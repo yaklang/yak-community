@@ -1,0 +1,51 @@
+$REM: 16;
+@function REM($n) {
+    @return calc($n / $REM) * 1rem;
+}
+
+.message-center-wrapper {
+    margin: REM(116) auto 0 auto;
+    width: REM(760);
+    .message-center-tabs {
+        margin-top: REM(24);
+        .tabs-bar-title {
+            height: REM(22);
+            font-size: REM(16);
+            font-weight: 600;
+            color: var(--base-font-color);
+            line-height: REM(22);
+            position: relative;
+            .title-count {
+                position: absolute;
+                top: 0;
+                height: REM(20);
+                font-size: REM(12);
+                color: #999ea8;
+                line-height: REM(20);
+            }
+        }
+    }
+
+    .message-center-tabs .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+        text-shadow: none;
+    }
+    .message-center-tabs.ant-tabs-top > .ant-tabs-nav {
+        margin-bottom: REM(16);
+    }
+    .message-center-tabs .ant-tabs-tab {
+        padding: 0;
+        z-index: 2;
+    }
+    .message-center-tabs .ant-tabs-ink-bar {
+        height: REM(6) !important;
+        border-radius: 3px;
+        background-color: var(--base-theme-color);
+        z-index: 1;
+    }
+    .message-center-tabs .ant-tabs-tab + .ant-tabs-tab {
+        margin: 0 0 0 REM(60);
+    }
+    .message-center-tabs.ant-tabs-top > .ant-tabs-nav::before {
+        border: 0;
+    }
+}

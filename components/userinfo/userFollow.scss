@@ -1,0 +1,94 @@
+$REM: 16;
+@function REM($n) {
+    @return calc($n / $REM) * 1rem;
+}
+
+.user-follow-wrapper {
+    width: REM(760);
+
+    .user-follow-hint {
+        height: REM(20);
+        font-size: REM(12);
+        color: #686c78;
+        line-height: REM(20);
+        margin-bottom: REM(8);
+    }
+
+    .user-follow-opt-wrapper {
+        padding: REM(24);
+        width: 100%;
+        height: REM(96);
+        background: #ffffff;
+        border-radius: 4px;
+    }
+    .user-follow-opt-wrapper + .user-follow-opt-wrapper {
+        margin-top: REM(16);
+    }
+
+    .user-follow-opt-body {
+        height: REM(48);
+        display: flex;
+        justify-content: space-between;
+
+        .follow-user {
+            display: flex;
+            &-img {
+                margin-top: 1px;
+                width: REM(40);
+                height: REM(40);
+                .img-style {
+                    @include width-height-100;
+                    border-radius: 50%;
+                }
+            }
+            &-info {
+                margin-left: REM(16);
+                font-size: REM(14);
+                .info-name {
+                    height: REM(20);
+                    font-weight: 600;
+                    color: var(--base-font-color);
+                    line-height: REM(20);
+                }
+                .info-dynamic {
+                    margin-top: REM(8);
+                    height: REM(20);
+                    color: #ff7d23;
+                    line-height: REM(20);
+                    .no-dynamic {
+                        color: #cbd1da;
+                    }
+                }
+            }
+        }
+
+        .follow-operate {
+            font-size: REM(14);
+            color: #686c78;
+            display: flex;
+
+            .follow-operate-icon {
+                margin-right: REM(8);
+                font-size: REM(24);
+                height: REM(20);
+                overflow: hidden;
+                margin-top: REM(-2);
+                border-radius: 4px;
+            }
+
+            .follow-operate-btn {
+                cursor: pointer;
+            }
+            .follow-operate-btn:hover {
+                color: #f73c1b;
+            }
+        }
+    }
+}
+
+.mutual-attention-hint-style {
+    height: REM(20);
+    font-size: REM(12);
+    color: #ffffff;
+    line-height: REM(20);
+}

@@ -1,0 +1,72 @@
+html,
+body {
+    padding: 0;
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+        Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+img,
+video {
+    -webkit-user-drag: none;
+}
+
+:root {
+    --base-background-color: #f7f8fa;
+    --base-font-color: #1e1f23;
+    --base-theme-color: #ff7d23;
+}
+
+$REM: 16;
+@function REM($n) {
+    @return calc($n / $REM) * 1rem;
+}
+
+@mixin width-height-100 {
+    width: 100%;
+    height: 100%;
+}
+@mixin text-ellipsis {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.text-ellipsis-style {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+//layout
+@import "../components/Layouts.scss";
+@import "../components/Headers.scss";
+@import "../components/Footers.scss";
+@import "../components/UserLayout.scss";
+
+// components
+@import "../components/TopicList.scss";
+
+// avatar
+@import "../components/avatar/avatar.scss";
+
+//pages
+@import "../pages/dynamic.scss";
+@import "../pages/messagecenter.scss";
+@import "../pages/userinfo.scss";
+
+// userinfo
+@import "../components/userinfo/settingInfo.scss";
+@import "../components/userinfo/userFollow.scss";
+
+// messageCenter
+@import "../components/messageCenter/fans.scss";

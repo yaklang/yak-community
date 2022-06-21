@@ -1,0 +1,23 @@
+$REM: 16;
+@function REM($n) {
+    @return calc($n / $REM) * 1rem;
+}
+
+.dynamic-wrapper {
+    margin: REM(80) auto 0 auto;
+    width: REM(1152);
+}
+.dynamic-back {
+    margin-bottom: REM(24);
+    color: #ef7826;
+    .dynamic-back-btn {
+        display: inline-flex;
+        align-items: center;
+        height: REM(20);
+        font-size: REM(14);
+        cursor: pointer;
+        .icon-style {
+            font-size: REM(16);
+        }
+    }
+}

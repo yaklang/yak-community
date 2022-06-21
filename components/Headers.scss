@@ -1,0 +1,121 @@
+.header-outside {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: REM(63);
+    border-bottom: 1px solid rgba(#e6eaef, 0.5);
+    z-index: 99;
+}
+.header-outside-transparent {
+    background-color: rgba(#ffffff, 0);
+}
+.header-outside-white {
+    background-color: #ffffff;
+}
+
+.header-main {
+    @include width-height-100;
+    padding: REM(16) REM(32) REM(15) REM(32);
+    display: flex;
+    justify-content: space-between;
+    .header-left {
+        display: flex;
+        &-home-page {
+            display: block;
+            width: REM(133);
+            height: REM(32);
+            .img-style {
+                @include width-height-100;
+            }
+        }
+        &-community-search {
+            margin-left: REM(118);
+            display: flex;
+            .community-body {
+                display: flex;
+                align-items: center;
+                cursor: pointer;
+                .community-icon-style {
+                    font-size: REM(18);
+                }
+                .community-title-style {
+                    margin-left: REM(8);
+                    font-size: REM(14);
+                    font-weight: 600;
+                    color: var(--base-font-color);
+                }
+            }
+            .community-divider {
+                margin: 0 16px;
+                height: 100%;
+            }
+            .community-input {
+                width: REM(743);
+                padding: 4px 5px;
+                border: 0;
+                background-color: rgba(#ffffff, 0);
+                &-icon {
+                    font-size: REM(18);
+                    color: #c3c7cf;
+                }
+                .ant-input {
+                    background-color: rgba(#ffffff, 0);
+                }
+            }
+            .community-input:hover {
+                border-color: #ff7d23;
+                box-shadow: 0 0 0 2px rgba(#ff7d23, 0.2);
+                background-color: rgba(#ffffff, 1);
+                .ant-input {
+                    background-color: rgba(#ffffff, 1);
+                }
+            }
+            .community-input.ant-input-affix-wrapper-focused {
+                border-color: #ff7d23;
+                box-shadow: 0 0 0 2px rgba(#ff7d23, 0.2);
+                background-color: rgba(#ffffff, 1);
+                .ant-input {
+                    background-color: rgba(#ffffff, 1);
+                }
+            }
+        }
+    }
+    .header-right {
+        display: flex;
+        .icon-style {
+            font-size: REM(32);
+        }
+        &-form-out {
+            height: REM(32);
+            padding: 0;
+        }
+        &-bell-out {
+            height: REM(32);
+            padding: 0;
+        }
+        .header-right-form-out + .header-right-bell-out {
+            margin-left: REM(8);
+        }
+        .header-right-bell-out + .header-right-login-btn {
+            margin-left: REM(24);
+        }
+        @mixin login-btn-color {
+            background: #ff7d23;
+            color: #ffffff;
+        }
+        &-login-btn {
+            height: REM(32);
+            border-radius: 4px;
+            font-size: REM(14);
+            padding: 0 15px;
+            @include login-btn-color;
+        }
+        &-login-btn:hover {
+            @include login-btn-color;
+        }
+        &-login-btn:focus {
+            @include login-btn-color;
+        }
+    }
+}

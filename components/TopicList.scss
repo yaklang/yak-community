@@ -1,0 +1,95 @@
+$REM: 16;
+@function REM($n) {
+    @return calc($n / $REM) * 1rem;
+}
+
+.topic-list-main {
+    margin-top: REM(63);
+    width: REM(376);
+    background-color: #ffffff;
+    border-radius: 4px;
+    .topic-list-container {
+        width: 100%;
+        padding: REM(24) REM(24) 0 REM(24);
+        .topic-list-header {
+            display: flex;
+            justify-content: space-between;
+            height: REM(22);
+            &-title {
+                font-size: REM(16);
+                font-weight: 600;
+                color: var(--base-font-color);
+                line-height: REM(22);
+            }
+            .refresh-btn {
+                height: REM(22);
+                padding: 0 15px;
+                font-size: REM(12);
+                color: #999ea8;
+                display: flex;
+                align-items: center;
+                .icon-style {
+                    font-size: REM(13);
+                    color: #686c78;
+                    display: flex;
+                }
+            }
+            .refresh-btn:hover {
+                color: var(--base-theme-color);
+                .icon-style {
+                    color: var(--base-theme-color);
+                }
+            }
+        }
+        .topic-list-body {
+            .topic-item-main + .topic-item-main {
+                border-top: 1px solid rgba(#e6eaef, 0.5);
+            }
+        }
+    }
+    .topic-list-change {
+        height: REM(44);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-top: 1px solid rgba(#e6eaef, 0.5);
+        .change-btn {
+            color: #999ea8;
+        }
+        .change-btn:hover {
+            color: var(--base-theme-color);
+        }
+    }
+}
+
+.topic-item-main {
+    height: REM(56);
+    padding: REM(16) 0;
+    display: flex;
+    &-rank {
+        width: REM(24);
+        height: REM(24);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        .rank-style {
+            font-size: REM(12);
+            font-weight: 600;
+            color: #ff7d23;
+        }
+        .img-style {
+            width: 100%;
+            height: 100%;
+        }
+    }
+    &-title {
+        @include text-ellipsis;
+        margin-left: REM(4);
+        width: REM(300);
+        height: REM(24);
+        font-size: REM(12);
+        font-weight: 500;
+        color: var(--base-font-color);
+        line-height: REM(24);
+    }
+}

@@ -1,0 +1,69 @@
+$REM: 16;
+@function REM($n) {
+    @return calc($n / $REM) * 1rem;
+}
+
+.setting-info-wrapper {
+    width: REM(760);
+    margin-top: REM(8);
+    .setting-info-row {
+        width: 100%;
+        height: REM(72);
+        line-height: REM(40);
+        background: #ffffff;
+        border-radius: 4px;
+        padding: REM(16) REM(24);
+        display: flex;
+        justify-content: space-between;
+        .info-show {
+            display: flex;
+            &-img {
+                width: REM(40);
+                height: REM(40);
+                .img-style {
+                    @include width-height-100;
+                    border-radius: 50%;
+                }
+            }
+            &-content {
+                margin-left: REM(16);
+                max-width: 50%;
+                font-size: REM(14);
+                font-weight: 600;
+                color: var(--base-font-color);
+            }
+        }
+        .info-operate {
+            display: flex;
+            height: REM(40);
+            line-height: REM(40);
+            font-size: REM(14);
+            color: #686c78;
+            cursor: pointer;
+
+            .info-operate-name {
+                margin-right: REM(16);
+                font-size: REM(12);
+                color: #999ea8;
+                cursor: auto;
+            }
+
+            .info-operate-btn:hover {
+                color: var(--base-theme-color);
+            }
+
+            .info-operate-unbind:hover {
+                color: #f73c1b;
+            }
+
+            .info-operate-divider {
+                .ant-divider.ant-divider-vertical {
+                    margin: 0 REM(16);
+                }
+            }
+        }
+    }
+    .setting-info-row + .setting-info-row {
+        margin-top: REM(16);
+    }
+}

@@ -1,0 +1,51 @@
+$REM: 16;
+@function REM($n) {
+    @return calc($n / $REM) * 1rem;
+}
+
+.user-info-wrapper {
+    margin: REM(200) auto 0 auto;
+    width: REM(760);
+    .user-info-tabs {
+        margin-top: REM(24);
+        .tabs-bar-title {
+            height: REM(22);
+            font-size: REM(16);
+            font-weight: 600;
+            color: var(--base-font-color);
+            line-height: REM(22);
+            position: relative;
+            .title-count {
+                position: absolute;
+                top: 0;
+                height: REM(20);
+                font-size: REM(12);
+                color: #999ea8;
+                line-height: REM(20);
+            }
+        }
+    }
+
+    .user-info-tabs .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+        text-shadow: none;
+    }
+    .user-info-tabs.ant-tabs-top > .ant-tabs-nav {
+        margin-bottom: REM(16);
+    }
+    .user-info-tabs .ant-tabs-tab {
+        padding: 0;
+        z-index: 2;
+    }
+    .user-info-tabs .ant-tabs-ink-bar {
+        height: REM(6) !important;
+        border-radius: 3px;
+        background-color: var(--base-theme-color);
+        z-index: 1;
+    }
+    .user-info-tabs .ant-tabs-tab + .ant-tabs-tab {
+        margin: 0 0 0 REM(60);
+    }
+    .user-info-tabs.ant-tabs-top > .ant-tabs-nav::before {
+        border: 0;
+    }
+}
