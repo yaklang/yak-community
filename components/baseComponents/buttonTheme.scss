@@ -1,0 +1,17 @@
+.button-default-style {
+    border-radius: 4px !important;
+    padding: 0 15px !important;
+}
+
+/* 主题色 */
+.yak-theme-button {
+    background: var(--base-theme-color) !important;
+    border: 1px solid var(--base-theme-color) !important;
+    color: #ffffff !important;
+}
+.yak-theme-button:hover,
+.yak-theme-button:focus,
+.yak-theme-button:active {
+    border-color: var(--base-theme-color) !important;
+    color: #ffffff !important;
+}

@@ -7,6 +7,8 @@ import Link from "next/link";
 import AvatarCard from "../components/avatar/AvatarCard";
 import TopicList from "../components/TopicList";
 import { LeftOutThemeIcon } from "../public/icons";
+import NoLayout from "../components/NoLayout";
+import CommentItem from "../components/CommentItem";
 
 interface DynamicProps {}
 
@@ -14,11 +16,7 @@ const Dynamic: NextPage<DynamicProps> = (props) => {
     const [activeKey, setActiveKey] = useState<string>("like");
 
     return (
-        <div
-            style={{
-                background: "#F7F8FA",
-            }}
-        >
+        <NoLayout>
             <div className="dynamic-wrapper">
                 <div className="dynamic-back">
                     <div className="dynamic-back-btn">
@@ -26,9 +24,12 @@ const Dynamic: NextPage<DynamicProps> = (props) => {
                         &nbsp; 返回
                     </div>
                 </div>
-                <div>
-                    <div></div>
-                    <div>
+
+                <div className="dynamic-body">
+                    <div className="dynamic-comment-body">
+                        <CommentItem />
+                    </div>
+                    <div className="dynamic-author-and-topic">
                         <div>
                             <AvatarCard
                                 info={{
@@ -50,7 +51,7 @@ const Dynamic: NextPage<DynamicProps> = (props) => {
                     </div>
                 </div>
             </div>
-        </div>
+        </NoLayout>
     );
 };
 

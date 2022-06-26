@@ -1,0 +1,62 @@
+$REM: 16;
+@function REM($n) {
+    @return calc($n / $REM) * 1rem;
+}
+
+.second-confirm-modal {
+    .second-confirm-body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        color: var(--base-font-color);
+
+        .close-title {
+            margin-bottom: REM(16);
+            padding: REM(32) REM(32) 0 REM(32);
+            font-size: REM(16);
+            font-weight: 600;
+        }
+
+        .close-subtitle {
+            margin-bottom: REM(20);
+            font-size: REM(14);
+        }
+
+        .close-btn {
+            .btn-style {
+                margin: 0 5px;
+                border-radius: 4px;
+            }
+
+            .confirm-style {
+                background: var(--base-theme-color);
+                color: #ffffff;
+            }
+            .confirm-style:hover,
+            .confirm-style:focus,
+            .confirm-style:active {
+                border-color: rgba(0, 0, 0, 0);
+            }
+
+            .cancel-style {
+                background: rgba(255, 255, 255, 0.8);
+                border: 1px solid rgba(230, 234, 239, 0.8);
+                color: #000000;
+            }
+            .cancel-style :hover,
+            .cancel-style :focus,
+            .cancel-style :active {
+                border-color: rgba(230, 234, 239, 0.8);
+            }
+        }
+    }
+
+    .ant-modal-content {
+        border-radius: 4px;
+    }
+
+    .ant-modal-body {
+        padding: 0;
+        padding-bottom: REM(32);
+    }
+}

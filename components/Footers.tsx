@@ -15,7 +15,7 @@ const Footers: NextPage<FootersProps> = (props) => {
                 <div className="footer-left">
                     <a href="/" className="footer-left-home-page">
                         <img
-                            src="/images/home/yakLogo.png"
+                            src="/images/yakLogo.png"
                             className="img-style"
                         />
                     </a>

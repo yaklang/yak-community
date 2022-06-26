@@ -1,0 +1,39 @@
+.input-default-style {
+    border-radius: 4px !important;
+}
+
+/* 主题色 */
+.yak-theme-input {
+    border: 1px solid var(--base-theme-color) !important;
+}
+.yak-theme-input:hover,
+.yak-theme-input:focus-visible {
+    border-color: var(--base-theme-color) !important;
+    outline: none;
+}
+.yak-theme-input:focus {
+    border-color: var(--base-theme-color) !important;
+    box-shadow: 0 0 0 2px #ff7d2320 !important;
+}
+.yak-theme-input.ant-input-affix-wrapper-focused {
+    border-color: var(--base-theme-color) !important;
+    box-shadow: 0 0 0 2px #ff7d2320 !important;
+}
+
+/* 登录页颜色 */
+.yak-login-input {
+    border: 1px solid #ead9db !important;
+}
+.yak-login-input:hover,
+.yak-login-input:focus-visible {
+    border-color: #ead9db !important;
+    outline: none;
+}
+.yak-login-input:focus {
+    border-color: #ead9db !important;
+    box-shadow: 0 0 0 2px #ead9db20 !important;
+}
+.yak-login-input.ant-input-affix-wrapper-focused {
+    border-color: #ead9db !important;
+    box-shadow: 0 0 0 2px #ead9db20 !important;
+}

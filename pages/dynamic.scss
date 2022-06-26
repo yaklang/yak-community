@@ -21,3 +21,11 @@ $REM: 16;
         }
     }
 }
+.dynamic-body {
+    display: flex;
+    .dynamic-comment-body {
+    }
+    .dynamic-author-and-topic {
+        margin-left: REM(16);
+    }
+}

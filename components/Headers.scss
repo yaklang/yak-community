@@ -1,3 +1,8 @@
+$REM: 16;
+@function REM($n) {
+    @return calc($n / $REM) * 1rem;
+}
+
 .header-outside {
     position: fixed;
     top: 0;
@@ -97,25 +102,77 @@
         .header-right-form-out + .header-right-bell-out {
             margin-left: REM(8);
         }
+        &-login-btn {
+            height: REM(32);
+            font-size: REM(14);
+        }
         .header-right-bell-out + .header-right-login-btn {
             margin-left: REM(24);
         }
-        @mixin login-btn-color {
-            background: #ff7d23;
-            color: #ffffff;
-        }
-        &-login-btn {
+        &-user-img {
+            width: REM(32);
             height: REM(32);
-            border-radius: 4px;
-            font-size: REM(14);
-            padding: 0 15px;
-            @include login-btn-color;
+            border-radius: 50%;
+            cursor: pointer;
         }
-        &-login-btn:hover {
-            @include login-btn-color;
+        .header-right-bell-out + .header-right-user-img {
+            margin-left: REM(24);
         }
-        &-login-btn:focus {
-            @include login-btn-color;
+    }
+}
+
+.user-info-menu {
+    .user-info-menu-body {
+        .menu-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            padding-right: REM(50);
+            li {
+                height: REM(24);
+                display: flex;
+                align-items: center;
+                cursor: pointer;
+                .icon-community-style{
+                    margin-right: 8px;
+                    font-size: REM(16);
+                }
+                .icon-style {
+                    margin-right: 4px;
+                    font-size: REM(20);
+                }
+            }
+            li:hover {
+                color: var(--base-theme-color);
+            }
+            li + li {
+                margin-top: REM(8);
+            }
         }
+
+        .menu-divider {
+            margin: REM(8) 0;
+        }
+
+        .menu-sign-out {
+            height: REM(24);
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            .icon-style {
+                margin-right: 4px;
+                font-size: REM(20);
+            }
+        }
+        .menu-sign-out:hover {
+            color: #f73c1b;
+        }
+    }
+
+    .ant-popover-inner-content {
+        padding: REM(12);
+    }
+    .ant-popover-inner {
+        border-radius: 4px;
     }
 }

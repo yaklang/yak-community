@@ -1,0 +1,63 @@
+.img-croppper-modal {
+    .img-croppper-body {
+        .body-title {
+            height: 24px;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--base-font-color);
+            line-height: 24px;
+        }
+
+        .body-cropper {
+            margin-top: 16px;
+            width: 100%;
+            .img-cropper-style {
+                width: 100%;
+                .img-style {
+                    @include width-height-100;
+                }
+            }
+        }
+
+        .body-hint {
+            margin-top: 8px;
+            height: 20px;
+            font-size: 12px;
+            color: #686c78;
+            line-height: 20px;
+        }
+
+        .body-operate {
+            margin-top: 16px;
+            display: flex;
+            justify-content: right;
+            .btn-style {
+                height: 32px;
+                padding: 0 15px;
+                font-size: 14px;
+                border-radius: 4px;
+            }
+            .cancel-btn {
+                color: #686c78;
+                border: 1px solid #e6eaef;
+            }
+            .complete-btn {
+                margin-left: 16px;
+                background: #ff7d23;
+                color: #ffffff;
+                border: 0;
+            }
+        }
+    }
+
+    .ant-modal-content {
+        background: #ffffff;
+        box-shadow: 0px 2px 4px 0px rgba(153, 158, 168, 0.3);
+        border-radius: 4px;
+        border: 1px solid rgba(230, 234, 239, 0.5);
+    }
+
+    .ant-modal-body {
+        padding: 24px;
+    }
+}

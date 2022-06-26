@@ -8,6 +8,7 @@ import UserLayout from "../components/UserLayout";
 import SettingInfo from "../components/userinfo/SettingInfo";
 import UserFollow from "../components/userinfo/UserFollow";
 import Fans from "../components/messageCenter/Fans";
+import NoLayout from "../components/NoLayout";
 
 const { TabPane } = Tabs;
 
@@ -17,11 +18,7 @@ const UserInfo: NextPage<ModifyUserProps> = (props) => {
     const [activeKey, setActiveKey] = useState<string>("like");
 
     return (
-        <div
-            style={{
-                background: "#F7F8FA",
-            }}
-        >
+        <NoLayout>
             <div className="message-center-wrapper">
                 <Tabs
                     activeKey={activeKey}
@@ -80,7 +77,7 @@ const UserInfo: NextPage<ModifyUserProps> = (props) => {
                     </TabPane>
                 </Tabs>
             </div>
-        </div>
+        </NoLayout>
     );
 };
 
