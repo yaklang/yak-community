@@ -3,14 +3,6 @@ import { UserInfoProps } from "../types/user";
 
 const DefaultUserInfo: UserInfoProps = {
     isLogin: false,
-    githubName: null,
-    githubHeadImg: null,
-    wechatName: null,
-    wechatHeadImg: null,
-    qqName: null,
-    qqHeadImg: null,
-    role: null,
-    token: null,
 };
 
 interface StoreProps {
@@ -22,14 +14,6 @@ interface StoreProps {
 export const useStore = create<StoreProps>((set, get) => ({
     userInfo: {
         isLogin: false,
-        githubName: null,
-        githubHeadImg: null,
-        wechatName: null,
-        wechatHeadImg: null,
-        qqName: null,
-        qqHeadImg: null,
-        role: null,
-        token: null,
     },
     signIn: (info) => set({ userInfo: info }),
     signOut: () => set({ userInfo: DefaultUserInfo }),
