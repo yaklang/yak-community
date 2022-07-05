@@ -196,12 +196,65 @@ $REM: 16;
                     .video-form-input {
                         width: 100%;
                         height: REM(32);
-                        border-radius: 4px;
                         font-size: REM(14);
-                        border: 1px solid #e6eaef;
                     }
-                    .video-form-input:focus {
-                        box-shadow: 0 0 0 2px #e6eaef00;
+
+                    .video-cover-body {
+                        width: REM(188);
+                        height: REM(106);
+                        background: #f7f8fa;
+                        border-radius: 4px;
+                        border: 1px solid rgba(230, 234, 239, 0.5);
+                        overflow: hidden;
+                        position: relative;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: center;
+                        .icon-style {
+                            font-size: REM(20);
+                        }
+                        .text-style {
+                            margin-top: 4px;
+                            height: REM(20);
+                            font-size: REM(12);
+                            color: #999ea8;
+                            line-height: REM(20);
+                        }
+
+                        .img-style {
+                            @include width-height-100;
+                        }
+                        .mask-cover {
+                            position: absolute;
+                            bottom: 0;
+                            left: 0;
+                            width: 100%;
+                            background: #ffffff00;
+                            border-radius: 0px 0px 4px 4px;
+                            height: REM(24);
+                            font-size: REM(12);
+                            color: #ffffff;
+                            display: flex;
+                            justify-content: space-around;
+                            align-items: center;
+                            .cover-btn {
+                                cursor: pointer;
+                                color: #ffffff;
+                            }
+                            .cover-btn:hover {
+                                color: var(--base-theme-color);
+                            }
+                        }
+                        .mask-cover-background {
+                            background: #2a2b3150;
+                        }
+                    }
+                    .video-cover-body:hover {
+                        .icon-style,
+                        .text-style {
+                            color: var(--base-theme-color);
+                        }
                     }
                 }
                 .ant-form-item + .ant-form-item {
@@ -242,17 +295,6 @@ $REM: 16;
             font-size: REM(12);
             width: 100%;
             height: REM(32);
-            border-radius: 4px;
-            border: 1px solid #e6eaef;
-        }
-        .body-input:hover,
-        .body-input:focus-visible {
-            border-color: #e6eaef;
-            outline: none;
-        }
-        .body-input:focus {
-            border-color: #e6eaef;
-            box-shadow: 0 0 0 2px #e6eaef20;
         }
 
         .body-list {

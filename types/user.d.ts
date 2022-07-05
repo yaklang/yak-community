@@ -1,7 +1,11 @@
-export interface UserInfoProps {
+export interface LoginUserInfoProps {
     isLogin: boolean;
     user_id?: number;
     name?: string;
     head_img?: string;
-    token?: string | null;
+}
+
+export interface UserInfoProps {
+    name: string;
+    head_img: string;
 }

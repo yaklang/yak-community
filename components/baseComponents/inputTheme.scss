@@ -37,3 +37,21 @@
     border-color: #ead9db !important;
     box-shadow: 0 0 0 2px #ead9db20 !important;
 }
+
+/* 内容输入页颜色 */
+.yak-info-input {
+    border: 1px solid #e6eaef !important;
+}
+.yak-info-input:hover,
+.yak-info-input:focus-visible {
+    border-color: #e6eaef !important;
+    outline: none;
+}
+.yak-info-input:focus {
+    border-color: #e6eaef !important;
+    box-shadow: 0 0 0 2px #e6eaef20 !important;
+}
+.yak-info-input.ant-input-affix-wrapper-focused {
+    border-color: #e6eaef !important;
+    box-shadow: 0 0 0 2px #e6eaef20 !important;
+}

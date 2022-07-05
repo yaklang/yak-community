@@ -1,25 +1,24 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { NextPage } from "next";
-import { Button } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import { UserInfoProps } from "../../types/user";
+import { API } from "../../types/api";
+import { ButtonTheme } from "../baseComponents/ButtonTheme";
+import { count } from "console";
 
 interface AvatarProps {
-    info: UserInfoProps;
+    info: API.UserDetail;
+    count: API.UserHead;
 }
 
 const Avatar: NextPage<AvatarProps> = (props) => {
-    const { info } = props;
+    const { info, count } = props;
 
     return (
         <div className="avatar-wrapper">
             <div className="avatar-body">
                 <div className="avatar-author-info">
                     <div className="avatar-author-info-header">
-                        <img
-                            className="img-style"
-                            src={`https://t12.baidu.com/it/u=3376231878,176147949&fm=30&app=106&f=JPEG?w=312&h=208&s=AA5210C7024E4555DC8CDCBB03005001`}
-                        />
+                        <img className="img-style" src={info.head_img} />
                     </div>
                     <div className="avatar-author-info-data">
                         <div
@@ -31,20 +30,24 @@ const Avatar: NextPage<AvatarProps> = (props) => {
                         <div className="author-popularity">
                             <div className="author-popularity-span">
                                 粉丝
-                                <span className="quantity-style">{"1234"}</span>
+                                <span className="quantity-style">
+                                    {count.fans}
+                                </span>
                             </div>
                             <div className="author-popularity-span">
                                 关注
-                                <span className="quantity-style">{"24"}</span>
+                                <span className="quantity-style">
+                                    {count.follow_num}
+                                </span>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div className="avatar-follow">
-                    <Button className="avatar-follow-btn">
+                    <ButtonTheme className="avatar-follow-btn">
                         <PlusOutlined />
                         关注
-                    </Button>
+                    </ButtonTheme>
                 </div>
             </div>
         </div>

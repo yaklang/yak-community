@@ -1,14 +1,14 @@
 import create from "zustand";
-import { UserInfoProps } from "../types/user";
+import { LoginUserInfoProps } from "../types/user";
 
-const DefaultUserInfo: UserInfoProps = {
+const DefaultUserInfo: LoginUserInfoProps = {
     isLogin: false,
 };
 
 interface StoreProps {
     /**@name 登录用户信息 */
-    userInfo: UserInfoProps;
-    signIn: (info: UserInfoProps) => void;
+    userInfo: LoginUserInfoProps;
+    signIn: (info: LoginUserInfoProps) => void;
     signOut: () => void;
 }
 export const useStore = create<StoreProps>((set, get) => ({

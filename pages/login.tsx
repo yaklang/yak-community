@@ -3,6 +3,7 @@ import { NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { Checkbox, Divider, Spin, Tooltip, Upload } from "antd";
+import { RcFile } from "antd/lib/upload";
 import {
     GithubOutlined,
     WechatOutlined,
@@ -19,8 +20,6 @@ import { NetWorkApi } from "../utils/fetch";
 import { API } from "../types/api";
 import { useStore } from "../store";
 import { setToken, TokenKey, UserId } from "../utils/auth";
-import { RcFile } from "antd/lib/upload";
-
 interface LoginProps {}
 
 type source = "github" | "wechat";
@@ -32,14 +31,9 @@ export interface LoginCode {
     code: string;
     type: source;
 }
-interface LoginPhone {
-    phone: string;
-    code: string;
-    auth_id: number;
-}
 
 const Login: NextPage<LoginProps> = (props) => {
-    const [page, setPage] = useState<1 | 2 | 3 | 4>(4);
+    const [page, setPage] = useState<1 | 2 | 3 | 4>(1);
     const [codeUrl, setCodeUrl] = useState<{
         url: string;
         type: source;
@@ -73,7 +67,6 @@ const Login: NextPage<LoginProps> = (props) => {
             user_id: info.user_id,
             name: info.name,
             head_img: info.head_img,
-            token: info.token,
         });
         setUserInfo(info);
         setToken(info.token);
@@ -132,7 +125,7 @@ const Login: NextPage<LoginProps> = (props) => {
                             setTimeout(() => setPage(3), 50);
                         } else {
                             setLoginInfo(res);
-                            // setTimeout(() => router.push("/"), 50);
+                            setTimeout(() => router.push("/"), 50);
                         }
                     })
                     .catch((err) => {});
@@ -141,7 +134,7 @@ const Login: NextPage<LoginProps> = (props) => {
             if (index === 3) {
                 if (thirdFlag) {
                     if (phone && phoneCode && authId) {
-                        NetWorkApi<LoginPhone, API.AuthResponse>({
+                        NetWorkApi<API.UserLogin, API.AuthResponse>({
                             method: "post",
                             url: "/api/user/login",
                             data: { phone, code: phoneCode, auth_id: authId },
@@ -161,19 +154,19 @@ const Login: NextPage<LoginProps> = (props) => {
 
             if (index === 4) {
                 if (fourthFlag) {
-                    router.push("/userinfo");
-                    return;
                     if (fourthName && img && userInfo.user_id) {
-                        NetWorkApi<LoginPhone, API.AuthResponse>({
+                        NetWorkApi<API.UpdateUser, API.AuthResponse>({
                             method: "post",
-                            url: "/api/user/login",
+                            url: "/api/forum/user",
                             data: {
-                                phone: "",
-                                code: "phoneCode",
-                                auth_id: authId,
+                                user_id: userInfo.user_id,
+                                name: fourthName,
+                                head_img: img,
                             },
+                            userToken: true,
                         })
                             .then((res) => {
+                                console.log("auth-4", res);
                                 signIn({
                                     ...userInfo,
                                     name: fourthName,
@@ -528,10 +521,6 @@ interface LoginFourthProps {
     headImg: string;
     onFourth: (flag: boolean, name?: string, img?: string) => any;
 }
-interface UploadFile {
-    file_name: RcFile;
-    type: string;
-}
 const LoginFourth: React.FC<LoginFourthProps> = (props) => {
     const { name, headImg, onFourth } = props;
 
@@ -571,28 +560,27 @@ const LoginFourth: React.FC<LoginFourthProps> = (props) => {
                 <img src={img} className="img-style" />
 
                 <Upload
-                    // accept=""
+                    accept=".png,.jpg,.jpeg"
                     showUploadList={false}
-                    beforeUpload={(file) => {
-                        console.log(123, file);
+                    beforeUpload={(file: RcFile) => {
+                        if (file.size > 10 * 1024 * 1024) {
+                            failed("请上传10MB以内的图片");
+                            return Promise.reject();
+                        }
 
-                        return true;
-                    }}
-                    customRequest={({ file }) => {
-                        const { type } = file as RcFile;
-                        console.log(file);
-                        NetWorkApi<UploadFile, string>({
+                        var formData = new FormData();
+                        formData.append("file_name", file);
+                        formData.append("type", file.type);
+                        NetWorkApi<FormData, string>({
                             method: "post",
                             url: "/api/upload/img",
-                            data: { file_name: file as RcFile, type },
+                            data: formData,
                             userToken: true,
                         })
-                            .then((res) => {
-                                console.log(res);
-                            })
-                            .catch((err) => {
-                                console.log(err);
-                            });
+                            .then((res) => setImg(res))
+                            .catch((err) => {});
+
+                        return Promise.reject();
                     }}
                 >
                     {showUpload && (

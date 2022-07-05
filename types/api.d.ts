@@ -7,12 +7,28 @@ export declare namespace API {
     export interface UserResponse {
         data: UserDetail;
     }
+    export interface UserLogin {
+        phone?: string;
+        code?: string;
+        auth_id?: number;
+    }
     export interface UserHead {
         user_id: number;
         user_name: string;
         head_img: string;
+        /**
+         * 关注数
+         */
         follow_num: number;
         fans: number;
+        /**
+         * 收藏
+         */
+        collect_num: number;
+        /**
+         * 动态
+         */
+        dynamic_num: number;
     }
     export interface UserFollows extends UserFollow {}
     export interface UserFollowResponse extends Paging {
@@ -136,8 +152,8 @@ export declare namespace API {
         /**
          * 话题id
          */
-        topic_id?: number;
-        topics?: string;
+        topic_id?: number[];
+        topics?: string[];
         title?: string;
         cover?: string;
         /**

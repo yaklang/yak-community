@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import { NextPage } from "next";
 import { Button } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import { UserInfoProps } from "../../types/user";
+import { LoginUserInfoProps } from "../../types/user";
 
 interface AvatarCardProps {
-    info: UserInfoProps;
+    info: LoginUserInfoProps;
 }
 
 const AvatarCard: NextPage<AvatarCardProps> = (props) => {

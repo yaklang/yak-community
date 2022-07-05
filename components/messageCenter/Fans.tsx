@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { NextPage } from "next";
 import { Button, Divider, Tooltip } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import { UserInfoProps } from "../../types/user";
+import { LoginUserInfoProps } from "../../types/user";
 import { MutualAttentionIcon } from "../../public/icons";
 
 interface FansProps {}

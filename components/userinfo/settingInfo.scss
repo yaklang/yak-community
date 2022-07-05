@@ -16,6 +16,7 @@ $REM: 16;
         display: flex;
         justify-content: space-between;
         .info-show {
+            flex: 1;
             display: flex;
             &-img {
                 width: REM(40);
@@ -65,5 +66,161 @@ $REM: 16;
     }
     .setting-info-row + .setting-info-row {
         margin-top: REM(16);
+    }
+}
+
+.setting-info-modal {
+    .modal-body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .btn-body {
+            width: 100%;
+            display: flex;
+            justify-content: right;
+            .btn-style + .btn-style {
+                margin-left: 16px;
+            }
+            .btn-style {
+                height: 32px;
+            }
+            .cancel-style {
+                color: #686c78;
+            }
+            .btn-disabled-style {
+                opacity: 0.5;
+            }
+        }
+    }
+
+    .setting-name-img {
+        .img-body {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            overflow: hidden;
+            position: relative;
+            .img-style {
+                width: 100%;
+                height: 100%;
+            }
+            .login-fourth-img-upload {
+                position: absolute;
+                left: 0;
+                bottom: 0;
+                width: 100%;
+                height: 32px;
+                background: #2a2b3150;
+                color: #ffffff;
+                font-size: 12px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                cursor: pointer;
+                .icon-style {
+                    font-size: 12px;
+                    margin-right: 4px;
+                }
+            }
+        }
+
+        .input-body {
+            width: 100%;
+            padding: 16px 0 24px 0;
+            .input-style {
+                height: 48px;
+            }
+            .divider-style {
+                margin: 0 16px;
+            }
+        }
+    }
+
+    .setting-phone {
+        .phone-body {
+            width: 100%;
+            padding-bottom: 16px;
+            .input-style {
+                height: 48px;
+            }
+            .divider-style {
+                margin: 0 16px;
+            }
+            .info-style {
+                color: red;
+            }
+        }
+
+        .code-body {
+            width: 100%;
+            padding-bottom: 24px;
+            display: flex;
+            .input-style {
+                height: 48px;
+            }
+
+            .btn-style {
+                margin-left: 8px;
+                height: 48px;
+                font-weight: 500;
+            }
+            .btn-disabled-style {
+                opacity: 0.5;
+            }
+        }
+    }
+
+    .setting-wechat-code {
+        width: 100%;
+        .wechat-login {
+            width: 100%;
+            height: 462px;
+            iframe {
+                width: 100%;
+                height: 100%;
+            }
+        }
+    }
+
+    .unbind-body {
+        width: 100%;
+        .body-text {
+            width: 100%;
+            height: 20px;
+            font-size: 12px;
+            color: #686c78;
+            line-height: 20px;
+        }
+        .body-btn {
+            margin-top: 32px;
+            width: 100%;
+            display: flex;
+            justify-content: right;
+            .btn-style + .btn-style {
+                margin-left: 16px;
+            }
+            .btn-style {
+                height: 32px;
+            }
+            .cancel-style {
+                color: #686c78;
+            }
+        }
+    }
+
+    .ant-modal-content {
+        border-radius: 4px;
+        border: 1px solid rgba(230, 234, 239, 0.5);
+    }
+
+    .ant-modal-header {
+        border-radius: 4px;
+        border-bottom: 0px;
+        padding: 24px;
+    }
+
+    .ant-modal-body {
+        padding: 0 24px 24px 24px;
     }
 }

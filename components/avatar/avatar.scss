@@ -51,17 +51,7 @@ $REM: 16;
     .avatar-follow {
         .avatar-follow-btn {
             height: REM(28);
-            background: var(--base-theme-color);
-            color: #ffffff;
-            border-radius: 4px;
-            padding: 0 15px;
             font-size: REM(14);
-        }
-        .avatar-follow-btn:hover {
-            border-color: rgba(0, 0, 0, 0);
-        }
-        .avatar-follow-btn:focus {
-            border-color: rgba(0, 0, 0, 0);
         }
     }
 }

@@ -45,17 +45,17 @@ export function NetWorkApi<T, D>(params: AxiosConfigProps<T>): Promise<D> {
 }
 
 export const handleAxiosError = (err: any) => {
-    const { code, response } = err as AxiosError<API.ActionFailed>;
+    const { response } = err as AxiosError<API.ActionFailed>;
 
-    if (!code) {
+    if (!response) {
         failed("请求超时，请重试");
         return;
     }
-    switch (code) {
-        case "209":
+    switch (response.status) {
+        case 209:
             failed(response?.data.reason || "");
             return;
-        case "500":
+        case 500:
             failed("Token已过期，请重新登录");
             return;
 
