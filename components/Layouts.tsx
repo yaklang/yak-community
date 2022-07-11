@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { NextPage } from "next";
-import { BackTop } from "antd";
 import { FormOutlined, UpOutlined } from "@ant-design/icons";
-import Router from "next/router";
 import Headers from "./Headers";
 import Footers from "./Footers";
-import {} from "../public/icons";
+import PostDynamic from "./modal/PostDynamic";
 
 interface LayoutsProps {
     children?: React.ReactNode;
 }
 
 const Layouts: NextPage<LayoutsProps> = (props) => {
+    const [postMessage, setPostMessage] = useState<boolean>(false);
+
     useEffect(() => {
         const DesignW = 1920;
         const FontRate = 16;
@@ -37,22 +37,30 @@ const Layouts: NextPage<LayoutsProps> = (props) => {
             <Headers />
             <div className="main-container">{props.children}</div>
             <Footers />
-            <BackTop className="layout-back-top" visibilityHeight={0}>
+            <div className="layout-back-top">
                 <div
                     className="btn-style publish-btn"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                    }}
+                    onClick={() => setPostMessage(true)}
                 >
                     <FormOutlined className="icon-style" />
                 </div>
-                <div className="btn-style top-btn">
+                <div
+                    className="btn-style top-btn"
+                    onClick={() => {
+                        window.scrollTo({ top: 0, behavior: "smooth" });
+                    }}
+                >
                     <div className="btn-icon">
                         <UpOutlined className="icon-style" />
                     </div>
                     <div className="text-style">置顶</div>
                 </div>
-            </BackTop>
+            </div>
+
+            <PostDynamic
+                visible={postMessage}
+                onCancel={() => setPostMessage(false)}
+            />
         </div>
     );
 };

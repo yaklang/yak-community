@@ -2,22 +2,16 @@ import React from "react";
 import { NextPage } from "next";
 import { Popover } from "antd";
 import { GithubOutlined, WechatOutlined } from "@ant-design/icons";
-import { useRouter } from "next/router";
 
 interface FootersProps {}
 
 const Footers: NextPage<FootersProps> = (props) => {
-    const router = useRouter();
-
     return (
         <div className="footer-outside">
             <div className="footer-main">
                 <div className="footer-left">
                     <a href="/" className="footer-left-home-page">
-                        <img
-                            src="/images/yakLogo.png"
-                            className="img-style"
-                        />
+                        <img src="/images/yakLogo.png" className="img-style" />
                     </a>
                     <div className="footer-left-copyright">{`Copyright © ${new Date().getFullYear()} for Yak Project. Own by v1ll4n. Powered by Docusaurus`}</div>
                     <a

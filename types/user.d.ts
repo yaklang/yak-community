@@ -5,7 +5,3 @@ export interface LoginUserInfoProps {
     head_img?: string;
 }
 
-export interface UserInfoProps {
-    name: string;
-    head_img: string;
-}

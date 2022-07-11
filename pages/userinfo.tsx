@@ -12,6 +12,8 @@ import { API } from "../types/api";
 import { NetWorkApi } from "../utils/fetch";
 import { useMemoizedFn } from "ahooks";
 import { useStore } from "../store";
+import UserCollect from "../components/userinfo/UserCollect";
+import UserDynamic from "../components/userinfo/UserDynamic";
 
 const { TabPane } = Tabs;
 
@@ -50,17 +52,16 @@ const UserInfo: NextPage<ModifyUserProps> = (props) => {
                     head_img: res.data.head_img,
                 });
                 setUser(res.data);
-                setTimeout(() => fetchFanHot(), 50);
+                fetchFanHot(res.data);
             })
             .catch((err) => {});
     };
 
-    const fetchFanHot = () => {
-        if (!userInfo.user_id) return;
+    const fetchFanHot = (info: API.UserDetail) => {
         NetWorkApi<fetchFanHotProps, API.UserHead>({
             method: "get",
             url: "/api/dynamic/user/head",
-            params: { user_id: userInfo.user_id, title: 1 },
+            params: { user_id: info.id, title: 1 },
             userToken: true,
         })
             .then((res) => {
@@ -70,7 +71,18 @@ const UserInfo: NextPage<ModifyUserProps> = (props) => {
     };
 
     useEffect(() => {
-        fetchUserInfo();
+        setUser({ id: 1, phone: "12312312312", name: "123", head_img: "" });
+        setUserCount({
+            user_id: 1,
+            user_name: "123",
+            head_img: "",
+            follow_num: 1,
+            fans: 1,
+            collect_num: 1,
+            dynamic_num: 1,
+            is_follow: false,
+        });
+        // fetchUserInfo();
     }, []);
 
     useEffect(() => {
@@ -82,7 +94,13 @@ const UserInfo: NextPage<ModifyUserProps> = (props) => {
         <UserLayout>
             {user && userCount && (
                 <div className="user-info-wrapper">
-                    <Avatar info={user} count={userCount} />
+                    <Avatar
+                        id={user.id}
+                        name={user.name}
+                        img={user.head_img}
+                        fans={userCount.fans}
+                        follows={userCount.follow_num}
+                    />
 
                     <Tabs
                         activeKey={activeKey}
@@ -113,7 +131,12 @@ const UserInfo: NextPage<ModifyUserProps> = (props) => {
                                 </div>
                             }
                             key="dynamic"
-                        ></TabPane>
+                        >
+                            <UserDynamic
+                                info={user}
+                                onUpdateUserInfo={fetchUserInfo}
+                            />
+                        </TabPane>
                         <TabPane
                             tab={
                                 <div className="tabs-bar-title">
@@ -138,7 +161,12 @@ const UserInfo: NextPage<ModifyUserProps> = (props) => {
                                 </div>
                             }
                             key="collection"
-                        ></TabPane>
+                        >
+                            <UserCollect
+                                info={user}
+                                onUpdateUserInfo={fetchUserInfo}
+                            />
+                        </TabPane>
                         <TabPane
                             tab={
                                 <div className="tabs-bar-title">
@@ -165,12 +193,8 @@ const UserInfo: NextPage<ModifyUserProps> = (props) => {
                             key="follow"
                         >
                             <UserFollow
-                                info={{
-                                    isLogin: true,
-                                    user_id: 111,
-                                    name: "123",
-                                    head_img: "123",
-                                }}
+                                info={user}
+                                onUpdateUserInfo={fetchUserInfo}
                             />
                         </TabPane>
                         <TabPane

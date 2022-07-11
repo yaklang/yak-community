@@ -4,7 +4,6 @@ $REM: 16;
 }
 
 .topic-list-main {
-    margin-top: REM(63);
     width: REM(376);
     background-color: #ffffff;
     border-radius: 4px;
@@ -58,6 +57,9 @@ $REM: 16;
         }
         .change-btn:hover {
             color: var(--base-theme-color);
+        }
+        .no-hot-style {
+            color: #999ea8;
         }
     }
 }

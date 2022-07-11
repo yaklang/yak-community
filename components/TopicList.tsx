@@ -3,6 +3,9 @@ import { NextPage } from "next";
 import { Button } from "antd";
 import { SyncOutlined } from "@ant-design/icons";
 import { useMemoizedFn } from "ahooks";
+import { SearchPageMeta } from "../types/extraApi";
+import { NetWorkApi } from "../utils/fetch";
+import { API } from "../types/api";
 
 const TopicIcon: string[] = [
     "/images/topic/topic-1.png",
@@ -17,50 +20,9 @@ interface TopicInfoProps {
 interface TopicListProps {}
 
 const TopicList: NextPage<TopicListProps> = (props) => {
-    const [list, setList] = useState<TopicInfoProps[]>([
-        { name: "1" },
-        { name: "2" },
-        { name: "3" },
-        { name: "4" },
-        { name: "5" },
-        { name: "6" },
-        { name: "7" },
-        { name: "8" },
-        { name: "9" },
-        { name: "10" },
-        { name: "11" },
-        { name: "12" },
-        { name: "13" },
-        { name: "14" },
-        { name: "15" },
-        { name: "16" },
-        { name: "17" },
-        { name: "18" },
-        { name: "19" },
-        { name: "20" },
-        { name: "21" },
-        { name: "22" },
-        { name: "23" },
-        { name: "24" },
-        { name: "25" },
-        { name: "26" },
-        { name: "27" },
-        { name: "28" },
-        { name: "29" },
-        { name: "30" },
-    ]);
-    const [showList, setShowList] = useState<TopicInfoProps[]>([
-        { name: "1" },
-        { name: "2" },
-        { name: "3" },
-        { name: "4" },
-        { name: "5" },
-        { name: "6" },
-        { name: "7" },
-        { name: "8" },
-        { name: "9" },
-        { name: "10" },
-    ]);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [list, setList] = useState<API.TopicList[]>([]);
+    const [showList, setShowList] = useState<API.TopicList[]>([]);
     const [page, setPage] = useState<0 | 1 | 2>(0);
 
     const changePage = useMemoizedFn(() => {
@@ -76,13 +38,47 @@ const TopicList: NextPage<TopicListProps> = (props) => {
         }
     });
 
+    const fetchTopicList = useMemoizedFn(() => {
+        if (loading) return;
+        setLoading(true);
+
+        NetWorkApi<SearchPageMeta, API.TopicResponse>({
+            method: "get",
+            url: "/api/forum/topics/hot",
+            params: {
+                Page: 1,
+                Limit: 30,
+                Order: "desc",
+            },
+            userToken: true,
+        })
+            .then((res) => {
+                setList(res.data || []);
+                if (Array.isArray(res.data)) {
+                    setShowList(
+                        res.data.length > 10 ? res.data.slice(0, 10) : res.data
+                    );
+                }
+            })
+            .catch((err) => {})
+            .finally(() => setTimeout(() => setLoading(false), 300));
+    });
+
+    useEffect(() => {
+        fetchTopicList();
+    }, []);
+
     return (
         <div className="topic-list-main">
             <div className="topic-list-container">
                 <div className="topic-list-header">
                     <div className="topic-list-header-title">话题榜</div>
                     <div className="topic-list-header-refresh">
-                        <Button type="link" className="refresh-btn">
+                        <Button
+                            type="link"
+                            className="refresh-btn"
+                            onClick={fetchTopicList}
+                        >
                             <SyncOutlined className="icon-style" />
                             点击刷新
                         </Button>
@@ -92,7 +88,7 @@ const TopicList: NextPage<TopicListProps> = (props) => {
                     {showList.map((item, index) => {
                         return (
                             <TopicItem
-                                key={item.name}
+                                key={item.topics}
                                 info={item}
                                 index={index}
                                 page={page}
@@ -101,17 +97,28 @@ const TopicList: NextPage<TopicListProps> = (props) => {
                     })}
                 </div>
             </div>
-            <div className="topic-list-change">
-                <Button type="link" className="change-btn" onClick={changePage}>
-                    换一批
-                </Button>
-            </div>
+
+            {(list.length === 0 || list.length > 10) && (
+                <div className="topic-list-change">
+                    {list.length > 10 ? (
+                        <Button
+                            type="link"
+                            className="change-btn"
+                            onClick={changePage}
+                        >
+                            换一批
+                        </Button>
+                    ) : (
+                        <span className="no-hot-style">暂无热门话题</span>
+                    )}
+                </div>
+            )}
         </div>
     );
 };
 
 interface TopicItemProps {
-    info: TopicInfoProps;
+    info: API.TopicList;
     index: number;
     page: 0 | 1 | 2;
 }
@@ -130,10 +137,9 @@ const TopicItem = (props: TopicItemProps) => {
                     <span className="rank-style">{page * 10 + index + 1}</span>
                 )}
             </div>
-            <div
-                className="topic-item-main-title"
-                title={`雄安新区${info.name}周年`}
-            >{`雄安新区${info.name}周年`}</div>
+            <div className="topic-item-main-title" title={info.topics}>
+                {info.topics}
+            </div>
         </div>
     );
 };

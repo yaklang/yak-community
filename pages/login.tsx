@@ -19,7 +19,7 @@ import { failed, success, warn } from "../utils/notification";
 import { NetWorkApi } from "../utils/fetch";
 import { API } from "../types/api";
 import { useStore } from "../store";
-import { setToken, TokenKey, UserId } from "../utils/auth";
+import { setTokenUser, TokenKey, UserId, userSignOut } from "../utils/auth";
 interface LoginProps {}
 
 type source = "github" | "wechat";
@@ -53,8 +53,7 @@ const Login: NextPage<LoginProps> = (props) => {
         setName("");
         setHeadImg("");
         setPage(1);
-        window.localStorage.removeItem(UserId);
-        window.localStorage.removeItem(TokenKey);
+        userSignOut();
     });
     const setUserInfo = (info: API.AuthResponse) => {
         setAuthId(info.auth_id);
@@ -69,9 +68,7 @@ const Login: NextPage<LoginProps> = (props) => {
             head_img: info.head_img,
         });
         setUserInfo(info);
-        setToken(info.token);
-        window.localStorage.setItem(UserId, `${info.user_id}`);
-        window.localStorage.setItem(TokenKey, info.token);
+        setTokenUser(info.token, `${info.user_id}`);
     };
 
     const nextStep = useMemoizedFn(

@@ -29,6 +29,7 @@ export declare namespace API {
          * 动态
          */
         dynamic_num: number;
+        is_follow: boolean;
     }
     export interface UserFollows extends UserFollow {}
     export interface UserFollowResponse extends Paging {
@@ -143,9 +144,6 @@ export declare namespace API {
         message: string;
     }
     export interface NewDynamic {
-        user_id?: number;
-        user_name?: string;
-        head_img?: string;
         content?: string;
         content_img?: string[];
         content_video?: string[];
@@ -292,6 +290,8 @@ export declare namespace API {
         collect: number;
         is_stars: boolean;
         is_collect: boolean;
+        is_follow: boolean;
+        comment_num: number;
     }
     export interface DynamicCommentList {
         id: number;

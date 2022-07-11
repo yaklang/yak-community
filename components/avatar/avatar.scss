@@ -107,15 +107,7 @@ $REM: 16;
             margin: REM(16) 0 REM(24) 0;
             .info-follow-btn {
                 height: REM(28);
-                background: var(--base-theme-color);
-                color: #ffffff;
-                padding: 0 15px;
-                border-radius: 4px;
-            }
-            .info-follow-btn:hover,
-            .info-follow-btn:focus,
-            .info-follow-btn:active {
-                border-color: rgba(0, 0, 0, 0);
+                font-size: REM(14);
             }
         }
     }

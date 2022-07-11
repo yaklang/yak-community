@@ -1,0 +1,63 @@
+$REM: 16;
+@function REM($n) {
+    @return calc($n / $REM) * 1rem;
+}
+
+.home-page-wrapper {
+    margin: REM(144) auto 0 auto;
+    width: REM(1152);
+
+    .home-page-title {
+        width: 100%;
+        text-align: center;
+        height: REM(72);
+        font-size: REM(48);
+        font-weight: 600;
+        color: var(--base-font-color);
+        line-height: REM(72);
+    }
+
+    .home-page-search {
+        margin-top: REM(16);
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        .search-body {
+            width: REM(662);
+            height: REM(56);
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 28px;
+            display: flex;
+            overflow: hidden;
+            .search-input {
+                height: 100%;
+                border-radius: 28px 28px 0 0;
+            }
+            .icon-style {
+                font-size: REM(20);
+                color: #c3c7cf;
+                margin-left: REM(24);
+                margin-right: REM(8);
+            }
+            .search-btn {
+                width: 72px;
+                height: 100%;
+                border-radius: 0 0 28px 28px;
+            }
+        }
+    }
+
+    .home-page-content {
+        width: 100%;
+        margin-top: REM(88);
+        display: flex;
+
+        .content-dynamic-body {
+            flex: 1;
+            margin-right: REM(16);
+            .comment-item-wrapper + .comment-item-wrapper {
+                margin-top: REM(16);
+            }
+        }
+    }
+}

@@ -1,54 +1,105 @@
-import React from "react";
+import React, { useState } from "react";
 import { NextPage } from "next";
 import { PlusOutlined } from "@ant-design/icons";
 import { API } from "../../types/api";
 import { ButtonTheme } from "../baseComponents/ButtonTheme";
-import { count } from "console";
+import { useMemoizedFn } from "ahooks";
+import { NetWorkApi } from "../../utils/fetch";
+import { FollowUserProps } from "../../types/extraApi";
 
 interface AvatarProps {
-    info: API.UserDetail;
-    count: API.UserHead;
+    id: number;
+    name: string;
+    img: string;
+    fans: number;
+    follows: number;
+    isFollow?: boolean;
+    showFollow?: boolean;
+    updateInfo?: () => any;
 }
 
 const Avatar: NextPage<AvatarProps> = (props) => {
-    const { info, count } = props;
+    const {
+        id,
+        name,
+        img,
+        fans,
+        follows,
+        isFollow,
+        showFollow = false,
+        updateInfo,
+    } = props;
+
+    const [showCancel, setShowCancel] = useState<boolean>(false);
+
+    const followUser = useMemoizedFn(() => {
+        NetWorkApi<FollowUserProps, API.ActionSucceeded>({
+            method: "post",
+            url: "/api/user/follow",
+            params: {
+                follow_user_id: id,
+                operation: isFollow ? "remove" : "add",
+            },
+            userToken: true,
+        })
+            .then((res) => {
+                if (updateInfo) updateInfo();
+            })
+            .catch((err) => {});
+    });
 
     return (
         <div className="avatar-wrapper">
             <div className="avatar-body">
                 <div className="avatar-author-info">
                     <div className="avatar-author-info-header">
-                        <img className="img-style" src={info.head_img} />
+                        <img className="img-style" src={img} />
                     </div>
                     <div className="avatar-author-info-data">
                         <div
                             className="author-name text-ellipsis-style"
-                            title={info.name || ""}
+                            title={name}
                         >
-                            {info.name}
+                            {name}
                         </div>
                         <div className="author-popularity">
                             <div className="author-popularity-span">
                                 粉丝
-                                <span className="quantity-style">
-                                    {count.fans}
-                                </span>
+                                <span className="quantity-style">{fans}</span>
                             </div>
                             <div className="author-popularity-span">
                                 关注
                                 <span className="quantity-style">
-                                    {count.follow_num}
+                                    {follows}
                                 </span>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div className="avatar-follow">
-                    <ButtonTheme className="avatar-follow-btn">
-                        <PlusOutlined />
-                        关注
-                    </ButtonTheme>
-                </div>
+                {showFollow && (
+                    <div className="avatar-follow">
+                        {isFollow ? (
+                            <ButtonTheme
+                                className="avatar-follow-btn"
+                                isInfo={!showCancel}
+                                isDanger={showCancel}
+                                onMouseEnter={() => setShowCancel(true)}
+                                onMouseLeave={() => setShowCancel(false)}
+                                onClick={followUser}
+                            >
+                                {showCancel ? "取消关注" : "已关注"}
+                            </ButtonTheme>
+                        ) : (
+                            <ButtonTheme
+                                className="avatar-follow-btn"
+                                onClick={followUser}
+                            >
+                                <PlusOutlined />
+                                关注
+                            </ButtonTheme>
+                        )}
+                    </div>
+                )}
             </div>
         </div>
     );

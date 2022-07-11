@@ -1,0 +1,111 @@
+$REM: 16;
+@function REM($n) {
+    @return calc($n / $REM) * 1rem;
+}
+
+.sub-comment-modal {
+    .sub-comment-wrapper {
+        .sub-comment-body {
+            margin-top: REM(9);
+            margin-left: REM(56);
+            background: #f7f8fa;
+            border-radius: 4px;
+            padding: 0 REM(24);
+            max-height: REM(480);
+            overflow: hidden auto;
+
+            .sub-comment-content-wrapper + .sub-comment-content-wrapper {
+                border-top: 1px solid #f2f4f7;
+            }
+        }
+    }
+
+    .ant-modal-content {
+        border-radius: 4px;
+        border: 1px solid rgba(230, 234, 239, 0.5);
+    }
+
+    .ant-modal-header {
+        border-radius: 4px;
+        border-bottom: 0px;
+        padding: 24px 24px 16px 24px;
+    }
+
+    .ant-modal-body {
+        padding: 0 24px 24px 24px;
+    }
+}
+
+.sub-comment-content-wrapper {
+    width: 100%;
+    padding: REM(16) 0;
+}
+
+.sub-comment-content-body {
+    display: flex;
+    .body-img {
+        margin-right: REM(16);
+        padding-top: 1px;
+        .img-style {
+            width: REM(40);
+            height: REM(40);
+            border-radius: 50%;
+        }
+    }
+
+    .body-data {
+        flex: 1;
+        overflow: hidden;
+        .body-data-name {
+            max-width: 300px;
+            height: REM(20);
+            font-size: REM(14);
+            font-weight: 600;
+            color: var(--base-font-color);
+            line-height: REM(20);
+        }
+
+        .body-data-text {
+            margin-top: REM(4);
+            margin-bottom: REM(8);
+            font-size: REM(12);
+            color: #686c78;
+            line-height: REM(17);
+
+            .comment-content-img {
+                color: var(--base-theme-color);
+                margin: 0 3px;
+            }
+        }
+
+        .body-data-time-operation {
+            height: REM(20);
+            font-size: REM(12);
+            color: #999ea8;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            .body-data-time {
+                height: 100%;
+            }
+
+            .body-data-operation {
+                height: 100%;
+                display: flex;
+                .operation-btn {
+                    display: flex;
+                    align-items: center;
+                    cursor: pointer;
+                    .icon-style {
+                        font-size: REM(16);
+                        margin-right: 2px;
+                    }
+                }
+                .operation-btn + .operation-btn {
+                    margin-left: REM(16);
+                }
+            }
+        }
+    }
+}

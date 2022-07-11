@@ -53,41 +53,52 @@ $REM: 16;
     width: 100%;
     height: 100%;
 }
+.opacity-50 {
+    opacity: 0.5;
+}
 
 //layout
 @import "../components/Layouts.scss";
 @import "../components/Headers.scss";
 @import "../components/Footers.scss";
+@import "../components/homeLayout.scss";
 @import "../components/UserLayout.scss";
 @import "../components/noLayout.scss";
 
 // base-components
 @import "../components/baseComponents/inputTheme.scss";
 @import "../components/baseComponents/buttonTheme.scss";
+@import "../components/baseComponents/collapseText.scss";
 
 // components
 @import "../components/TopicList.scss";
 @import "../components/commentItem.scss";
 
 // modal
+@import "../components/modal/postDynamic.scss";
 @import "../components/modal/postComment.scss";
 @import "../components/modal/secondConfirm.scss";
 @import "../components/modal/imgCropper.scss";
 @import "../components/modal/infoConfirm.scss";
+@import "../components/modal/subComment.scss";
 
 // avatar
 @import "../components/avatar/avatar.scss";
 
 //pages
+@import "../pages/index.scss";
 @import "../pages/dynamic.scss";
 @import "../pages/messagecenter.scss";
 @import "../pages/userinfo.scss";
 @import "../pages/login.scss";
 @import "../pages/middle.scss";
+@import "../pages/userpage.scss";
 
 // userinfo
+@import "../components/userinfo/userDynamic.scss";
 @import "../components/userinfo/settingInfo.scss";
 @import "../components/userinfo/userFollow.scss";
+@import "../components/userinfo/userCollect.scss";
 
 // messageCenter
 @import "../components/messageCenter/fans.scss";

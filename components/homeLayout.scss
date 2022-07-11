@@ -1,0 +1,12 @@
+.home-layout-container {
+    background-color: var(--base-background-color);
+    min-width: 100%;
+    height: 100%;
+    position: relative;
+}
+.home-layout-bg {
+    background-image: url("../public/images/home/community-bg.png");
+    background-size: REM(1920) REM(428);
+    background-repeat: no-repeat;
+    background-position: 0 0;
+}

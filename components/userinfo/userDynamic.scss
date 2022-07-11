@@ -1,0 +1,24 @@
+$REM: 16;
+@function REM($n) {
+    @return calc($n / $REM) * 1rem;
+}
+
+.user-dynamic-wrapper {
+    width: REM(760);
+
+    .user-dynamic-hint {
+        height: REM(20);
+        font-size: REM(12);
+        color: #686c78;
+        line-height: REM(20);
+        margin-bottom: REM(8);
+    }
+
+    .user-dynamic-body {
+        width: 100%;
+
+        .comment-item-wrapper + .comment-item-wrapper {
+            margin-top: REM(16);
+        }
+    }
+}

@@ -15,3 +15,29 @@
     border-color: var(--base-theme-color) !important;
     color: #ffffff !important;
 }
+
+/* 内容页颜色 */
+.yak-info-button {
+    background: rgba(255, 255, 255, 0.8) !important;
+    border: 1px solid rgba(230, 234, 239, 0.5) !important;
+    color: var(--base-font-color) !important;
+}
+.yak-info-button:hover,
+.yak-info-button:focus,
+.yak-info-button:active {
+    border-color: rgba(230, 234, 239, 0.5) !important;
+    color: var(--base-font-color) !important;
+}
+
+/* 危险功能颜色 */
+.yak-danger-button {
+    background: #f73c1b !important;
+    border: 1px solid rgba(230, 234, 239, 1) !important;
+    color: #ffffff !important;
+}
+.yak-danger-button:hover,
+.yak-danger-button:focus,
+.yak-danger-button:active {
+    border-color: rgba(230, 234, 239, 1) !important;
+    color: #ffffff !important;
+}

@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { NextPage } from "next";
 import { Button, Divider, Input, Popover } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
@@ -20,10 +20,10 @@ import { useRouter } from "next/router";
 import { ButtonTheme } from "./baseComponents/ButtonTheme";
 import { useMemoizedFn } from "ahooks";
 import { useStore } from "../store";
-import { TokenKey, UserId, userSignOut } from "../utils/auth";
+import { userSignOut } from "../utils/auth";
 import { NetWorkApi } from "../utils/fetch";
 import { API } from "../types/api";
-import PostComment from "./modal/PostComment";
+import PostDynamic from "./modal/PostDynamic";
 
 interface HeadersProps {}
 
@@ -82,9 +82,7 @@ const Headers: NextPage<HeadersProps> = (props) => {
     const loginSignOut = () => {
         signOut();
         userSignOut();
-        setTimeout(() => {
-            router.push("/");
-        }, 50);
+        setTimeout(() => router.push("/"), 50);
     };
 
     useEffect(() => {
@@ -113,7 +111,7 @@ const Headers: NextPage<HeadersProps> = (props) => {
         });
     }, []);
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         if (!userInfo.isLogin) {
             NetWorkApi<undefined, API.UserResponse>({
                 method: "get",
@@ -127,7 +125,6 @@ const Headers: NextPage<HeadersProps> = (props) => {
                         name: res.data.name,
                         head_img: res.data.head_img,
                     });
-                    console.log("auth", res);
                 })
                 .catch((err) => {});
         }
@@ -183,7 +180,6 @@ const Headers: NextPage<HeadersProps> = (props) => {
                         <Popover
                             overlayClassName="user-info-menu"
                             placement="bottomRight"
-                            trigger="click"
                             content={
                                 <div className="user-info-menu-body">
                                     <ul className="menu-list">
@@ -193,9 +189,9 @@ const Headers: NextPage<HeadersProps> = (props) => {
                                             onClick={() => userInfoLink(1)}
                                         >
                                             {menu1 ? (
-                                                <CommunityThemeIcon className="icon-community-style" />
+                                                <CommunityThemeIcon className="icon-style" />
                                             ) : (
-                                                <CommunityIcon className="icon-community-style" />
+                                                <CommunityIcon className="icon-style" />
                                             )}
                                             我的动态
                                         </li>
@@ -269,7 +265,7 @@ const Headers: NextPage<HeadersProps> = (props) => {
                 </div>
             </div>
 
-            <PostComment
+            <PostDynamic
                 visible={postMessage}
                 onCancel={() => setPostMessage(false)}
             />

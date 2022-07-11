@@ -6,7 +6,6 @@ import { API } from "../types/api";
 const instance = axios.create({
     // baseURL: "http://onlinecs.vaiwan.cn/api/",
     withCredentials: true,
-    // timeout: 1000
 });
 instance.interceptors.response.use(
     (res) => {
