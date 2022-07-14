@@ -61,25 +61,9 @@ export declare namespace API {
         name?: string;
         head_img?: string;
     }
-    export interface UpdateDynamic {
-        /**
-         * 动态id
-         */
+    export interface TopicsInfo {
         id: number;
-        content?: string;
-        content_img?: string[];
-        content_video?: string[];
-        /**
-         * 话题id
-         */
-        topic_id?: number;
-        topics?: string;
-        title?: string;
-        cover?: string;
-        /**
-         * true允许下载，false不允许
-         */
-        download?: boolean;
+        topics: string;
     }
     export interface TopicSearchResponse {
         data: TopicList[];
@@ -144,13 +128,16 @@ export declare namespace API {
         message: string;
     }
     export interface NewDynamic {
+        /**
+         * 动态id
+         */
+        id?: number;
         content?: string;
-        content_img?: string[];
-        content_video?: string[];
+        content_video?: string;
         /**
          * 话题id
          */
-        topic_id?: number[];
+        topic_ids?: number[];
         topics?: string[];
         title?: string;
         cover?: string;
@@ -158,6 +145,7 @@ export declare namespace API {
          * true允许下载，false不允许
          */
         download: boolean;
+        csrf_token?: string;
     }
     export interface MessageCenterStarsResponse extends Paging {
         data: MessageCenterStars[];
@@ -275,22 +263,37 @@ export declare namespace API {
         content: string;
         content_img: string;
         content_video: string;
-        /**
-         * 话题id
-         */
-        topic_id: number;
         topics: string;
+        topic_info: TopicsInfo[];
         title: string;
         cover: string;
         /**
          * true允许下载，false不允许
          */
         download: boolean;
+        /**
+         * 点赞数
+         */
         stars: number;
+        /**
+         * 收藏数
+         */
         collect: number;
+        /**
+         * 是否点赞
+         */
         is_stars: boolean;
+        /**
+         * 是否收藏
+         */
         is_collect: boolean;
+        /**
+         * 是否关注
+         */
         is_follow: boolean;
+        /**
+         * 总评论数
+         */
         comment_num: number;
     }
     export interface DynamicCommentList {

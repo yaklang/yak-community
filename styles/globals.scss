@@ -93,6 +93,7 @@ $REM: 16;
 @import "../pages/login.scss";
 @import "../pages/middle.scss";
 @import "../pages/userpage.scss";
+@import "../pages/agreement.scss";
 
 // userinfo
 @import "../components/userinfo/userDynamic.scss";
@@ -102,3 +103,5 @@ $REM: 16;
 
 // messageCenter
 @import "../components/messageCenter/fans.scss";
+@import "../components/messageCenter/messageLike.scss";
+@import "../components/messageCenter/messageComment.scss";

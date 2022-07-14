@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { ReactNode, useEffect, useRef, useState } from "react";
 import { NextPage } from "next";
-import { Button, Divider, Input, Popover } from "antd";
+import { Badge, Button, Divider, Input, Popover } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import {
     BellOutIcon,
@@ -8,9 +8,15 @@ import {
     CollectionThemeIcon,
     CommunityIcon,
     CommunityThemeIcon,
+    FansIcon,
+    FansThemeIcon,
     FollowIcon,
     FollowThemeIcon,
     FormOutIcon,
+    LikeIcon,
+    LikeThemeIcon,
+    ReplyIcon,
+    ReplyThemeIcon,
     SettingIcon,
     SettingThemeIcon,
     SignOutIcon,
@@ -25,6 +31,30 @@ import { NetWorkApi } from "../utils/fetch";
 import { API } from "../types/api";
 import PostDynamic from "./modal/PostDynamic";
 
+interface MessageMenuProps {
+    name: string;
+    icon: ReactNode;
+    themeIcon: ReactNode;
+}
+
+const MessageMenu: MessageMenuProps[] = [
+    {
+        name: "赞",
+        icon: <LikeIcon className="icon-style" />,
+        themeIcon: <LikeThemeIcon className="icon-style" />,
+    },
+    {
+        name: "评论",
+        icon: <ReplyIcon className="icon-style" />,
+        themeIcon: <ReplyThemeIcon className="icon-style" />,
+    },
+    {
+        name: "粉丝",
+        icon: <FansIcon className="icon-style" />,
+        themeIcon: <FansThemeIcon className="icon-style" />,
+    },
+];
+
 interface HeadersProps {}
 
 const Headers: NextPage<HeadersProps> = (props) => {
@@ -35,6 +65,57 @@ const Headers: NextPage<HeadersProps> = (props) => {
     const router = useRouter();
 
     const [postMessage, setPostMessage] = useState<boolean>(false);
+
+    const [showDot, setShowDot] = useState<boolean>(false);
+    const [like, setLike] = useState<boolean>(false);
+    const [comment, setComment] = useState<boolean>(false);
+    const [fans, setFans] = useState<boolean>(false);
+    const [likeNum, setLikeNum] = useState<number>(1);
+    const [commentNum, setCommentNum] = useState<number>(1);
+    const [fansNum, setFansNum] = useState<number>(0);
+
+    const fetchMessage = useMemoizedFn(() => {
+        setShowDot(true);
+        NetWorkApi<undefined, API.UserResponse>({
+            method: "get",
+            url: "/api/forum/user",
+            userToken: true,
+        })
+            .then((res) => {})
+            .catch((err) => {});
+    });
+
+    useEffect(() => {
+        fetchMessage();
+    }, []);
+
+    const showMessageIcon = useMemoizedFn((index: number) => {
+        if (index === 1) setLike(!like);
+        if (index === 2) setComment(!comment);
+        if (index === 3) setFans(!fans);
+    });
+    const userMessageLink = (flag: number) => {
+        switch (flag) {
+            case 1:
+                router.push({
+                    pathname: "/messagecenter",
+                    query: { tabs: "like" },
+                });
+                break;
+            case 2:
+                router.push({
+                    pathname: "/messagecenter",
+                    query: { tabs: "comment" },
+                });
+                break;
+            case 3:
+                router.push({
+                    pathname: "/messagecenter",
+                    query: { tabs: "fans" },
+                });
+                break;
+        }
+    };
 
     const [menu1, setMenu1] = useState<boolean>(false);
     const [menu2, setMenu2] = useState<boolean>(false);
@@ -171,11 +252,93 @@ const Headers: NextPage<HeadersProps> = (props) => {
                         className="header-right-form-out"
                         onClick={() => setPostMessage(true)}
                     />
-                    <Button
-                        icon={<BellOutIcon className="icon-style" />}
-                        type="link"
-                        className="header-right-bell-out"
-                    />
+                    <Badge color={"#F73C1B"} dot={showDot} offset={[-10, 5]}>
+                        <Popover
+                            overlayClassName="user-info-menu"
+                            placement="bottom"
+                            content={
+                                <div className="user-info-menu-body">
+                                    <ul className="message-list">
+                                        <li
+                                            onMouseEnter={() =>
+                                                showMessageIcon(1)
+                                            }
+                                            onMouseLeave={() =>
+                                                showMessageIcon(1)
+                                            }
+                                            onClick={() => userMessageLink(1)}
+                                        >
+                                            <div className="message-title">
+                                                {like ? (
+                                                    <LikeThemeIcon className="icon-style" />
+                                                ) : (
+                                                    <LikeIcon className="icon-style" />
+                                                )}
+                                                赞
+                                            </div>
+                                            {!!likeNum && (
+                                                <div className="message-hint">
+                                                    {likeNum}
+                                                </div>
+                                            )}
+                                        </li>
+                                        <li
+                                            onMouseEnter={() =>
+                                                showMessageIcon(2)
+                                            }
+                                            onMouseLeave={() =>
+                                                showMessageIcon(2)
+                                            }
+                                            onClick={() => userMessageLink(2)}
+                                        >
+                                            <div>
+                                                {comment ? (
+                                                    <ReplyThemeIcon className="icon-style" />
+                                                ) : (
+                                                    <ReplyIcon className="icon-style" />
+                                                )}
+                                                评论
+                                            </div>
+                                            {!!commentNum && (
+                                                <div className="message-hint">
+                                                    {commentNum}
+                                                </div>
+                                            )}
+                                        </li>
+                                        <li
+                                            onMouseEnter={() =>
+                                                showMessageIcon(3)
+                                            }
+                                            onMouseLeave={() =>
+                                                showMessageIcon(3)
+                                            }
+                                            onClick={() => userMessageLink(3)}
+                                        >
+                                            <div>
+                                                {fans ? (
+                                                    <FansThemeIcon className="icon-style" />
+                                                ) : (
+                                                    <FansIcon className="icon-style" />
+                                                )}
+                                                粉丝
+                                            </div>
+                                            {!!fansNum && (
+                                                <div className="message-hint">
+                                                    {fansNum}
+                                                </div>
+                                            )}
+                                        </li>
+                                    </ul>
+                                </div>
+                            }
+                        >
+                            <Button
+                                icon={<BellOutIcon className="icon-style" />}
+                                type="link"
+                                className="header-right-bell-out"
+                            />
+                        </Popover>
+                    </Badge>
                     {userInfo.isLogin ? (
                         <Popover
                             overlayClassName="user-info-menu"

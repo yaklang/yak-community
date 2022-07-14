@@ -2,8 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Checkbox, Divider, Spin, Tooltip, Upload } from "antd";
-import { RcFile } from "antd/lib/upload";
+import { Checkbox, Divider, Spin, Tooltip } from "antd";
 import {
     GithubOutlined,
     WechatOutlined,
@@ -19,7 +18,10 @@ import { failed, success, warn } from "../utils/notification";
 import { NetWorkApi } from "../utils/fetch";
 import { API } from "../types/api";
 import { useStore } from "../store";
-import { setTokenUser, TokenKey, UserId, userSignOut } from "../utils/auth";
+import { setTokenUser, userSignOut } from "../utils/auth";
+import { queryURLParams, replaceParamVal } from "../utils/urlTool";
+import { SingleUpload } from "../components/baseComponents/SingleUpload";
+
 interface LoginProps {}
 
 type source = "github" | "wechat";
@@ -44,10 +46,28 @@ const Login: NextPage<LoginProps> = (props) => {
 
     const router = useRouter();
 
-    const { userInfo, signIn, signOut } = useStore();
+    const { userInfo, signIn, signOut, githubAuth, clearGithubAuth } =
+        useStore();
+
+    useEffect(() => {
+        const { page } = router.query;
+        if (
+            page &&
+            page === "3" &&
+            githubAuth.auth_id &&
+            githubAuth.name &&
+            githubAuth.head_img
+        ) {
+            setAuthId(githubAuth.auth_id);
+            setName(githubAuth.name);
+            setHeadImg(githubAuth.head_img);
+            setPage(3);
+        }
+    }, [router]);
 
     const clearPageCache = useMemoizedFn(() => {
         signOut();
+        clearGithubAuth();
         setCodeUrl({ url: "", type: "github" });
         setAuthId(0);
         setName("");
@@ -102,7 +122,15 @@ const Login: NextPage<LoginProps> = (props) => {
                     params: { source: source },
                 })
                     .then((res) => {
-                        setCodeUrl({ url: res, type: source });
+                        const redirect_uri = decodeURIComponent(
+                            queryURLParams(res)["redirect_uri"]
+                        );
+                        const newUrl = replaceParamVal(
+                            res,
+                            "redirect_uri",
+                            encodeURIComponent(`${redirect_uri}login`)
+                        );
+                        setCodeUrl({ url: newUrl, type: source });
                         setTimeout(() => setPage(2), 50);
                     })
                     .catch((err) => {});
@@ -115,7 +143,6 @@ const Login: NextPage<LoginProps> = (props) => {
                     params: { code, type: source },
                 })
                     .then((res) => {
-                        console.log("2-auth", res);
                         if (!res.user_id) {
                             success("登录成功，新用户正在跳转手机绑定页面");
                             setUserInfo(res);
@@ -138,6 +165,7 @@ const Login: NextPage<LoginProps> = (props) => {
                         })
                             .then((res) => {
                                 setLoginInfo(res);
+                                clearGithubAuth();
                                 setTimeout(() => setPage(4), 50);
                             })
                             .catch((err) => {});
@@ -163,7 +191,6 @@ const Login: NextPage<LoginProps> = (props) => {
                             userToken: true,
                         })
                             .then((res) => {
-                                console.log("auth-4", res);
                                 signIn({
                                     ...userInfo,
                                     name: fourthName,
@@ -299,7 +326,8 @@ const LoginFirst: React.FC<LoginFirstProps> = (props) => {
                     onChange={(e) => setChecked(e.target.checked)}
                 />
                 已阅读并同意 Yakit 社区账号&nbsp;
-                <a href="#">用户协议 </a> 和 <a href="#">隐私政策</a>
+                <Link href="/useagreement">服务协议</Link> 和{" "}
+                <Link href="/personalprotection">隐私政策</Link>
             </div>
         </>
     );
@@ -337,7 +365,7 @@ const LoginSecond: React.FC<LoginSecondProps> = (props) => {
                     e.data &&
                     e.data.code &&
                     e.data.source &&
-                    e.data.source === "wechat"
+                    e.data.source === "wechatlogin"
                 )
                     onSecond(e.data.code, type);
             });
@@ -386,6 +414,7 @@ const LoginThird: React.FC<LoginThirdProps> = (props) => {
         codeTime.current = null;
         codeTimeCount.current = 180;
         setTime(180);
+        setBtnDisabled(false);
     };
 
     const sendNote = useMemoizedFn(() => {
@@ -411,7 +440,10 @@ const LoginThird: React.FC<LoginThirdProps> = (props) => {
             params: { phone: phone, auth_id: authId },
         })
             .then((res) => {})
-            .catch((err) => {});
+            .catch((err) => {
+                clearTime();
+                failed("获取验证码次数过多，请等几分钟后重试");
+            });
     });
 
     const login = useMemoizedFn(() => {
@@ -523,6 +555,7 @@ const LoginFourth: React.FC<LoginFourthProps> = (props) => {
 
     const [userName, setUserName] = useState<string>(name);
     const [img, setImg] = useState<string>(headImg);
+    const [imgLoading, setImgLoading] = useState<boolean>(false);
     const [showUpload, setShowUpload] = useState<boolean>(false);
 
     const login = useMemoizedFn(() => {
@@ -549,45 +582,28 @@ const LoginFourth: React.FC<LoginFourthProps> = (props) => {
                 基本信息
             </div>
 
-            <div
-                className="login-fourth-img"
-                onMouseEnter={() => setShowUpload(true)}
-                onMouseLeave={() => setShowUpload(false)}
-            >
-                <img src={img} className="img-style" />
-
-                <Upload
-                    accept=".png,.jpg,.jpeg"
-                    showUploadList={false}
-                    beforeUpload={(file: RcFile) => {
-                        if (file.size > 10 * 1024 * 1024) {
-                            failed("请上传10MB以内的图片");
-                            return Promise.reject();
-                        }
-
-                        var formData = new FormData();
-                        formData.append("file_name", file);
-                        formData.append("type", file.type);
-                        NetWorkApi<FormData, string>({
-                            method: "post",
-                            url: "/api/upload/img",
-                            data: formData,
-                            userToken: true,
-                        })
-                            .then((res) => setImg(res))
-                            .catch((err) => {});
-
-                        return Promise.reject();
-                    }}
+            <Spin spinning={imgLoading}>
+                <div
+                    className="login-fourth-img"
+                    onMouseEnter={() => setShowUpload(true)}
+                    onMouseLeave={() => setShowUpload(false)}
                 >
-                    {showUpload && (
-                        <div className="login-fourth-img-upload">
-                            <FormOutlined className="icon-style" />
-                            更改
-                        </div>
-                    )}
-                </Upload>
-            </div>
+                    <img src={img} className="img-style" />
+
+                    <SingleUpload
+                        setValue={(res) => setImg(res)}
+                        onProgress={() => setImgLoading(true)}
+                        onSuccess={() => setImgLoading(false)}
+                    >
+                        {showUpload && (
+                            <div className="login-fourth-img-upload">
+                                <FormOutlined className="icon-style" />
+                                更改
+                            </div>
+                        )}
+                    </SingleUpload>
+                </div>
+            </Spin>
 
             <div className="login-fourth-name">
                 <InputTheme

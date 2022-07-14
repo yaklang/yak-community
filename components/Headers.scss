@@ -146,6 +146,43 @@ $REM: 16;
             }
         }
 
+        .message-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            li {
+                width: REM(102);
+                height: REM(24);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                cursor: pointer;
+                .icon-style {
+                    margin-right: 4px;
+                    font-size: REM(20);
+                }
+                .message-title {
+                    display: inline-flex;
+                    align-items: center;
+                }
+                .message-hint {
+                    height: REM(16);
+                    background: #f73c1b;
+                    border-radius: 8px;
+                    display: inline-flex;
+                    align-items: center;
+                    color: #ffffff;
+                    padding: 0 4px;
+                }
+            }
+            li:hover {
+                color: var(--base-theme-color);
+            }
+            li + li {
+                margin-top: REM(8);
+            }
+        }
+
         .menu-divider {
             margin: REM(8) 0;
         }

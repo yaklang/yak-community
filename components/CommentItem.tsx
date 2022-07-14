@@ -76,7 +76,7 @@ const CommentItem: NextPage<CommentItemProps> = (props) => {
     const videos =
         !info.content_video || info.content_video === "null"
             ? null
-            : JSON.parse(info.content_video);
+            : info.content_video;
 
     const { userInfo } = useStore();
     const router = useRouter();
@@ -564,9 +564,11 @@ const CommentItem: NextPage<CommentItemProps> = (props) => {
 
             {replyComment && (
                 <PostComment
-                    dynamicInfo={info}
-                    mainCommentInfo={replyComment}
-                    commentInfo={replyComment}
+                    dynamicId={info.id}
+                    mainCommentId={replyComment.id}
+                    commentId={replyComment.id}
+                    commentUserId={replyComment.user_id}
+                    name={replyComment.user_name}
                     visible={replyShow}
                     onCancel={() => {
                         setReplyShow(false);

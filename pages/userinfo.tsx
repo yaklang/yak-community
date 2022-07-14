@@ -1,28 +1,22 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import { NextPage } from "next";
-import Link from "next/link";
+import { useRouter } from "next/router";
 import { Tabs } from "antd";
 import {} from "@ant-design/icons";
+import { API } from "../types/api";
+import { NetWorkApi } from "../utils/fetch";
+import { useStore } from "../store";
 import Avatar from "../components/avatar/Avatar";
 import UserLayout from "../components/UserLayout";
 import SettingInfo from "../components/userinfo/SettingInfo";
 import UserFollow from "../components/userinfo/UserFollow";
-import { useRouter } from "next/router";
-import { API } from "../types/api";
-import { NetWorkApi } from "../utils/fetch";
-import { useMemoizedFn } from "ahooks";
-import { useStore } from "../store";
 import UserCollect from "../components/userinfo/UserCollect";
 import UserDynamic from "../components/userinfo/UserDynamic";
+import { FetchUserFans } from "../types/extraApi";
 
 const { TabPane } = Tabs;
 
 interface ModifyUserProps {}
-
-interface fetchFanHotProps {
-    user_id: number;
-    title: 0 | 1;
-}
 
 const UserInfo: NextPage<ModifyUserProps> = (props) => {
     const router = useRouter();
@@ -47,7 +41,6 @@ const UserInfo: NextPage<ModifyUserProps> = (props) => {
             .then((res) => {
                 signIn({
                     ...userInfo,
-                    user_id: res.data.id,
                     name: res.data.name,
                     head_img: res.data.head_img,
                 });
@@ -58,10 +51,10 @@ const UserInfo: NextPage<ModifyUserProps> = (props) => {
     };
 
     const fetchFanHot = (info: API.UserDetail) => {
-        NetWorkApi<fetchFanHotProps, API.UserHead>({
+        NetWorkApi<FetchUserFans, API.UserHead>({
             method: "get",
             url: "/api/dynamic/user/head",
-            params: { user_id: info.id, title: 1 },
+            params: { user_id: info.id },
             userToken: true,
         })
             .then((res) => {
@@ -71,18 +64,7 @@ const UserInfo: NextPage<ModifyUserProps> = (props) => {
     };
 
     useEffect(() => {
-        setUser({ id: 1, phone: "12312312312", name: "123", head_img: "" });
-        setUserCount({
-            user_id: 1,
-            user_name: "123",
-            head_img: "",
-            follow_num: 1,
-            fans: 1,
-            collect_num: 1,
-            dynamic_num: 1,
-            is_follow: false,
-        });
-        // fetchUserInfo();
+        fetchUserInfo();
     }, []);
 
     useEffect(() => {

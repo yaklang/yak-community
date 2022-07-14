@@ -1,0 +1,59 @@
+@media (min-width: 10px) {
+    .agreement-container {
+        padding: 50px 10px 10px 10px;
+    }
+}
+@media (min-width: 768px) {
+    .agreement-container {
+        padding: 50px 50px 10px 50px;
+    }
+}
+@media (min-width: 1200px) {
+    .agreement-container {
+        padding: 50px 100px 20px 100px;
+    }
+}
+.agreement-container {
+    .page-title {
+        text-align: center;
+        font-size: 32px;
+        font-weight: 600;
+        padding-bottom: 20px;
+    }
+    .head-title {
+        text-align: center;
+        font-size: 24px;
+        font-weight: 600;
+        padding-bottom: 20px;
+    }
+
+    .effective-date {
+        padding-bottom: 30px;
+    }
+
+    .head-first {
+        font-size: 20px;
+        font-weight: 600;
+    }
+
+    .high-light {
+        font-weight: 600;
+    }
+
+    table {
+        border-collapse: collapse;
+        margin-bottom: 1rem;
+        tr,
+        td,
+        th {
+            border: 1px solid #000000;
+        }
+        td {
+            padding: 6px;
+        }
+    }
+
+    a {
+        color: var(--base-theme-color);
+    }
+}

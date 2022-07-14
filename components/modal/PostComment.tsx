@@ -23,16 +23,25 @@ const DefaultCommentInfo: API.NewDynamicComment = {
 };
 
 interface PostCommentProps {
-    dynamicInfo: API.DynamicLists;
-    mainCommentInfo?: API.DynamicCommentList;
-    commentInfo: API.DynamicCommentList;
+    dynamicId: number;
+    mainCommentId?: number;
+    commentId: number;
+    commentUserId: number;
+    name: string;
     visible: boolean;
     onCancel: (flag: boolean) => any;
 }
 
 const PostComment: NextPage<PostCommentProps> = (props) => {
-    const { dynamicInfo, mainCommentInfo, commentInfo, visible, onCancel } =
-        props;
+    const {
+        dynamicId,
+        mainCommentId = 0,
+        commentId,
+        commentUserId,
+        name,
+        visible,
+        onCancel,
+    } = props;
 
     const [loading, setLoading] = useState<boolean>(false);
     const [comment, setComment] = useState<API.NewDynamicComment>({
@@ -52,10 +61,10 @@ const PostComment: NextPage<PostCommentProps> = (props) => {
         if (loading) return;
 
         let params: API.NewDynamicComment = {
-            dynamic_id: dynamicInfo.id,
-            parent_id: commentInfo.id,
-            by_user_id: commentInfo.user_id,
-            root_id: mainCommentInfo?.id || 0,
+            dynamic_id: dynamicId,
+            parent_id: commentId,
+            by_user_id: commentUserId,
+            root_id: mainCommentId,
             message: comment.message,
         };
         if (comment.message_img && comment.message_img.length > 0)
@@ -103,9 +112,7 @@ const PostComment: NextPage<PostCommentProps> = (props) => {
         >
             <div className="post-comment-body">
                 <div className="post-comment-header">
-                    <div className="header-title">{`回复@${
-                        commentInfo.user_name || ""
-                    }`}</div>
+                    <div className="header-title">{`回复@${name || ""}`}</div>
                     <CloseOutlined
                         className="header-del"
                         onClick={closeModal}

@@ -1,8 +1,13 @@
 import create from "zustand";
-import { LoginUserInfoProps } from "../types/user";
+import { GithubAuth, LoginUserInfoProps } from "../types/user";
 
 const DefaultUserInfo: LoginUserInfoProps = {
     isLogin: false,
+};
+const DefaultGithubAuth: GithubAuth = {
+    auth_id: 0,
+    head_img: "",
+    name: "string",
 };
 
 interface StoreProps {
@@ -10,6 +15,10 @@ interface StoreProps {
     userInfo: LoginUserInfoProps;
     signIn: (info: LoginUserInfoProps) => void;
     signOut: () => void;
+    /**@name github授权临时数据 */
+    githubAuth: GithubAuth;
+    setGithubAuth: (info: GithubAuth) => void;
+    clearGithubAuth: () => void;
 }
 export const useStore = create<StoreProps>((set, get) => ({
     userInfo: {
@@ -17,4 +26,8 @@ export const useStore = create<StoreProps>((set, get) => ({
     },
     signIn: (info) => set({ userInfo: info }),
     signOut: () => set({ userInfo: DefaultUserInfo }),
+
+    githubAuth: { ...DefaultGithubAuth },
+    setGithubAuth: (info) => set({ githubAuth: { ...info } }),
+    clearGithubAuth: () => set({ githubAuth: { ...DefaultGithubAuth } }),
 }));

@@ -172,9 +172,11 @@ const SubComment: NextPage<SubCommentProps> = (props) => {
 
                 {replyComment && (
                     <PostComment
-                        dynamicInfo={dynamicInfo}
-                        mainCommentInfo={info}
-                        commentInfo={replyComment}
+                        dynamicId={dynamicInfo.id}
+                        mainCommentId={info.id}
+                        commentId={replyComment.id}
+                        commentUserId={replyComment.user_id}
+                        name={replyComment.user_name}
                         visible={replyShow}
                         onCancel={() => setReplyShow(false)}
                     />

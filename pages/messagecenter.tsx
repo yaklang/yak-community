@@ -1,21 +1,32 @@
-import React, { useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { NextPage } from "next";
-import { UserOutlined } from "@ant-design/icons";
-import { Form, Upload, message, Input, Button, Breadcrumb, Tabs } from "antd";
-
 import Link from "next/link";
-import UserLayout from "../components/UserLayout";
-import SettingInfo from "../components/userinfo/SettingInfo";
-import UserFollow from "../components/userinfo/UserFollow";
-import Fans from "../components/messageCenter/Fans";
+import { useRouter } from "next/router";
+import {} from "@ant-design/icons";
+import { Tabs } from "antd";
 import NoLayout from "../components/NoLayout";
+import Fans from "../components/messageCenter/Fans";
+import MessageLike from "../components/messageCenter/MessageLike";
+import MessageComment from "../components/messageCenter/MessageComment";
 
 const { TabPane } = Tabs;
 
-interface ModifyUserProps {}
+interface MessageCenterProps {}
 
-const UserInfo: NextPage<ModifyUserProps> = (props) => {
+const MessageCenter: NextPage<MessageCenterProps> = (props) => {
+    const router = useRouter();
+
     const [activeKey, setActiveKey] = useState<string>("like");
+
+    useLayoutEffect(() => {
+        const { query } = router;
+        if (query.tabs) setActiveKey(query.tabs as string);
+    }, []);
+
+    useEffect(() => {
+        const { query } = router;
+        setActiveKey(query.tabs as string);
+    }, [router]);
 
     return (
         <NoLayout>
@@ -40,7 +51,9 @@ const UserInfo: NextPage<ModifyUserProps> = (props) => {
                             </div>
                         }
                         key="like"
-                    ></TabPane>
+                    >
+                        <MessageLike />
+                    </TabPane>
                     <TabPane
                         tab={
                             <div className="tabs-bar-title">
@@ -56,7 +69,9 @@ const UserInfo: NextPage<ModifyUserProps> = (props) => {
                             </div>
                         }
                         key="comment"
-                    ></TabPane>
+                    >
+                        <MessageComment />
+                    </TabPane>
                     <TabPane
                         tab={
                             <div className="tabs-bar-title">
@@ -81,4 +96,4 @@ const UserInfo: NextPage<ModifyUserProps> = (props) => {
     );
 };
 
-export default UserInfo;
+export default MessageCenter;

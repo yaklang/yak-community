@@ -1,7 +1,6 @@
 import React, { useState, useRef } from "react";
 import { NextPage } from "next";
-import { Divider, Modal, Tooltip, Upload } from "antd";
-import { RcFile } from "antd/lib/upload";
+import { Divider, Modal, Spin, Tooltip } from "antd";
 import { FormOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import { useMemoizedFn } from "ahooks";
 import { API } from "../../types/api";
@@ -9,6 +8,7 @@ import { ButtonTheme } from "../baseComponents/ButtonTheme";
 import { InputTheme } from "../baseComponents/InputTheme";
 import { failed, success } from "../../utils/notification";
 import { NetWorkApi } from "../../utils/fetch";
+import { SingleUpload } from "../baseComponents/SingleUpload";
 
 type ModalType = "name" | "phone" | "wechat" | "github" | "";
 const ModalTypeTitle: { [key: string]: string } = {
@@ -50,6 +50,7 @@ const SettingInfo: NextPage<SettingInfoProps> = (props) => {
 
     const [name, setName] = useState<string>(info.name);
     const [img, setImg] = useState<string>(info.head_img);
+    const [imgLoading, setImgLoading] = useState<boolean>(false);
     const [showUpload, setShowUpload] = useState<boolean>(false);
 
     const [phone, setPhone] = useState<string>("");
@@ -65,6 +66,7 @@ const SettingInfo: NextPage<SettingInfoProps> = (props) => {
         codeTime.current = null;
         codeTimeCount.current = 180;
         setTime(180);
+        setBtnDisabled(false);
     };
     const reg = /^1[3456789][0-9]{9}$/;
     const sendNote = useMemoizedFn(() => {
@@ -91,7 +93,10 @@ const SettingInfo: NextPage<SettingInfoProps> = (props) => {
             userToken: true,
         })
             .then((res) => {})
-            .catch((err) => {});
+            .catch((err) => {
+                clearTime();
+                failed("获取验证码次数过多，请等几分钟后重试");
+            });
     });
 
     const showModal = useMemoizedFn((flag: ModalType) => {
@@ -123,9 +128,7 @@ const SettingInfo: NextPage<SettingInfoProps> = (props) => {
                 onUpdateUserInfo();
                 setModalVisible(false);
             })
-            .catch((err) => {
-                console.log(err);
-            });
+            .catch((err) => {});
     });
 
     const updatePhone = useMemoizedFn(() => {
@@ -146,6 +149,7 @@ const SettingInfo: NextPage<SettingInfoProps> = (props) => {
         })
             .then((res) => {
                 onUpdateUserInfo();
+                clearTime();
                 setModalVisible(false);
             })
             .catch((err) => {});
@@ -339,45 +343,27 @@ const SettingInfo: NextPage<SettingInfoProps> = (props) => {
             >
                 {modalIndex === "name" && (
                     <div className="modal-body setting-name-img">
-                        <div
-                            className="img-body"
-                            onMouseEnter={() => setShowUpload(true)}
-                            onMouseLeave={() => setShowUpload(false)}
-                        >
-                            <img src={img} className="img-style" />
-
-                            <Upload
-                                accept=".png,.jpg,.jpeg"
-                                showUploadList={false}
-                                beforeUpload={(file: RcFile) => {
-                                    if (file.size > 10 * 1024 * 1024) {
-                                        failed("请上传10MB以内的图片");
-                                        return Promise.reject();
-                                    }
-
-                                    var formData = new FormData();
-                                    formData.append("file_name", file);
-                                    formData.append("type", file.type);
-                                    NetWorkApi<FormData, string>({
-                                        method: "post",
-                                        url: "/api/upload/img",
-                                        data: formData,
-                                        userToken: true,
-                                    })
-                                        .then((res) => setImg(res))
-                                        .catch((err) => {});
-
-                                    return Promise.reject();
-                                }}
+                        <Spin spinning={imgLoading}>
+                            <div
+                                className="img-body"
+                                onMouseEnter={() => setShowUpload(true)}
+                                onMouseLeave={() => setShowUpload(false)}
                             >
-                                {showUpload && (
-                                    <div className="login-fourth-img-upload">
-                                        <FormOutlined className="icon-style" />
-                                        更改
-                                    </div>
-                                )}
-                            </Upload>
-                        </div>
+                                <img src={img} className="img-style" />
+                                <SingleUpload
+                                    setValue={(res) => setImg(res)}
+                                    onProgress={() => setImgLoading(true)}
+                                    onSuccess={() => setImgLoading(false)}
+                                >
+                                    {showUpload && (
+                                        <div className="login-fourth-img-upload">
+                                            <FormOutlined className="icon-style" />
+                                            更改
+                                        </div>
+                                    )}
+                                </SingleUpload>
+                            </div>
+                        </Spin>
                         <div className="input-body">
                             <InputTheme
                                 className="input-style"
@@ -402,7 +388,12 @@ const SettingInfo: NextPage<SettingInfoProps> = (props) => {
                             <ButtonTheme
                                 className="btn-style cancel-style"
                                 isTheme={false}
-                                onClick={() => setModalVisible(false)}
+                                onClick={() => {
+                                    setName(info.name);
+                                    setImg(info.head_img);
+                                    setModalVisible(false);
+                                    setModalIndex("");
+                                }}
                             >
                                 取消
                             </ButtonTheme>
@@ -488,7 +479,12 @@ const SettingInfo: NextPage<SettingInfoProps> = (props) => {
                             <ButtonTheme
                                 className="btn-style cancel-style"
                                 isTheme={false}
-                                onClick={() => setModalVisible(false)}
+                                onClick={() => {
+                                    setPhone("");
+                                    setPhoneCode("");
+                                    setModalVisible(false);
+                                    setModalIndex("");
+                                }}
                             >
                                 取消
                             </ButtonTheme>
