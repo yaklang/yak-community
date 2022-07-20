@@ -18,7 +18,7 @@ import { failed, success, warn } from "../utils/notification";
 import { NetWorkApi } from "../utils/fetch";
 import { API } from "../types/api";
 import { useStore } from "../store";
-import { setTokenUser, userSignOut } from "../utils/auth";
+import { setPlatform, setTokenUser, userSignOut } from "../utils/auth";
 import { queryURLParams, replaceParamVal } from "../utils/urlTool";
 import { SingleUpload } from "../components/baseComponents/SingleUpload";
 
@@ -143,6 +143,7 @@ const Login: NextPage<LoginProps> = (props) => {
                     params: { code, type: source },
                 })
                     .then((res) => {
+                        setPlatform("wechat");
                         if (!res.user_id) {
                             success("登录成功，新用户正在跳转手机绑定页面");
                             setUserInfo(res);
@@ -152,7 +153,9 @@ const Login: NextPage<LoginProps> = (props) => {
                             setTimeout(() => router.push("/"), 50);
                         }
                     })
-                    .catch((err) => {});
+                    .catch((err) => {
+                        setTimeout(() => setPage(1), 50);
+                    });
             }
 
             if (index === 3) {

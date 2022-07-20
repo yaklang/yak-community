@@ -9,6 +9,10 @@ import { InputTheme } from "../baseComponents/InputTheme";
 import { failed, success } from "../../utils/notification";
 import { NetWorkApi } from "../../utils/fetch";
 import { SingleUpload } from "../baseComponents/SingleUpload";
+import { queryURLParams, replaceParamVal } from "../../utils/urlTool";
+import { useStore } from "../../store";
+import { getPlatform, setTokenUser } from "../../utils/auth";
+import { UpdateAuthProps } from "../../types/extraApi";
 
 type ModalType = "name" | "phone" | "wechat" | "github" | "";
 const ModalTypeTitle: { [key: string]: string } = {
@@ -39,6 +43,10 @@ const SettingInfo: NextPage<SettingInfoProps> = (props) => {
     const Github: API.UserAurh | undefined = info.child?.filter((item) => {
         return item.from_platform === "github";
     })[0];
+
+    const { signIn, setGithubAuth } = useStore();
+
+    const platform = getPlatform();
 
     const [modalVisible, setModalVisible] = useState<boolean>(false);
     const [modalIndex, setModalIndex] = useState<ModalType>("");
@@ -99,9 +107,88 @@ const SettingInfo: NextPage<SettingInfoProps> = (props) => {
             });
     });
 
+    const getAuthUlr = (source: "github" | "wechat") => {
+        NetWorkApi<{ source: "github" | "wechat" }, string>({
+            method: "get",
+            url: "/api/auth/from",
+            params: { source: source },
+        })
+            .then((res) => {
+                const redirect_uri = decodeURIComponent(
+                    queryURLParams(res)["redirect_uri"]
+                );
+                const newUrl = replaceParamVal(
+                    res,
+                    "redirect_uri",
+                    encodeURIComponent(`${redirect_uri}auth`)
+                );
+                setAuthUrl(source, newUrl);
+            })
+            .catch((err) => {});
+    };
+    const setAuthUrl = (source: "github" | "wechat", url: string) => {
+        if (source === "github") {
+            setGithubAuth({
+                auth_id: Github?.auth_id || 0,
+                head_img: "",
+                name: "",
+            });
+            setTimeout(() => {
+                window.location.href = url;
+            }, 10);
+        } else {
+            setTimeout(() => {
+                var urls = url.split("?")[1];
+                const urlSearchParams = new URLSearchParams(urls);
+                const params = Object.fromEntries(urlSearchParams.entries());
+                // @ts-ignore
+                var obj = new window.WxLogin({
+                    self_redirect: true,
+                    id: "wechat-auth",
+                    appid: params.appid,
+                    scope: params.scope.split("#")[0],
+                    redirect_uri: params.redirect_uri,
+                });
+                window.addEventListener("message", (e) => {
+                    if (
+                        e &&
+                        e.data &&
+                        e.data.code &&
+                        e.data.source &&
+                        e.data.source === "wechatauth"
+                    ) {
+                        NetWorkApi<UpdateAuthProps, API.ActionSucceeded>({
+                            method: "get",
+                            url: "/api/update/auth",
+                            params: {
+                                code: e.data.code as string,
+                                type: source,
+                                auth_id: Wechat?.auth_id || 0,
+                            },
+                            userToken: true,
+                        })
+                            .then((res) => {
+                                setTimeout(() => {
+                                    setModalVisible(false);
+                                    onUpdateUserInfo();
+                                }, 10);
+                            })
+                            .catch((err) => {
+                                setModalVisible(false);
+                            });
+                    }
+                });
+            }, 50);
+        }
+    };
+
     const showModal = useMemoizedFn((flag: ModalType) => {
         if (flag === "github") {
+            getAuthUlr("github");
             return;
+        }
+        if (flag === "wechat") {
+            setTimeout(() => getAuthUlr("wechat"), 10);
         }
         setModalIndex(flag);
         setModalVisible(true);
@@ -169,10 +256,10 @@ const SettingInfo: NextPage<SettingInfoProps> = (props) => {
         })
             .then((res) => {
                 success("解绑成功");
-                setWarnModal(false);
                 onUpdateUserInfo();
             })
-            .catch((err) => {});
+            .catch((err) => {})
+            .finally(() => setWarnModal(false));
     });
 
     return (
@@ -242,7 +329,7 @@ const SettingInfo: NextPage<SettingInfoProps> = (props) => {
                             <div className="info-operate-name">
                                 {Github.name}
                             </div>
-                            {Wechat && (
+                            {Wechat && platform !== "github" && (
                                 <>
                                     <div
                                         className="info-operate-unbind"
@@ -294,7 +381,7 @@ const SettingInfo: NextPage<SettingInfoProps> = (props) => {
                             <div className="info-operate-name">
                                 {Wechat.name}
                             </div>
-                            {Github && (
+                            {Github && platform !== "wechat" && (
                                 <>
                                     <div
                                         className="info-operate-unbind"
@@ -504,7 +591,7 @@ const SettingInfo: NextPage<SettingInfoProps> = (props) => {
                 )}
                 {modalIndex === "wechat" && (
                     <div className="modal-body setting-wechat-code">
-                        <div id="wechat-login" className="wechat-login"></div>
+                        <div id="wechat-auth" className="wechat-login"></div>
                     </div>
                 )}
                 {modalIndex === "" && <div></div>}

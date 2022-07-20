@@ -58,12 +58,12 @@ $REM: 16;
 }
 
 //layout
-@import "../components/Layouts.scss";
-@import "../components/Headers.scss";
-@import "../components/Footers.scss";
-@import "../components/homeLayout.scss";
-@import "../components/UserLayout.scss";
-@import "../components/noLayout.scss";
+@import "../components/layout/layouts.scss";
+@import "../components/layout/headers.scss";
+@import "../components/layout/footers.scss";
+@import "../components/layout/homeLayout.scss";
+@import "../components/layout/userLayout.scss";
+@import "../components/layout/noLayout.scss";
 
 // base-components
 @import "../components/baseComponents/inputTheme.scss";
@@ -73,6 +73,7 @@ $REM: 16;
 // components
 @import "../components/TopicList.scss";
 @import "../components/commentItem.scss";
+@import "../components/commentContentInfo.scss";
 
 // modal
 @import "../components/modal/postDynamic.scss";

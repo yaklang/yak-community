@@ -24,17 +24,19 @@ import SecondConfirm from "./SecondConfirm";
 import { NetWorkApi } from "../../utils/fetch";
 import { API } from "../../types/api";
 import { InputTheme } from "../baseComponents/InputTheme";
-import { useDebounce, useMemoizedFn } from "ahooks";
+import { useDebounce, useGetState, useMemoizedFn } from "ahooks";
 import InfoConfirm from "./InfoConfirm";
 import { RcFile } from "antd/lib/upload";
 import { failed } from "../../utils/notification";
 import { SingleUpload } from "../baseComponents/SingleUpload";
 import { useStore } from "../../store";
+import { generateTimeName } from "../../utils/timeTool";
 
 const { TextArea } = Input;
 const { Item } = Form;
 
 interface PostDynamicProps {
+    existId?: number;
     visible: boolean;
     onCancel: (flag: boolean) => any;
 }
@@ -45,29 +47,131 @@ interface FetchTopicProps {
 
 interface NewDynamicInfoProps {
     content: string;
-    content_img: string[];
-    content_video: string[];
+    content_img: { src: string; name: string }[];
+    content_video: { src: string; name: string };
     topics: API.TopicList[];
     title: string;
     cover: string;
     download: boolean;
+    csrf_token: string;
 }
 
+const DefaultNewDynamicInfo: NewDynamicInfoProps = {
+    content: "",
+    content_img: [],
+    content_video: { src: "", name: "" },
+    topics: [],
+    title: "",
+    cover: "",
+    download: false,
+    csrf_token: "",
+};
+
 const PostDynamic: NextPage<PostDynamicProps> = (props) => {
-    const { visible, onCancel } = props;
+    const { existId, visible, onCancel } = props;
 
-    const { userInfo } = useStore();
+    const { setHomePageDynamicId } = useStore();
 
-    const [dynamic, setDynamic] = useState<NewDynamicInfoProps>({
-        content: "",
-        content_img: [],
-        content_video: [],
-        topics: [],
-        title: "",
-        cover: "",
-        download: false,
+    const [loading, setLoading] = useState<boolean>(false);
+    const [dynamic, setDynamic, getDynamic] = useGetState<NewDynamicInfoProps>({
+        ...DefaultNewDynamicInfo,
     });
 
+    const fetchCsrfToken = useMemoizedFn(() => {
+        NetWorkApi<undefined, string>({
+            method: "get",
+            url: "/api/random",
+            userToken: true,
+        })
+            .then((res) => {
+                setDynamic({ ...dynamic, csrf_token: res });
+            })
+            .catch((err) => {});
+    });
+
+    useEffect(() => {
+        if (visible) fetchCsrfToken();
+    }, [visible]);
+
+    useEffect(() => {
+        if (existId) {
+            NetWorkApi<{ id: number }, API.DynamicListDetailResponse>({
+                method: "get",
+                url: "/api/dynamic/detail",
+                params: { id: existId },
+                userToken: true,
+            })
+                .then((res) => {
+                    const { data } = res;
+                    const imgs: string[] =
+                        !data.content_img || data.content_img === "null"
+                            ? []
+                            : JSON.parse(data.content_img);
+
+                    setDynamic({
+                        ...getDynamic(),
+                        content: data.content,
+                        content_img: imgs.map((item) => {
+                            const imgInfo: { src: string; name: string } = {
+                                src: item,
+                                name: (item.split("/").pop() || "").split(
+                                    "."
+                                )[0],
+                            };
+                            return imgInfo;
+                        }),
+                        content_video: {
+                            src: data.content_video,
+                            name: (
+                                data.content_video.split("/").pop() || ""
+                            ).split(".")[0],
+                        },
+                        topics: data.topic_info.map((item) => {
+                            const topicInfo: API.TopicList = {
+                                id: item.id,
+                                created_at: 0,
+                                updated_at: 0,
+                                topics: item.topics,
+                                hot_num: 0,
+                            };
+                            return topicInfo;
+                        }),
+                        title: data.title,
+                        cover: data.cover,
+                        download: data.download,
+                    });
+                })
+                .catch((err) => {});
+        }
+    }, [existId]);
+
+    const cancelModal = useMemoizedFn(() => {
+        if (
+            dynamic.content ||
+            dynamic.content_img.length !== 0 ||
+            dynamic.content_video ||
+            dynamic.title ||
+            dynamic.cover
+        ) {
+            setSecondShow(true);
+        } else {
+            setTimeout(() => onCancel(false), 50);
+            resetDynamic();
+        }
+    });
+    // 重置弹窗内数据
+    const resetDynamic = () => {
+        setDynamic({ ...DefaultNewDynamicInfo });
+        fileList.current = [];
+        imgList.current = [];
+        videoTime.current = null;
+        videoCount.current = 0;
+        setVideoRate(0);
+        setVideoSize(0);
+        setTopiCList([]);
+        setTopicSearch("");
+    };
+    // 视频内容的判断还是有点问题
     const releaseDynamic = useMemoizedFn(() => {
         if (!dynamic.content) {
             failed("请输入动态内容");
@@ -75,52 +179,62 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
         }
 
         if (
-            dynamic.content_video.length === 1 &&
-            (!dynamic.cover || !dynamic.title)
+            (dynamic.content_video.src && (!dynamic.cover || !dynamic.title)) ||
+            (!dynamic.content_video.src && (dynamic.cover || dynamic.title))
         ) {
             failed("请完善视频相关内容填写");
             return;
         }
 
-        const topic_id = dynamic.topics
+        setLoading(true);
+
+        // 通过动态内容过滤后还存在的话题内容
+        const existTopics = dynamic.topics.filter(
+            (item) => dynamic.content.indexOf(item.topics) > -1
+        );
+        // 选择的话题ID
+        const topic_id = existTopics
             .filter((item) => !!item.id)
             .map((item) => item.id);
-        const topics = dynamic.topics.map((item) => item.topics);
+        // 新建话题内容
+        const topics = existTopics
+            .filter((item) => !item.id)
+            .map((item) => item.topics);
 
         const params: API.NewDynamic = {
             content: dynamic.content,
             download: dynamic.download,
         };
-        if (topic_id.length !== 0) params.topic_id = topic_id;
+        // 判断添加动态可选内容
+        if (topic_id.length !== 0) params.topic_ids = topic_id;
         if (topics.length !== 0) params.topics = topics;
-
         if (dynamic.content_img.length !== 0) {
-            params.content_img = dynamic.content_img;
-            delete params.content_video;
-            delete params.cover;
-            delete params.title;
+            params.csrf_token = dynamic.csrf_token;
         }
-        if (dynamic.content_video.length === 1) {
-            params.content_video = dynamic.content_video;
+        if (dynamic.content_video.src) {
+            params.content_video = dynamic.content_video.src;
             params.title = dynamic.title;
             params.cover = dynamic.cover;
         }
+        if (existId) params.id = existId;
 
-        NetWorkApi<API.NewDynamic, API.ActionSucceeded>({
+        NetWorkApi<API.NewDynamic, number>({
             method: "post",
             url: "/api/dynamic/issue",
             data: params,
             userToken: true,
         })
             .then((res) => {
-                console.log(res);
+                setTimeout(() => onCancel(true), 50);
+                setHomePageDynamicId(res);
+                resetDynamic();
             })
-            .catch((err) => {
-                uploadImg();
-            });
+            .catch((err) => {})
+            .finally(() => setTimeout(() => setLoading(false), 100));
     });
 
     const [secondShow, setSecondShow] = useState<boolean>(false);
+
     // 图片文件规则判断
     const imgJudge = (file: RcFile) => {
         if (file.size > 10 * 1024 * 1024) {
@@ -137,30 +251,64 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
     const [imgIcon, setImgIcon] = useState<boolean>(false);
     const imgTime = useRef<any>(null);
     const fileList = useRef<RcFile[]>([]);
-    const imgList = useRef<string[]>([]);
+    const imgList = useRef<{ src: string; name: string }[]>([]);
 
     const uploadImg = useMemoizedFn(() => {
-        if (fileList.current.length === 0) return;
+        if (!dynamic.csrf_token) {
+            failed("获取关键信息失败，请关闭弹窗重新打开");
+            return;
+        }
+        if (imgList.current.length + dynamic.content_img.length >= 18) return;
+        if (fileList.current.length === 0) {
+            setDynamic({
+                ...dynamic,
+                content_img: dynamic.content_img.concat(imgList.current),
+            });
+            imgList.current = [];
+            return;
+        }
+
         // @ts-ignore
         const file: RcFile = fileList.current.pop();
+        const fileName = generateTimeName();
         var formData = new FormData();
-        formData.append("file_name", file);
-        formData.append("type", file.type);
-        return NetWorkApi<FormData, string>({
+        formData.append("file", file);
+        formData.append("csrf_token", dynamic.csrf_token);
+        formData.append("file_name", file.name);
+        return NetWorkApi<FormData, API.ActionSucceeded>({
             method: "post",
-            url: "/api/upload/img",
+            url: "/api/upload/imgs",
             data: formData,
             userToken: true,
         })
             .then((res) => {
-                console.log([res]);
-                setTimeout(() => {
-                    uploadImg();
-                }, 1000);
+                imgList.current.push({ src: "", name: fileName });
+                uploadImg();
             })
             .catch((err) => {
                 uploadImg();
             });
+    });
+    const delImg = useMemoizedFn((index: number) => {
+        const name = dynamic.content_img[index].name;
+
+        NetWorkApi<API.DeleteResource, API.ActionSucceeded>({
+            method: "post",
+            url: "/api/delete/resource",
+            data: {
+                csrf_token: dynamic.csrf_token,
+                file_name: [name],
+                file_type: "img",
+            },
+            userToken: true,
+        })
+            .then((res) => {
+                setDynamic({
+                    ...dynamic,
+                    content_img: dynamic.content_img.splice(index, 1),
+                });
+            })
+            .catch((err) => {});
     });
 
     const [videoIcon, setVideoIcon] = useState<boolean>(false);
@@ -175,11 +323,13 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
         if (videoTime.current) {
             clearInterval(videoTime.current);
             videoTime.current = null;
+            videoCount.current = 0;
         }
         videoTime.current = setInterval(() => {
             if (videoCount.current === 11) {
                 clearInterval(videoTime.current);
                 videoTime.current = null;
+                videoCount.current = 0;
                 return;
             }
             videoCount.current = videoCount.current + 1;
@@ -197,9 +347,42 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
             title: file.name.split(".")[0] || "未命名视频",
         });
     });
+    const videoUploadFailed = useMemoizedFn(() => {
+        clearInterval(videoTime.current);
+        videoTime.current = null;
+        videoCount.current = 0;
+        setVideoRate(0);
+        setVideoSize(0);
+    });
+    const delVideo = useMemoizedFn(() => {
+        const name = dynamic.content_video.name;
+
+        NetWorkApi<API.DeleteResource, API.ActionSucceeded>({
+            method: "post",
+            url: "/api/delete/resource",
+            data: {
+                csrf_token: dynamic.csrf_token,
+                file_name: [name],
+                file_type: "video",
+            },
+            userToken: true,
+        })
+            .then((res) => {
+                setDynamic({
+                    ...dynamic,
+                    content_video: {
+                        src: "",
+                        name: "",
+                    },
+                    download: false,
+                });
+            })
+            .catch((err) => {});
+    });
 
     const [coverMak, setCoverMask] = useState<boolean>(false);
 
+    // 图片/视频上传时的清空判断
     const [uploadWarn, setUploadWarn] = useState<boolean>(false);
     const [uploadWarnType, setUploadWarnType] = useState<1 | 2>(1);
 
@@ -213,14 +396,14 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
                 ...dynamic,
                 content_img: uploadWarnType === 2 ? [] : dynamic.content_img,
                 content_video:
-                    uploadWarnType === 1 ? [] : dynamic.content_video,
+                    uploadWarnType === 1
+                        ? { src: "", name: "" }
+                        : dynamic.content_video,
                 title: uploadWarnType === 1 ? "" : dynamic.title,
                 cover: uploadWarnType === 1 ? "" : dynamic.cover,
             });
-            setUploadWarn(false);
-        } else {
-            setUploadWarn(false);
         }
+        setUploadWarn(false);
     });
 
     const [topicIcon, setTopicIcon] = useState<boolean>(false);
@@ -240,11 +423,9 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
             })
             .catch((err) => {});
     };
-
     useEffect(() => {
         fetchTopic();
     }, [useDebounce(topicSearch, { wait: 500 })]);
-
     const selectTopic = useMemoizedFn((item: API.TopicList) => {
         setDynamic({
             ...dynamic,
@@ -261,14 +442,14 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
             footer={null}
             destroyOnClose={true}
             className="post-dynamic-modal"
-            onCancel={() => setSecondShow(true)}
+            onCancel={cancelModal}
         >
             <div className="post-dynamic-body">
                 <div className="post-dynamic-header">
                     <div className="header-title">发布动态</div>
                     <CloseOutlined
                         className="header-del"
-                        onClick={() => setSecondShow(true)}
+                        onClick={cancelModal}
                     />
                 </div>
 
@@ -276,6 +457,7 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
                     className="post-dynamic-input"
                     placeholder="有什么想分享给大家～"
                     autoSize={{ minRows: 4, maxRows: 6 }}
+                    maxLength={5000}
                     value={dynamic.content}
                     onChange={(e) =>
                         setDynamic({ ...dynamic, content: e.target.value })
@@ -284,7 +466,7 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
 
                 <div className="post-dynamic-operate">
                     <div className="operate-function">
-                        {dynamic.content_video.length === 1 ? (
+                        {!!dynamic.content_video.src ? (
                             <Button
                                 type="link"
                                 onMouseEnter={() => setImgIcon(true)}
@@ -307,7 +489,6 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
                                     if (!imgJudge(file)) {
                                         return Promise.reject();
                                     }
-                                    console.log(file);
 
                                     fileList.current.push(file);
 
@@ -326,6 +507,7 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
                                     type="link"
                                     onMouseEnter={() => setImgIcon(true)}
                                     onMouseLeave={() => setImgIcon(false)}
+                                    disabled={dynamic.content_img.length >= 18}
                                     icon={
                                         imgIcon ? (
                                             <UploadImgThemeIcon className="icon-style" />
@@ -353,19 +535,24 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
                         ) : (
                             <SingleUpload
                                 isVideo={true}
-                                setValue={(res) =>
+                                setValue={(res, name) =>
                                     setDynamic({
                                         ...dynamic,
-                                        content_video: [res],
+                                        content_video: {
+                                            src: res,
+                                            name: name || "",
+                                        },
                                     })
                                 }
                                 onProgress={videoUploadProgress}
                                 onSuccess={videoUploadSuccess}
+                                onFailed={videoUploadFailed}
                             >
                                 <Button
                                     type="link"
                                     onMouseEnter={() => setVideoIcon(true)}
                                     onMouseLeave={() => setVideoIcon(false)}
+                                    disabled={videoSize > 0 && videoSize < 100}
                                     icon={
                                         videoIcon ? (
                                             <UploadVideoThemeIcon className="icon-style" />
@@ -397,7 +584,7 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
                                         }
                                     />
                                     <div className="body-list">
-                                        {topicSearch
+                                        {(topicSearch
                                             ? [
                                                   {
                                                       id: 0,
@@ -407,29 +594,20 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
                                                       hot_num: 0,
                                                   } as API.TopicList,
                                               ]
-                                                  .concat(topicList)
-                                                  .map((item, index) => {
-                                                      return (
-                                                          <div
-                                                              className="list-opt text-ellipsis-style"
-                                                              onClick={() =>
-                                                                  selectTopic(
-                                                                      item
-                                                                  )
-                                                              }
-                                                          >{`#${item.topics}#`}</div>
-                                                      );
-                                                  })
-                                            : topicList.map((item, index) => {
-                                                  return (
-                                                      <div
-                                                          className="list-opt text-ellipsis-style"
-                                                          onClick={() =>
-                                                              selectTopic(item)
-                                                          }
-                                                      >{`#${item.topics}#`}</div>
-                                                  );
-                                              })}
+                                            : []
+                                        )
+                                            .concat(topicList)
+                                            .map((item, index) => {
+                                                return (
+                                                    <div
+                                                        key={`${item.topics}-${item.id}`}
+                                                        className="list-opt text-ellipsis-style"
+                                                        onClick={() =>
+                                                            selectTopic(item)
+                                                        }
+                                                    >{`#${item.topics}#`}</div>
+                                                );
+                                            })}
                                     </div>
                                 </div>
                             }
@@ -452,6 +630,7 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
                     <div className="operate-publish">
                         <Button
                             className="operate-publish-btn"
+                            disabled={!dynamic.content || loading}
                             onClick={releaseDynamic}
                         >
                             发布
@@ -461,24 +640,51 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
 
                 {dynamic.content_img.length !== 0 && (
                     <div className="post-dynamic-img">
-                        {[1, 2, 3, 4, 5, 6, 7, 8].map((item, idnex) => {
+                        {dynamic.content_img.map((item, index) => {
                             return (
-                                <div className="img-opt">
-                                    <img
-                                        src="https://img2.baidu.com/it/u=586743041,2475093996&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"
-                                        className="img-style"
-                                    />
-                                    <div className="img-opt-del">x</div>
+                                <div className="img-opt" key={item.src}>
+                                    <img src={item.src} className="img-style" />
+                                    <div
+                                        className="img-opt-del"
+                                        onClick={() => delImg(index)}
+                                    >
+                                        x
+                                    </div>
                                 </div>
                             );
                         })}
-                        <div className="img-add">
-                            <PlusOutlined className="icon-style" />
-                        </div>
+                        {dynamic.content_img.length !== 18 && (
+                            <Upload
+                                accept=".png,.jpg,.jpeg"
+                                showUploadList={false}
+                                multiple={true}
+                                beforeUpload={(file: RcFile) => {
+                                    if (!imgJudge(file)) {
+                                        return Promise.reject();
+                                    }
+
+                                    fileList.current.push(file);
+
+                                    if (imgTime.current) {
+                                        clearTimeout(imgTime.current);
+                                        imgTime.current = null;
+                                    }
+                                    imgTime.current = setTimeout(
+                                        () => uploadImg(),
+                                        200
+                                    );
+                                    return Promise.reject();
+                                }}
+                            >
+                                <div className="img-add">
+                                    <PlusOutlined className="icon-style" />
+                                </div>
+                            </Upload>
+                        )}
                     </div>
                 )}
 
-                {dynamic.content_video.length === 1 && (
+                {(dynamic.content_video.src || videoSize > 0) && (
                     <div className="post-dynamic-video">
                         <div className="video-hint">
                             请上传 200MB
@@ -500,14 +706,18 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
                             <div className="video-operate">
                                 <SingleUpload
                                     isVideo={true}
-                                    setValue={(res) =>
+                                    setValue={(res, name) =>
                                         setDynamic({
                                             ...dynamic,
-                                            content_video: [res],
+                                            content_video: {
+                                                src: res,
+                                                name: name || "",
+                                            },
                                         })
                                     }
                                     onProgress={videoUploadProgress}
                                     onSuccess={videoUploadSuccess}
+                                    onFailed={videoUploadFailed}
                                 >
                                     <a
                                         href="#"
@@ -519,15 +729,7 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
                                 <Popconfirm
                                     placement="bottomLeft"
                                     title="确定要放弃上传视频吗？"
-                                    onConfirm={() =>
-                                        setDynamic({
-                                            ...dynamic,
-                                            content_video: [],
-                                            cover: "",
-                                            title: "",
-                                            download: false,
-                                        })
-                                    }
+                                    onConfirm={() => delVideo()}
                                     okText="确定"
                                     cancelText="取消"
                                 >
@@ -539,7 +741,6 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
                                     </a>
                                 </Popconfirm>
                             </div>
-                            {/* )} */}
                         </div>
 
                         <div className="video-progress-info">
@@ -569,6 +770,7 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
                                     isInfo={true}
                                     placeholder="请输入中文、英文或数字，不超过50个字符"
                                     className="video-form-input"
+                                    maxLength={50}
                                     value={dynamic.title}
                                     onChange={(e) =>
                                         setDynamic({
@@ -611,11 +813,11 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
                                                     </div>
                                                 )}
                                             </SingleUpload>
-                                            {coverMak && (
+                                            {/* {coverMak && (
                                                 <div className="cover-btn">
                                                     裁剪封面
                                                 </div>
-                                            )}
+                                            )} */}
                                         </div>
                                     </div>
                                 ) : (
@@ -656,7 +858,10 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
                     visible={secondShow}
                     onCancel={(flag) => {
                         setSecondShow(false);
-                        if (flag) setTimeout(() => onCancel(false), 50);
+                        if (flag) {
+                            setTimeout(() => onCancel(false), 50);
+                            resetDynamic();
+                        }
                     }}
                 />
 

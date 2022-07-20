@@ -3,7 +3,7 @@ import { NextPage } from "next";
 import { PlusOutlined } from "@ant-design/icons";
 import { API } from "../../types/api";
 import { ButtonTheme } from "../baseComponents/ButtonTheme";
-import { useMemoizedFn } from "ahooks";
+import { useGetState, useMemoizedFn } from "ahooks";
 import { NetWorkApi } from "../../utils/fetch";
 import { FollowUserProps } from "../../types/extraApi";
 
@@ -31,8 +31,12 @@ const Avatar: NextPage<AvatarProps> = (props) => {
     } = props;
 
     const [showCancel, setShowCancel] = useState<boolean>(false);
+    const [loading, setLoading, getLoading] = useGetState<boolean>(false);
 
     const followUser = useMemoizedFn(() => {
+        if (getLoading()) return;
+
+        setLoading(true);
         NetWorkApi<FollowUserProps, API.ActionSucceeded>({
             method: "post",
             url: "/api/user/follow",
@@ -45,7 +49,8 @@ const Avatar: NextPage<AvatarProps> = (props) => {
             .then((res) => {
                 if (updateInfo) updateInfo();
             })
-            .catch((err) => {});
+            .catch((err) => {})
+            .finally(() => setTimeout(() => setLoading(false), 300));
     });
 
     return (
@@ -81,6 +86,7 @@ const Avatar: NextPage<AvatarProps> = (props) => {
                         {isFollow ? (
                             <ButtonTheme
                                 className="avatar-follow-btn"
+                                disabled={loading}
                                 isInfo={!showCancel}
                                 isDanger={showCancel}
                                 onMouseEnter={() => setShowCancel(true)}
@@ -92,6 +98,7 @@ const Avatar: NextPage<AvatarProps> = (props) => {
                         ) : (
                             <ButtonTheme
                                 className="avatar-follow-btn"
+                                disabled={loading}
                                 onClick={followUser}
                             >
                                 <PlusOutlined />

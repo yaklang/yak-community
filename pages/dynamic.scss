@@ -23,6 +23,11 @@ $REM: 16;
 }
 .dynamic-body {
     display: flex;
+
+    .dynamic-comment-body {
+        margin-bottom: 24px;
+    }
+
     .dynamic-author-and-topic {
         margin-left: REM(16);
         .dynamic-topic-list {

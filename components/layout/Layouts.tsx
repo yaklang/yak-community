@@ -3,7 +3,7 @@ import { NextPage } from "next";
 import { FormOutlined, UpOutlined } from "@ant-design/icons";
 import Headers from "./Headers";
 import Footers from "./Footers";
-import PostDynamic from "./modal/PostDynamic";
+import PostDynamic from "../modal/PostDynamic";
 
 interface LayoutsProps {
     children?: React.ReactNode;

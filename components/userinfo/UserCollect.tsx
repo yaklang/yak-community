@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { NextPage } from "next";
-import {} from "antd";
-import {} from "@ant-design/icons";
 import { API } from "../../types/api";
 import { useMemoizedFn } from "ahooks";
 import { NetWorkApi } from "../../utils/fetch";
-import { SearchPageMeta } from "../../types/extraApi";
+import { FetchDynamicInfo, SearchPageMeta } from "../../types/extraApi";
 import CommentItem from "../CommentItem";
 
 interface UserCollectProps {
@@ -18,20 +16,19 @@ const UserCollect: NextPage<UserCollectProps> = (props) => {
 
     const [list, setList] = useState<API.DynamicListResponse>({
         data: [],
-        pagemeta: { page: 1, limit: 50, total: 0, total_page: 0 },
+        pagemeta: { page: 1, limit: 10, total: 0, total_page: 1 },
     });
 
     const fetchList = useMemoizedFn(() => {
         NetWorkApi<SearchPageMeta, API.DynamicListResponse>({
             method: "get",
             url: "/api/collect/dynamic",
-            params: { Page: 1, Limit: 10, Order: "desc" },
+            params: { page: 1, limit: 10, order: "desc" },
             userToken: true,
         })
             .then((res) => {
-                console.log(res);
                 setList({
-                    data: res.data || [],
+                    data: list.data.concat(res.data || []),
                     pagemeta: res.pagemeta,
                 });
             })
@@ -60,6 +57,7 @@ const UserCollect: NextPage<UserCollectProps> = (props) => {
                     }),
                     pagemeta: list.pagemeta,
                 });
+                onUpdateUserInfo();
             }
             if (type === "user") {
                 setList({
@@ -70,9 +68,30 @@ const UserCollect: NextPage<UserCollectProps> = (props) => {
                     }),
                     pagemeta: list.pagemeta,
                 });
+                onUpdateUserInfo();
             }
         }
     );
+
+    // 更新动态局部数据(请求后端获取)
+    const updateDynamicInfoApi = useMemoizedFn((id: number) => {
+        NetWorkApi<FetchDynamicInfo, API.DynamicListDetailResponse>({
+            method: "get",
+            url: "/api/dynamic/detail",
+            params: { id },
+            userToken: true,
+        })
+            .then((res) => {
+                setList({
+                    data: list.data.map((item) => {
+                        if (item.id === res.data.id) return res.data;
+                        return item;
+                    }),
+                    pagemeta: list.pagemeta,
+                });
+            })
+            .catch((err) => {});
+    });
 
     return (
         <div className="user-collect-wrapper">
@@ -87,6 +106,7 @@ const UserCollect: NextPage<UserCollectProps> = (props) => {
                             key={item.id}
                             info={item}
                             updateInfo={updateDynamicInfo}
+                            updateDynamicInfo={updateDynamicInfoApi}
                         />
                     );
                 })}

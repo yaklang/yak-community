@@ -24,6 +24,7 @@ $REM: 16;
 
     .user-page-tabs {
         margin-top: REM(24);
+        margin-bottom: REM(24);
         .tabs-bar-title {
             height: REM(22);
             font-size: REM(16);
@@ -42,9 +43,7 @@ $REM: 16;
         }
     }
 
-    .user-tabs-bar-title-tabs
-        .ant-tabs-tab.ant-tabs-tab-active
-        .ant-tabs-tab-btn {
+    .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
         text-shadow: none;
     }
     .user-page-tabs.ant-tabs-top > .ant-tabs-nav {

@@ -23,9 +23,9 @@ const Fans: NextPage<FansProps> = (props) => {
             method: "get",
             url: "/api/message/center/follow",
             params: {
-                Page: 1,
-                Limit: 20,
-                Order: "desc",
+                page: 1,
+                limit: 20,
+                order: "desc",
             },
             userToken: true,
         })

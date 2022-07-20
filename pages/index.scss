@@ -55,6 +55,8 @@ $REM: 16;
         .content-dynamic-body {
             flex: 1;
             margin-right: REM(16);
+            padding-bottom: 24px;
+
             .comment-item-wrapper + .comment-item-wrapper {
                 margin-top: REM(16);
             }

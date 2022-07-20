@@ -3,6 +3,7 @@ import { Upload, UploadProps } from "antd";
 import { RcFile } from "antd/lib/upload";
 import { failed } from "../../utils/notification";
 import { NetWorkApi } from "../../utils/fetch";
+import { generateTimeName } from "../../utils/timeTool";
 
 const imgJudge = (file: RcFile) => {
     if (file.size > 10 * 1024 * 1024) {
@@ -30,9 +31,10 @@ const videoJudge = (file: RcFile) => {
 
 export interface SingleUploadProps extends UploadProps {
     isVideo?: boolean;
-    setValue: (res: string) => any;
+    setValue: (res: string, name?: string) => any;
     onProgress?: (file: RcFile) => any;
     onSuccess?: (file: RcFile) => any;
+    onFailed?: () => any;
 }
 
 export const SingleUpload: React.FC<SingleUploadProps> = React.memo((props) => {
@@ -41,6 +43,7 @@ export const SingleUpload: React.FC<SingleUploadProps> = React.memo((props) => {
         setValue,
         onProgress,
         onSuccess,
+        onFailed,
         children,
         ...restProps
     } = props;
@@ -51,6 +54,7 @@ export const SingleUpload: React.FC<SingleUploadProps> = React.memo((props) => {
 
     return (
         <Upload
+            {...restProps}
             accept={accept}
             showUploadList={false}
             beforeUpload={(file: RcFile) => {
@@ -58,11 +62,19 @@ export const SingleUpload: React.FC<SingleUploadProps> = React.memo((props) => {
                     return Promise.reject();
                 }
 
+                const name = generateTimeName();
+
                 if (onProgress) onProgress(file);
 
                 var formData = new FormData();
-                formData.append("file_name", file);
-                formData.append("type", file.type);
+                if (isVideo) {
+                    formData.append("file", file);
+                    formData.append("file_name", name);
+                } else {
+                    formData.append("file_name", file);
+                    formData.append("type", file.type);
+                }
+
                 NetWorkApi<FormData, string>({
                     method: "post",
                     url: api,
@@ -70,10 +82,12 @@ export const SingleUpload: React.FC<SingleUploadProps> = React.memo((props) => {
                     userToken: true,
                 })
                     .then((res) => {
-                        setValue(res);
+                        setValue(res, name);
                         if (onSuccess) onSuccess(file);
                     })
-                    .catch((err) => {});
+                    .catch((err) => {
+                        if (onFailed) onFailed();
+                    });
 
                 return Promise.reject();
             }}

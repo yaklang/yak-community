@@ -1,15 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { NextPage } from "next";
 import { Modal } from "antd";
 import { API } from "../../types/api";
-import { CommentContent } from "../CommentItem";
-import { CollapseParagraph } from "../baseComponents/CollapseParagraph";
-import { timeFormat } from "../../utils/timeTool";
-import { LikeIcon, LikeThemeIcon, ReplyIcon } from "../../public/icons";
-import { useMemoizedFn } from "ahooks";
+import { useGetState, useMemoizedFn, useVirtualList } from "ahooks";
 import { NetWorkApi } from "../../utils/fetch";
-import { FetchSubComments, StarsComment } from "../../types/extraApi";
+import { FetchSubComments } from "../../types/extraApi";
 import PostComment from "./PostComment";
+import { CommentContentInfo } from "../CommentContentInfo";
 
 interface SubCommentProps {
     dynamicInfo: API.DynamicLists;
@@ -17,118 +14,90 @@ interface SubCommentProps {
     width?: number;
     visible: boolean;
     onCancel: () => any;
+
+    updateCommentStar?: (id: number, isStar: boolean) => any;
+    updateCommentNum?: (id: number) => any;
 }
 
 const SubComment: NextPage<SubCommentProps> = (props) => {
-    const { dynamicInfo, info, width, visible, onCancel } = props;
+    const {
+        dynamicInfo,
+        info,
+        width,
+        visible,
+        onCancel,
+        updateCommentStar,
+        updateCommentNum,
+    } = props;
 
-    const [loading, setLoading] = useState<boolean>(false);
+    const [loading, setLoading, getLoading] = useGetState<boolean>(false);
+    const pageRef = useRef<number>(1);
     const [lists, setLists] = useState<API.DynamicComment>({
-        data: [
-            {
-                id: 1,
-                created_at: new Date().getTime(),
-                updated_at: new Date().getTime(),
-                dynamic_id: 1,
-                root_id: 0,
-                parent_id: 0,
-                user_id: 1,
-                user_name: "123",
-                head_img: "",
-                message: "123132",
-                message_img: "",
-                like_num: 12,
-                by_user_id: 2,
-                by_user_name: "321",
-                by_head_img: "",
-                reply_num: 22,
-            },
-            {
-                id: 1,
-                created_at: new Date().getTime(),
-                updated_at: new Date().getTime(),
-                dynamic_id: 1,
-                root_id: 0,
-                parent_id: 0,
-                user_id: 1,
-                user_name: "123",
-                head_img: "",
-                message: "123132",
-                message_img: "",
-                like_num: 12,
-                by_user_id: 2,
-                by_user_name: "321",
-                by_head_img: "",
-                reply_num: 22,
-            },
-            {
-                id: 1,
-                created_at: new Date().getTime(),
-                updated_at: new Date().getTime(),
-                dynamic_id: 1,
-                root_id: 0,
-                parent_id: 0,
-                user_id: 1,
-                user_name: "123",
-                head_img: "",
-                message: "123132",
-                message_img: "",
-                like_num: 12,
-                by_user_id: 2,
-                by_user_name: "321",
-                by_head_img: "",
-                reply_num: 22,
-            },
-            {
-                id: 1,
-                created_at: new Date().getTime(),
-                updated_at: new Date().getTime(),
-                dynamic_id: 1,
-                root_id: 0,
-                parent_id: 0,
-                user_id: 1,
-                user_name: "123",
-                head_img: "",
-                message: "123132",
-                message_img: "",
-                like_num: 12,
-                by_user_id: 2,
-                by_user_name: "321",
-                by_head_img: "",
-                reply_num: 22,
-            },
-        ],
-        pagemeta: { page: 1, limit: 5, total: 2, total_page: 1 },
+        data: [],
+        pagemeta: { page: 1, limit: 10, total: 0, total_page: 1 },
     });
 
-    const fetchSubCommentList = useMemoizedFn(() => {
+    const listRef = useRef(null);
+    const wrapperRef = useRef(null);
+
+    const [list] = useVirtualList(lists.data, {
+        containerTarget: listRef,
+        wrapperTarget: wrapperRef,
+        itemHeight: 100,
+        overscan: 5,
+    });
+
+    const fetchSubCommentList = useMemoizedFn((isNew?: boolean) => {
+        if (getLoading()) return;
+
         setLoading(true);
         NetWorkApi<FetchSubComments, API.DynamicComment>({
             method: "get",
             url: "/api/forum/comment/reply",
             params: {
-                Page: 1,
-                Limit: 10,
-                Order: "desc",
+                page: pageRef.current,
+                limit: 10,
+                order: "desc",
                 root_id: info.id,
                 dynamic_id: dynamicInfo.id,
             },
             userToken: true,
         })
             .then((res) => {
-                setLists({
-                    data: res.data || [],
-                    pagemeta: res.pagemeta,
-                });
-                console.log(res);
+                if (isNew) {
+                    setLists({
+                        data: (res.data ? [res.data[0]] : []).concat(
+                            lists.data
+                        ),
+                        pagemeta: res.pagemeta,
+                    });
+                } else {
+                    setLists({
+                        data: lists.data.concat(res.data || []),
+                        pagemeta: res.pagemeta,
+                    });
+                }
             })
             .catch((err) => {})
             .finally(() => setTimeout(() => setLoading(false), 300));
     });
 
+    const moreList = useMemoizedFn((e) => {
+        if (getLoading()) return;
+        if (lists.data.length >= lists.pagemeta.total) return;
+
+        if (
+            e.target.offsetHeight + e.target.scrollTop >
+            e.target.scrollHeight - 10
+        ) {
+            pageRef.current += 1;
+            fetchSubCommentList();
+        }
+    });
+
     useEffect(() => {
-        fetchSubCommentList();
-    }, []);
+        if (visible) fetchSubCommentList();
+    }, [visible]);
 
     const [replyShow, setReplyShow] = useState<boolean>(false);
     const [replyComment, setReplyComment] = useState<API.DynamicCommentList>();
@@ -142,32 +111,59 @@ const SubComment: NextPage<SubCommentProps> = (props) => {
         <Modal
             centered={true}
             footer={null}
+            destroyOnClose={true}
             className="sub-comment-modal"
             width={width || 662}
             title={`共 ${info.reply_num} 条回复`}
             visible={visible}
-            onCancel={() => onCancel()}
+            onCancel={() => {
+                setLists({
+                    data: [],
+                    pagemeta: { page: 1, limit: 10, total: 0, total_page: 1 },
+                });
+                pageRef.current = 1;
+                onCancel();
+            }}
         >
             <div className="sub-comment-wrapper">
                 <div className="main-comment-body">
-                    <CommentContent
+                    <CommentContentInfo
+                        isShowMore={false}
                         info={info}
                         onReply={(commentInfo) => publishReply(commentInfo)}
-                        isShowMore={false}
+                        updateCommentStar={(id, isStar) => {
+                            if (updateCommentStar)
+                                updateCommentStar(id, isStar);
+                        }}
                     />
                 </div>
 
-                <div className="sub-comment-body">
-                    {lists.data.map((item, index) => {
-                        return (
-                            <SubCommentContent
-                                info={item}
-                                onReply={(commentInfo) =>
-                                    publishReply(commentInfo)
-                                }
-                            />
-                        );
-                    })}
+                <div
+                    ref={listRef}
+                    className="sub-comment-body"
+                    onScroll={(e) => moreList(e)}
+                >
+                    <div ref={wrapperRef}>
+                        {list.map((item) => {
+                            return (
+                                <CommentContentInfo
+                                    key={item.data.id}
+                                    isShowMore={false}
+                                    isSubComment={true}
+                                    info={item.data}
+                                    onReply={(commentInfo) =>
+                                        publishReply(commentInfo)
+                                    }
+                                />
+                            );
+                        })}
+                    </div>
+
+                    {loading && (
+                        <div className="sub-comment-loading">
+                            正在加载中。。。
+                        </div>
+                    )}
                 </div>
 
                 {replyComment && (
@@ -178,7 +174,13 @@ const SubComment: NextPage<SubCommentProps> = (props) => {
                         commentUserId={replyComment.user_id}
                         name={replyComment.user_name}
                         visible={replyShow}
-                        onCancel={() => setReplyShow(false)}
+                        onCancel={(flag) => {
+                            if (flag) {
+                                fetchSubCommentList(true);
+                                if (updateCommentNum) updateCommentNum(info.id);
+                            }
+                            setReplyShow(false);
+                        }}
                     />
                 )}
             </div>
@@ -187,102 +189,3 @@ const SubComment: NextPage<SubCommentProps> = (props) => {
 };
 
 export default SubComment;
-
-// 子评论内容组件
-interface SubCommentContentProps {
-    info: API.DynamicCommentList;
-    onReply: (item: API.DynamicCommentList) => any;
-}
-const SubCommentContent: React.FC<SubCommentContentProps> = (props) => {
-    const { info, onReply } = props;
-    const imgs: string[] =
-        info.message_img && info.message_img !== "null"
-            ? JSON.parse(info.message_img)
-            : [];
-    const row = info.message.split("\n");
-
-    const [loading, setLoading] = useState<boolean>(false);
-    const [flag, setFlag] = useState<boolean>(false);
-    //评论点赞操作
-    const onLike = useMemoizedFn(() => {
-        if (loading) return;
-
-        setLoading(true);
-        NetWorkApi<StarsComment, API.ActionSucceeded>({
-            method: "post",
-            url: "/api/forum/comment/stars",
-            params: {
-                comment_id: info.id,
-                operation: flag ? "remove" : "add",
-            },
-            userToken: true,
-        })
-            .then((res) => {
-                setFlag(!flag);
-                console.log(res);
-            })
-            .catch((err) => {})
-            .finally(() => setTimeout(() => setLoading(false), 100));
-    });
-
-    return (
-        <div className="sub-comment-content-wrapper">
-            <div className="sub-comment-content-body">
-                <div className="body-img">
-                    <img src={info.head_img} className="img-style" />
-                </div>
-
-                <div className="body-data">
-                    <div className="body-data-name text-ellipsis-style">
-                        {info.user_name}
-                    </div>
-
-                    <div className="body-data-text">
-                        <CollapseParagraph
-                            value={
-                                <>
-                                    {info.message}
-                                    {imgs.map((item) => {
-                                        return (
-                                            <a
-                                                className="comment-content-img"
-                                                href={item}
-                                                target="_blank"
-                                            >
-                                                [图片]
-                                            </a>
-                                        );
-                                    })}
-                                </>
-                            }
-                            rows={2}
-                        />
-                        {/* <CollapseText value={"fwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefofwfwfwefwenfownefo"} /> */}
-                    </div>
-
-                    <div className="body-data-time-operation">
-                        <div className="body-data-time">
-                            {timeFormat(info.created_at, "YYYY/MM/DD HH:mm")}
-                        </div>
-                        <div className="body-data-operation">
-                            <div
-                                className="operation-btn"
-                                onClick={() => onReply(info)}
-                            >
-                                <ReplyIcon className="icon-style" />
-                            </div>
-                            <div className="operation-btn" onClick={onLike}>
-                                {flag ? (
-                                    <LikeThemeIcon className="icon-style" />
-                                ) : (
-                                    <LikeIcon className="icon-style" />
-                                )}
-                                {flag ? info.like_num + 1 : info.like_num}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-};

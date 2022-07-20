@@ -21,15 +21,15 @@ import {
     SettingThemeIcon,
     SignOutIcon,
     SignOutThemeIcon,
-} from "../public/icons";
+} from "../../public/icons";
 import { useRouter } from "next/router";
-import { ButtonTheme } from "./baseComponents/ButtonTheme";
+import { ButtonTheme } from "../baseComponents/ButtonTheme";
 import { useMemoizedFn } from "ahooks";
-import { useStore } from "../store";
-import { userSignOut } from "../utils/auth";
-import { NetWorkApi } from "../utils/fetch";
-import { API } from "../types/api";
-import PostDynamic from "./modal/PostDynamic";
+import { useStore } from "../../store";
+import { userSignOut } from "../../utils/auth";
+import { NetWorkApi } from "../../utils/fetch";
+import { API } from "../../types/api";
+import PostDynamic from "../modal/PostDynamic";
 
 interface MessageMenuProps {
     name: string;
@@ -58,11 +58,14 @@ const MessageMenu: MessageMenuProps[] = [
 interface HeadersProps {}
 
 const Headers: NextPage<HeadersProps> = (props) => {
-    const { userInfo, signIn, signOut } = useStore();
+    const { userInfo, signIn, signOut, setHomePageKeywords } = useStore();
 
     const headerRef = useRef(null);
 
     const router = useRouter();
+
+    const [keywords, setKeywords] = useState<string>("");
+    const [showKeywords, setShowKeywords] = useState<boolean>(false);
 
     const [postMessage, setPostMessage] = useState<boolean>(false);
 
@@ -177,6 +180,9 @@ const Headers: NextPage<HeadersProps> = (props) => {
             if (!headerRef || !headerRef.current) return;
             const header = headerRef.current as unknown as HTMLDivElement;
 
+            if (scrollTop >= 376) setShowKeywords(true);
+            if (scrollTop < 376) setShowKeywords(false);
+
             if (
                 scrollTop >= header.offsetHeight &&
                 header.className.indexOf("header-outside-transparent") > -1
@@ -231,18 +237,32 @@ const Headers: NextPage<HeadersProps> = (props) => {
                                 Yak 社区
                             </div>
                         </div>
-                        <Divider
-                            type="vertical"
-                            className="community-divider"
-                        />
-                        <Input
-                            className="community-input"
-                            placeholder="搜索..."
-                            allowClear={true}
-                            prefix={
-                                <SearchOutlined className="community-input-icon" />
-                            }
-                        />
+                        {showKeywords && (
+                            <>
+                                <Divider
+                                    type="vertical"
+                                    className="community-divider"
+                                />
+                                <Input
+                                    className="community-input"
+                                    placeholder="搜索..."
+                                    allowClear={true}
+                                    prefix={
+                                        <SearchOutlined className="community-input-icon" />
+                                    }
+                                    value={keywords}
+                                    onChange={(e) =>
+                                        setKeywords(e.target.value)
+                                    }
+                                    onPressEnter={() =>
+                                        setHomePageKeywords({
+                                            value: keywords,
+                                            trigger: true,
+                                        })
+                                    }
+                                />
+                            </>
+                        )}
                     </div>
                 </div>
                 <div className="header-right">

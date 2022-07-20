@@ -2,12 +2,11 @@ import React, { useEffect, useLayoutEffect, useState } from "react";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { Tabs } from "antd";
-import {} from "@ant-design/icons";
 import { API } from "../types/api";
 import { NetWorkApi } from "../utils/fetch";
 import { useStore } from "../store";
 import Avatar from "../components/avatar/Avatar";
-import UserLayout from "../components/UserLayout";
+import UserLayout from "../components/layout/UserLayout";
 import SettingInfo from "../components/userinfo/SettingInfo";
 import UserFollow from "../components/userinfo/UserFollow";
 import UserCollect from "../components/userinfo/UserCollect";
@@ -32,7 +31,7 @@ const UserInfo: NextPage<ModifyUserProps> = (props) => {
         if (query.tabs) setActiveKey(query.tabs as string);
     }, []);
 
-    const fetchUserInfo = () => {
+    const fetchUserInfo = (noUpdate?: boolean) => {
         NetWorkApi<undefined, API.UserResponse>({
             method: "get",
             url: "/api/forum/user",
@@ -115,7 +114,7 @@ const UserInfo: NextPage<ModifyUserProps> = (props) => {
                             key="dynamic"
                         >
                             <UserDynamic
-                                info={user}
+                                userId={user.id}
                                 onUpdateUserInfo={fetchUserInfo}
                             />
                         </TabPane>
@@ -175,7 +174,7 @@ const UserInfo: NextPage<ModifyUserProps> = (props) => {
                             key="follow"
                         >
                             <UserFollow
-                                info={user}
+                                userId={user.id}
                                 onUpdateUserInfo={fetchUserInfo}
                             />
                         </TabPane>

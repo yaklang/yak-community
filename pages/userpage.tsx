@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { NextPage } from "next";
-import Link from "next/link";
 import { Tabs } from "antd";
-import {} from "@ant-design/icons";
 import Avatar from "../components/avatar/Avatar";
-import UserLayout from "../components/UserLayout";
+import UserLayout from "../components/layout/UserLayout";
 import { useRouter } from "next/router";
 import { API } from "../types/api";
 import { NetWorkApi } from "../utils/fetch";
 import { useMemoizedFn } from "ahooks";
 import { FetchUserFans } from "../types/extraApi";
 import { LeftOutThemeIcon } from "../public/icons";
+import UserDynamic from "../components/userinfo/UserDynamic";
 
 const { TabPane } = Tabs;
 
@@ -63,9 +62,7 @@ const UserPage: NextPage<UserPageProps> = (props) => {
                         follows={user.follow_num}
                         isFollow={user.is_follow}
                         showFollow={true}
-                        updateInfo={() =>
-                            setUser({ ...user, is_follow: !user.is_follow })
-                        }
+                        updateInfo={() => fetchUserInfo(user.user_id)}
                     />
 
                     <Tabs activeKey="dynamic" className="user-page-tabs">
@@ -93,7 +90,15 @@ const UserPage: NextPage<UserPageProps> = (props) => {
                                 </div>
                             }
                             key="dynamic"
-                        ></TabPane>
+                        >
+                            <UserDynamic
+                                userId={user.user_id}
+                                onlyShow={true}
+                                onUpdateUserInfo={() =>
+                                    fetchUserInfo(user.user_id)
+                                }
+                            />
+                        </TabPane>
                     </Tabs>
                 </div>
             )}

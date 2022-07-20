@@ -6,7 +6,7 @@ import { UploadImgIcon, UploadImgThemeIcon } from "../../public/icons";
 import SecondConfirm from "./SecondConfirm";
 import { NetWorkApi } from "../../utils/fetch";
 import { API } from "../../types/api";
-import { useMemoizedFn } from "ahooks";
+import { useGetState, useMemoizedFn } from "ahooks";
 import { failed } from "../../utils/notification";
 import { SingleUpload } from "../baseComponents/SingleUpload";
 import { ButtonTheme } from "../baseComponents/ButtonTheme";
@@ -43,7 +43,7 @@ const PostComment: NextPage<PostCommentProps> = (props) => {
         onCancel,
     } = props;
 
-    const [loading, setLoading] = useState<boolean>(false);
+    const [loading, setLoading, getLoading] = useGetState<boolean>(false);
     const [comment, setComment] = useState<API.NewDynamicComment>({
         ...DefaultCommentInfo,
     });
@@ -58,7 +58,7 @@ const PostComment: NextPage<PostCommentProps> = (props) => {
             return;
         }
 
-        if (loading) return;
+        if (getLoading()) return;
 
         let params: API.NewDynamicComment = {
             dynamic_id: dynamicId,
@@ -123,6 +123,7 @@ const PostComment: NextPage<PostCommentProps> = (props) => {
                     className="post-comment-input"
                     placeholder="请输入回复内容"
                     autoSize={{ minRows: 4, maxRows: 6 }}
+                    maxLength={150}
                     value={comment.message}
                     onChange={(e) =>
                         setComment({ ...comment, message: e.target.value })
@@ -133,6 +134,11 @@ const PostComment: NextPage<PostCommentProps> = (props) => {
                     <div className="operate-function">
                         <SingleUpload
                             setValue={(res) => {
+                                if (
+                                    comment.message_img &&
+                                    comment.message_img.length >= 3
+                                )
+                                    return;
                                 setComment({
                                     ...comment,
                                     message_img: comment.message_img?.concat([
@@ -143,7 +149,10 @@ const PostComment: NextPage<PostCommentProps> = (props) => {
                         >
                             <Button
                                 type="link"
-                                disabled={comment.message_img?.length === 3}
+                                disabled={
+                                    comment.message_img &&
+                                    comment.message_img.length >= 3
+                                }
                                 onMouseEnter={() => setImgIcon(true)}
                                 onMouseLeave={() => setImgIcon(false)}
                                 icon={
@@ -162,7 +171,7 @@ const PostComment: NextPage<PostCommentProps> = (props) => {
                             className={`operate-publish-btn ${
                                 !comment.message ? "opacity-50" : ""
                             }`}
-                            disabled={!comment.message}
+                            disabled={!comment.message || loading}
                             onClick={releaseComment}
                         >
                             发布

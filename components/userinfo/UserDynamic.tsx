@@ -1,65 +1,36 @@
 import React, { useState, useEffect } from "react";
 import { NextPage } from "next";
-import { Button, Divider, Tooltip } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
-import { MutualAttentionIcon } from "../../public/icons";
 import { API } from "../../types/api";
 import { useMemoizedFn } from "ahooks";
 import { NetWorkApi } from "../../utils/fetch";
-import {
-    FetchDynamicList,
-    FollowUserProps,
-    SearchPageMeta,
-} from "../../types/extraApi";
+import { FetchDynamicInfo, FetchDynamicList } from "../../types/extraApi";
 import CommentItem from "../CommentItem";
 
 interface UserDynamicProps {
-    info: API.UserDetail;
+    userId: number;
     onUpdateUserInfo: () => any;
+    onlyShow?: boolean;
+    isFollow?: boolean;
 }
 
 const UserDynamic: NextPage<UserDynamicProps> = (props) => {
-    const { info, onUpdateUserInfo } = props;
+    const { userId, onlyShow = false, onUpdateUserInfo } = props;
 
     const [list, setList] = useState<API.DynamicListResponse>({
-        data: [
-            {
-                id: 1,
-                created_at: new Date().getTime(),
-                updated_at: new Date().getTime(),
-                user_id: 1,
-                user_name: "123",
-                head_img: "",
-                content: "123",
-                content_img: "",
-                content_video: "",
-                topic_id: 123,
-                topics: "",
-                title: "",
-                cover: "",
-                download: false,
-                stars: 123,
-                collect: 123,
-                is_stars: false,
-                is_collect: false,
-                is_follow: false,
-                comment_num: 123,
-            },
-        ],
-        pagemeta: { page: 1, limit: 50, total: 0, total_page: 0 },
+        data: [],
+        pagemeta: { page: 1, limit: 10, total: 0, total_page: 1 },
     });
 
     const fetchList = useMemoizedFn(() => {
         NetWorkApi<FetchDynamicList, API.DynamicListResponse>({
             method: "get",
             url: "/api/dynamic/issue",
-            params: { Page: 1, Limit: 10, Order: "desc", user_id: info.id },
+            params: { page: 1, limit: 10, order: "desc", user_id: userId },
             userToken: true,
         })
             .then((res) => {
-                console.log(res);
                 setList({
-                    data: res.data || [],
+                    data: list.data.concat(res.data || []),
                     pagemeta: res.pagemeta,
                 });
             })
@@ -81,19 +52,47 @@ const UserDynamic: NextPage<UserDynamicProps> = (props) => {
                     pagemeta: list.pagemeta,
                 });
             }
-            if (type === "user") return;
+            if (type === "user") {
+                setList({
+                    data: list.data.map((item) => {
+                        item.is_follow = !item.is_follow;
+                        return item;
+                    }),
+                    pagemeta: list.pagemeta,
+                });
+                onUpdateUserInfo();
+            }
         }
     );
 
+    // 更新动态局部数据(请求后端获取)
+    const updateDynamicInfoApi = useMemoizedFn((id: number) => {
+        NetWorkApi<FetchDynamicInfo, API.DynamicListDetailResponse>({
+            method: "get",
+            url: "/api/dynamic/detail",
+            params: { id },
+            userToken: true,
+        })
+            .then((res) => {
+                setList({
+                    data: list.data.map((item) => {
+                        if (item.id === res.data.id) return res.data;
+                        return item;
+                    }),
+                    pagemeta: list.pagemeta,
+                });
+            })
+            .catch((err) => {});
+    });
+
     const delDynamic = useMemoizedFn((info: API.DynamicLists) => {
-        NetWorkApi<{ id: number }, API.DynamicListResponse>({
+        NetWorkApi<{ id: number }, API.ActionSucceeded>({
             method: "delete",
             url: "/api/dynamic/issue",
             params: { id: info.id },
             userToken: true,
         })
             .then((res) => {
-                console.log(res);
                 setList({
                     data: list.data.filter((item) => item.id !== info.id),
                     pagemeta: list.pagemeta,
@@ -105,9 +104,11 @@ const UserDynamic: NextPage<UserDynamicProps> = (props) => {
 
     return (
         <div className="user-dynamic-wrapper">
-            <div className="user-dynamic-hint">
-                {`共 ${list.pagemeta.total || 0} 条动态`}
-            </div>
+            {!onlyShow && (
+                <div className="user-dynamic-hint">
+                    {`共 ${list.pagemeta.total || 0} 条动态`}
+                </div>
+            )}
 
             <div className="user-dynamic-body">
                 {list.data.map((item, index) => {
@@ -116,11 +117,10 @@ const UserDynamic: NextPage<UserDynamicProps> = (props) => {
                             key={item.id}
                             info={item}
                             updateInfo={updateDynamicInfo}
-                            isOwner={true}
+                            updateDynamicInfo={updateDynamicInfoApi}
+                            isOwner={!onlyShow}
                             onEdit={() => {}}
-                            onDel={() => {
-                                delDynamic(item);
-                            }}
+                            onDel={() => delDynamic(item)}
                         />
                     );
                 })}

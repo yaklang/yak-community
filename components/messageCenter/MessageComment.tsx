@@ -28,9 +28,9 @@ const MessageComment: NextPage<MessageCommentProps> = (props) => {
             method: "get",
             url: "/api/message/center/content",
             params: {
-                Page: 1,
-                Limit: 20,
-                Order: "desc",
+                page: 1,
+                limit: 20,
+                order: "desc",
             },
             userToken: true,
         })

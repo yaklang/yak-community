@@ -6,32 +6,40 @@ import { API } from "../types/api";
 import { queryURLParams } from "../utils/urlTool";
 import { failed, success } from "../utils/notification";
 import { useStore } from "../store";
-import { setTokenUser } from "../utils/auth";
+import { setPlatform, setTokenUser } from "../utils/auth";
 import { useRouter } from "next/router";
+import { UpdateAuthProps } from "../types/extraApi";
 
 interface MiddleProps {}
 
 const Middle: NextPage<MiddleProps> = (props) => {
-    const { signIn, setGithubAuth } = useStore();
+    const { signIn, githubAuth, setGithubAuth, clearGithubAuth } = useStore();
 
     const router = useRouter();
 
     const timeRef = useRef<number>(0);
 
     useEffect(() => {
-        const time = setInterval(() => {
-            if (timeRef.current >= 30) {
-                clearInterval(time);
-                failed("登录超时，请重新登录");
-                router.push("/login");
-            }
-            timeRef.current = timeRef.current + 1;
-        }, 1000);
-
         const url = window.location.href;
         const params = queryURLParams(url);
         const source = params.source;
         const code = params.code;
+
+        const time = setInterval(() => {
+            if (timeRef.current >= 30) {
+                clearInterval(time);
+                failed("登录超时，请重新登录");
+                router.push(
+                    source.indexOf("auth") > -1
+                        ? {
+                              pathname: "/userinfo",
+                              query: { tabs: "setting" },
+                          }
+                        : "/login"
+                );
+            }
+            timeRef.current = timeRef.current + 1;
+        }, 1000);
 
         if (source === "wechatlogin" || source === "wechatauth") {
             window.parent.postMessage({ source, code }, "*");
@@ -45,6 +53,7 @@ const Middle: NextPage<MiddleProps> = (props) => {
             })
                 .then((res) => {
                     clearInterval(time);
+                    setPlatform("github");
                     if (!res.user_id) {
                         success("登录成功，新用户正在跳转手机绑定页面");
                         setGithubAuth({
@@ -64,19 +73,32 @@ const Middle: NextPage<MiddleProps> = (props) => {
                         setTimeout(() => router.push("/"), 50);
                     }
                 })
-                .catch((err) => {});
+                .catch((err) => {
+                    setTimeout(() => router.push("/login"), 50);
+                });
         }
 
         if (source === "githubauth") {
-            NetWorkApi<LoginCode, API.AuthResponse>({
+            NetWorkApi<UpdateAuthProps, API.ActionSucceeded>({
                 method: "get",
-                url: "/api/auth",
-                params: { code, type: "github" },
+                url: "/api/update/auth",
+                params: { code, type: "github", auth_id: githubAuth.auth_id },
+                userToken: true,
             })
                 .then((res) => {
-                    console.log("github", res);
+                    clearGithubAuth();
                 })
-                .catch((err) => {});
+                .catch((err) => {})
+                .finally(() => {
+                    setTimeout(
+                        () =>
+                            router.push({
+                                pathname: "/userinfo",
+                                query: { tabs: "setting" },
+                            }),
+                        50
+                    );
+                });
         }
     }, []);
 

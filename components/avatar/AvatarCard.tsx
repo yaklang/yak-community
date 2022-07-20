@@ -6,35 +6,39 @@ import { API } from "../../types/api";
 import { FollowUserProps } from "../../types/extraApi";
 import { NetWorkApi } from "../../utils/fetch";
 import { ButtonTheme } from "../baseComponents/ButtonTheme";
-import { useMemoizedFn } from "ahooks";
+import { useGetState, useMemoizedFn } from "ahooks";
 
 interface AvatarCardProps {
     info: API.UserHead;
-    isFollow: boolean;
     updateInfo?: () => any;
 }
 
 const AvatarCard: NextPage<AvatarCardProps> = (props) => {
-    const { info, isFollow, updateInfo } = props;
+    const { info, updateInfo } = props;
 
     const router = useRouter();
 
+    const [loading, setLoading, getLoading] = useGetState<boolean>(false);
     const [showCancel, setShowCancel] = useState<boolean>(false);
 
     const followUser = useMemoizedFn(() => {
+        if (getLoading()) return;
+
+        setLoading(true);
         NetWorkApi<FollowUserProps, API.ActionSucceeded>({
             method: "post",
             url: "/api/user/follow",
             params: {
                 follow_user_id: info.user_id,
-                operation: isFollow ? "remove" : "add",
+                operation: info.is_follow ? "remove" : "add",
             },
             userToken: true,
         })
             .then((res) => {
                 if (updateInfo) updateInfo();
             })
-            .catch((err) => {});
+            .catch((err) => {})
+            .finally(() => setTimeout(() => setLoading(false), 300));
     });
 
     return (
@@ -57,9 +61,10 @@ const AvatarCard: NextPage<AvatarCardProps> = (props) => {
                         </div>
                     </div>
                     <div className="info-follow">
-                        {isFollow ? (
+                        {info.is_follow ? (
                             <ButtonTheme
                                 className="info-follow-btn"
+                                disabled={loading}
                                 isInfo={!showCancel}
                                 isDanger={showCancel}
                                 onMouseEnter={() => setShowCancel(true)}
@@ -71,6 +76,7 @@ const AvatarCard: NextPage<AvatarCardProps> = (props) => {
                         ) : (
                             <ButtonTheme
                                 className="info-follow-btn"
+                                disabled={loading}
                                 onClick={followUser}
                             >
                                 <PlusOutlined />

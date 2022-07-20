@@ -1,8 +1,8 @@
 export interface SearchPageMeta {
-    Page: number;
-    Limit: number;
-    OrderBy?: string;
-    Order: "asc" | "desc";
+    page: number;
+    limit: number;
+    order_by?: string;
+    order: "asc" | "desc";
 }
 
 export interface FetchDynamicList extends SearchPageMeta {
@@ -43,4 +43,14 @@ export interface FetchSubComments extends SearchPageMeta {
 export interface StarsComment {
     comment_id: number;
     operation: OperationType;
+}
+
+export interface UpdateAuthProps {
+    code: string;
+    type: "github" | "wechat";
+    auth_id: number;
+}
+
+export interface FetchFollowList extends SearchPageMeta {
+    user_id: number;
 }

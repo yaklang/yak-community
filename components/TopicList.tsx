@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { NextPage } from "next";
 import { Button } from "antd";
 import { SyncOutlined } from "@ant-design/icons";
@@ -12,10 +12,6 @@ const TopicIcon: string[] = [
     "/images/topic/topic-2.png",
     "/images/topic/topic-3.png",
 ];
-
-interface TopicInfoProps {
-    name: string;
-}
 
 interface TopicListProps {}
 
@@ -46,9 +42,9 @@ const TopicList: NextPage<TopicListProps> = (props) => {
             method: "get",
             url: "/api/forum/topics/hot",
             params: {
-                Page: 1,
-                Limit: 30,
-                Order: "desc",
+                page: 1,
+                limit: 30,
+                order: "desc",
             },
             userToken: true,
         })

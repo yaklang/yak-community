@@ -1,7 +1,7 @@
 import { AppProps } from "next/app";
 import { NextPage } from "next";
 import Head from "next/head";
-import Layouts from "../components/Layouts";
+import Layouts from "../components/layout/Layouts";
 import "../styles/globals.scss";
 import "antd/dist/antd.css";
 

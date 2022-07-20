@@ -43,6 +43,14 @@ export declare namespace API {
         content: string;
         content_img: string;
         content_video: string;
+        /**
+         * 关注当前登录用户
+         */
+        follow_me: boolean;
+        /**
+         * 登录用户是否已关注
+         */
+        me_follow: boolean;
     }
     export interface UserDetail {
         id: number;
@@ -133,6 +141,7 @@ export declare namespace API {
          */
         id?: number;
         content?: string;
+        old_content_img?: string[];
         content_video?: string;
         /**
          * 话题id
@@ -176,10 +185,10 @@ export declare namespace API {
          */
         dynamic_cover: string;
     }
-    export interface MessageCenterFollowResponse extends Paging {
-        data: MessageCenterFollow[];
+    export interface MessageCenterFansResponse extends Paging {
+        data: MessageCenterFans[];
     }
-    export interface MessageCenterFollow {
+    export interface MessageCenterFans {
         id: number;
         created_at: number;
         updated_at: number;
@@ -187,6 +196,14 @@ export declare namespace API {
         action_user_name: string;
         action_head_img: string;
         follow_user_id: number;
+        /**
+         * 关注当前登录用户
+         */
+        follow_me: boolean;
+        /**
+         * 登录用户是否已关注
+         */
+        me_follow: boolean;
     }
     export interface MessageCenterCommentResponse extends Paging {
         data: MessageCenterComment[];
@@ -243,6 +260,20 @@ export declare namespace API {
          * 动态视频-封面图
          */
         dynamic_cover: string;
+    }
+    export interface MessageCenter {
+        /**
+         * 回复评论条数
+         */
+        comment_num: number;
+        /**
+         * 粉丝关注条数
+         */
+        fans: number;
+        /**
+         * 点赞条数
+         */
+        stars_num: number;
     }
     export interface GormBaseModel {
         id: number;
@@ -316,6 +347,14 @@ export declare namespace API {
     }
     export interface DynamicComment extends Paging {
         data: DynamicCommentList[];
+    }
+    export interface DeleteResource {
+        csrf_token?: string;
+        file_name: string[];
+        /**
+         * 删除图片传'img' 视频传 'video'
+         */
+        file_type: string;
     }
     export interface AuthResponse {
         user_id: number;
