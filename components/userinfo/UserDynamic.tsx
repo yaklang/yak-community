@@ -5,12 +5,12 @@ import { useMemoizedFn } from "ahooks";
 import { NetWorkApi } from "../../utils/fetch";
 import { FetchDynamicInfo, FetchDynamicList } from "../../types/extraApi";
 import CommentItem from "../CommentItem";
+import PostDynamic from "../modal/PostDynamic";
 
 interface UserDynamicProps {
     userId: number;
     onUpdateUserInfo: () => any;
     onlyShow?: boolean;
-    isFollow?: boolean;
 }
 
 const UserDynamic: NextPage<UserDynamicProps> = (props) => {
@@ -85,6 +85,31 @@ const UserDynamic: NextPage<UserDynamicProps> = (props) => {
             .catch((err) => {});
     });
 
+    const [postDynamic, setPostDynamic] = useState<boolean>(false);
+    const [dynamicId, setDynamicId] = useState<number>(0);
+    const editDynamic = useMemoizedFn((info: API.DynamicLists) => {
+        setDynamicId(info.id);
+        setPostDynamic(true);
+    });
+    const updateDynamicOptInfo = useMemoizedFn((id: number) => {
+        NetWorkApi<FetchDynamicInfo, API.DynamicListDetailResponse>({
+            method: "get",
+            url: "/api/dynamic/detail",
+            params: { id },
+            userToken: true,
+        })
+            .then((res) => {
+                setList({
+                    data: list.data.map((item) => {
+                        if (item.id === id) return res.data;
+                        return item;
+                    }),
+                    pagemeta: list.pagemeta,
+                });
+            })
+            .catch((err) => {});
+    });
+
     const delDynamic = useMemoizedFn((info: API.DynamicLists) => {
         NetWorkApi<{ id: number }, API.ActionSucceeded>({
             method: "delete",
@@ -119,12 +144,23 @@ const UserDynamic: NextPage<UserDynamicProps> = (props) => {
                             updateInfo={updateDynamicInfo}
                             updateDynamicInfo={updateDynamicInfoApi}
                             isOwner={!onlyShow}
-                            onEdit={() => {}}
+                            onEdit={() => editDynamic(item)}
                             onDel={() => delDynamic(item)}
                         />
                     );
                 })}
             </div>
+
+            <PostDynamic
+                existId={dynamicId}
+                visible={postDynamic}
+                onCancel={(flag) => {
+                    if (flag) updateDynamicOptInfo(dynamicId);
+
+                    setDynamicId(0);
+                    setPostDynamic(false);
+                }}
+            />
         </div>
     );
 };

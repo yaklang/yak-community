@@ -5,12 +5,16 @@ import { failed } from "../../utils/notification";
 import { NetWorkApi } from "../../utils/fetch";
 import { generateTimeName } from "../../utils/timeTool";
 
-const imgJudge = (file: RcFile) => {
+export const imgJudge = (file: RcFile) => {
     if (file.size > 10 * 1024 * 1024) {
         failed("请上传10MB以内的图片");
         return false;
     }
-    if (!["image/jpg", "image/jpeg", "image/png"].includes(file.type)) {
+    if (
+        !["image/jpg", "image/jpeg", "image/png", "image/gif"].includes(
+            file.type
+        )
+    ) {
         failed("请上传jpg、jpeg、png格式的图片");
         return false;
     }
@@ -22,8 +26,12 @@ const videoJudge = (file: RcFile) => {
         failed("请上传200MB以内的视频");
         return false;
     }
-    if (!["video/mp4"].includes(file.type)) {
-        failed("请上传MP4格式的视频");
+    if (
+        !["video/mp4", "video/avi", "video/wmv", "video/flv"].includes(
+            file.type
+        )
+    ) {
+        failed("请上传MP4/AVI/WMV/FLV格式的视频");
         return false;
     }
     return true;
@@ -48,7 +56,7 @@ export const SingleUpload: React.FC<SingleUploadProps> = React.memo((props) => {
         ...restProps
     } = props;
 
-    const accept = isVideo ? ".mp4" : ".png,.jpg,.jpeg";
+    const accept = isVideo ? ".mp4,.avi,.wmv,.flv" : ".png,.jpg,.jpeg,.gif";
     const judge = isVideo ? videoJudge : imgJudge;
     const api = isVideo ? "/api/upload/video" : "/api/upload/img";
 
@@ -69,7 +77,10 @@ export const SingleUpload: React.FC<SingleUploadProps> = React.memo((props) => {
                 var formData = new FormData();
                 if (isVideo) {
                     formData.append("file", file);
-                    formData.append("file_name", name);
+                    formData.append(
+                        "file_name",
+                        `${name}.${file.name.split(".").pop()}`
+                    );
                 } else {
                     formData.append("file_name", file);
                     formData.append("type", file.type);
@@ -82,7 +93,7 @@ export const SingleUpload: React.FC<SingleUploadProps> = React.memo((props) => {
                     userToken: true,
                 })
                     .then((res) => {
-                        setValue(res, name);
+                        setValue(res, `${name}.${file.name.split(".").pop()}`);
                         if (onSuccess) onSuccess(file);
                     })
                     .catch((err) => {

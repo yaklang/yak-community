@@ -76,11 +76,17 @@ $REM: 16;
                 border-radius: 4px;
             }
 
-            .follow-operate-btn {
+            .follow-operate-btn-true {
                 cursor: pointer;
             }
-            .follow-operate-btn:hover {
+            .follow-operate-btn-true:hover {
                 color: #f73c1b;
+            }
+            .follow-operate-btn-false {
+                cursor: pointer;
+            }
+            .follow-operate-btn-false:hover {
+                color: var(--base-theme-color);
             }
         }
     }

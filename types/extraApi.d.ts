@@ -54,3 +54,7 @@ export interface UpdateAuthProps {
 export interface FetchFollowList extends SearchPageMeta {
     user_id: number;
 }
+
+export interface FetchFanList extends SearchPageMeta {
+    user_id: number;
+}

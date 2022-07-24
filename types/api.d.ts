@@ -20,6 +20,9 @@ export declare namespace API {
          * 关注数
          */
         follow_num: number;
+        /**
+         * 粉丝
+         */
         fans: number;
         /**
          * 收藏
@@ -29,6 +32,9 @@ export declare namespace API {
          * 动态
          */
         dynamic_num: number;
+        /**
+         * 是否关注
+         */
         is_follow: boolean;
     }
     export interface UserFollows extends UserFollow {}
@@ -137,11 +143,14 @@ export declare namespace API {
     }
     export interface NewDynamic {
         /**
-         * 动态id
+         * 动态id 编辑时使用
          */
         id?: number;
-        content?: string;
+        /**
+         * 编辑时修改后的老图片url组
+         */
         old_content_img?: string[];
+        content?: string;
         content_video?: string;
         /**
          * 话题id
@@ -184,6 +193,8 @@ export declare namespace API {
          * 动态视频-封面图
          */
         dynamic_cover: string;
+        /** 视频标题 */
+        dynamic_title: string;
     }
     export interface MessageCenterFansResponse extends Paging {
         data: MessageCenterFans[];
@@ -224,6 +235,7 @@ export declare namespace API {
          * 评论图片
          */
         message_img: string;
+        root_id: number;
         /**
          * 回复用户id
          */
@@ -260,6 +272,7 @@ export declare namespace API {
          * 动态视频-封面图
          */
         dynamic_cover: string;
+        dynamic_title: string;
     }
     export interface MessageCenter {
         /**

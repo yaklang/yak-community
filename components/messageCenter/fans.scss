@@ -71,10 +71,27 @@ $REM: 16;
             height: 100%;
             display: flex;
             align-items: center;
+
+            .fans-operate-icon {
+                margin-right: REM(8);
+                font-size: REM(24);
+                height: REM(20);
+                overflow: hidden;
+                margin-top: REM(-2);
+                border-radius: 4px;
+            }
+
             &-btn {
                 height: REM(28);
                 font-size: REM(14);
             }
         }
     }
+}
+
+.mutual-attention-hint-style {
+    height: REM(20);
+    font-size: REM(12);
+    color: #ffffff;
+    line-height: REM(20);
 }

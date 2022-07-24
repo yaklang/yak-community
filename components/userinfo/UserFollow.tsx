@@ -48,12 +48,25 @@ const UserFollow: NextPage<UserFollowProps> = (props) => {
             userToken: true,
         })
             .then((res) => {
-                setList({
-                    data: list.data.filter(
-                        (item) => item.follow_user_id !== id
-                    ),
-                    pagemeta: list.pagemeta,
-                });
+                if (onlyShow) {
+                    setList({
+                        data: list.data.map((item) => {
+                            if (item.follow_user_id === id) {
+                                item.me_follow = !item.me_follow;
+                            }
+                            return item;
+                        }),
+                        pagemeta: list.pagemeta,
+                    });
+                } else {
+                    setList({
+                        data: list.data.filter(
+                            (item) => item.follow_user_id !== id
+                        ),
+                        pagemeta: list.pagemeta,
+                    });
+                }
+
                 onUpdateUserInfo();
             })
             .catch((err) => {});
@@ -142,56 +155,36 @@ const UserFollow: NextPage<UserFollowProps> = (props) => {
                             </div>
 
                             <div className="follow-operate">
-                                {!onlyShow ? (
-                                    <>
-                                        {item.me_follow && (
-                                            <Tooltip
-                                                placement="bottom"
-                                                title={
-                                                    <span className="mutual-attention-hint-style">
-                                                        互相关注
-                                                    </span>
-                                                }
-                                            >
-                                                <MutualAttentionIcon className="follow-operate-icon" />
-                                            </Tooltip>
-                                        )}
-                                        <div
-                                            className="follow-operate-btn"
-                                            onClick={() =>
-                                                cancelFollow(
-                                                    item.follow_user_id
-                                                )
-                                            }
-                                        >
-                                            取消关注
-                                        </div>
-                                    </>
+                                {item.me_follow && item.follow_me && (
+                                    <Tooltip
+                                        placement="bottom"
+                                        title={
+                                            <span className="mutual-attention-hint-style">
+                                                互相关注
+                                            </span>
+                                        }
+                                    >
+                                        <MutualAttentionIcon className="follow-operate-icon" />
+                                    </Tooltip>
+                                )}
+                                {onlyShow ? (
+                                    <div
+                                        className={`follow-operate-btn-${item.me_follow}`}
+                                        onClick={() =>
+                                            cancelFollow(item.follow_user_id)
+                                        }
+                                    >
+                                        {item.me_follow ? "取消关注" : "关注"}
+                                    </div>
                                 ) : (
-                                    <>
-                                        {item.me_follow && item.follow_me && (
-                                            <Tooltip
-                                                placement="bottom"
-                                                title={
-                                                    <span className="mutual-attention-hint-style">
-                                                        互相关注
-                                                    </span>
-                                                }
-                                            >
-                                                <MutualAttentionIcon className="follow-operate-icon" />
-                                            </Tooltip>
-                                        )}
-                                        <div
-                                            className="follow-operate-btn"
-                                            onClick={() =>
-                                                cancelFollow(
-                                                    item.follow_user_id
-                                                )
-                                            }
-                                        >
-                                            取消关注
-                                        </div>
-                                    </>
+                                    <div
+                                        className="follow-operate-btn-true"
+                                        onClick={() =>
+                                            cancelFollow(item.follow_user_id)
+                                        }
+                                    >
+                                        取消关注
+                                    </div>
                                 )}
                             </div>
                         </div>

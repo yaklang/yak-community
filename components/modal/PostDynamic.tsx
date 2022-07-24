@@ -28,7 +28,7 @@ import { useDebounce, useGetState, useMemoizedFn } from "ahooks";
 import InfoConfirm from "./InfoConfirm";
 import { RcFile } from "antd/lib/upload";
 import { failed } from "../../utils/notification";
-import { SingleUpload } from "../baseComponents/SingleUpload";
+import { imgJudge, SingleUpload } from "../baseComponents/SingleUpload";
 import { useStore } from "../../store";
 import { generateTimeName } from "../../utils/timeTool";
 
@@ -103,11 +103,48 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
             })
                 .then((res) => {
                     const { data } = res;
+                    console.log(123);
                     const imgs: string[] =
                         !data.content_img || data.content_img === "null"
                             ? []
                             : JSON.parse(data.content_img);
 
+                    setTimeout(() => {
+                        setDynamic({
+                            ...getDynamic(),
+                            content: data.content,
+                            content_img: imgs.map((item) => {
+                                const imgInfo: { src: string; name: string } = {
+                                    src: item,
+                                    name: (item.split("/").pop() || "").split(
+                                        "."
+                                    )[0],
+                                };
+                                return imgInfo;
+                            }),
+                            content_video: {
+                                src: data.content_video,
+                                name: (
+                                    data.content_video.split("/").pop() || ""
+                                ).split(".")[0],
+                            },
+                            topics: data.topic_info
+                                ? data.topic_info.map((item) => {
+                                      const topicInfo: API.TopicList = {
+                                          id: item.id,
+                                          created_at: 0,
+                                          updated_at: 0,
+                                          topics: item.topics,
+                                          hot_num: 0,
+                                      };
+                                      return topicInfo;
+                                  })
+                                : [],
+                            title: data.title,
+                            cover: data.cover,
+                            download: data.download,
+                        });
+                    }, 200);
                     setDynamic({
                         ...getDynamic(),
                         content: data.content,
@@ -211,6 +248,11 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
         if (dynamic.content_img.length !== 0) {
             params.csrf_token = dynamic.csrf_token;
         }
+        if (existId && dynamic.content_img.length !== 0) {
+            params.old_content_img = dynamic.content_img
+                .filter((item) => item.src)
+                .map((item) => item.src);
+        }
         if (dynamic.content_video.src) {
             params.content_video = dynamic.content_video.src;
             params.title = dynamic.title;
@@ -234,19 +276,6 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
     });
 
     const [secondShow, setSecondShow] = useState<boolean>(false);
-
-    // 图片文件规则判断
-    const imgJudge = (file: RcFile) => {
-        if (file.size > 10 * 1024 * 1024) {
-            failed("请上传10MB以内的图片");
-            return false;
-        }
-        if (!["image/jpg", "image/jpeg", "image/png"].includes(file.type)) {
-            failed("请上传10MB以内的图片");
-            return false;
-        }
-        return true;
-    };
 
     const [imgIcon, setImgIcon] = useState<boolean>(false);
     const imgTime = useRef<any>(null);
@@ -274,7 +303,10 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
         var formData = new FormData();
         formData.append("file", file);
         formData.append("csrf_token", dynamic.csrf_token);
-        formData.append("file_name", file.name);
+        formData.append(
+            "file_name",
+            `${fileName}.${file.name.split(".").pop()}`
+        );
         return NetWorkApi<FormData, API.ActionSucceeded>({
             method: "post",
             url: "/api/upload/imgs",
@@ -282,16 +314,17 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
             userToken: true,
         })
             .then((res) => {
-                imgList.current.push({ src: "", name: fileName });
+                imgList.current.push({
+                    src: (file as any).path,
+                    name: `${fileName}.${file.name.split(".").pop()}`,
+                });
                 uploadImg();
             })
             .catch((err) => {
                 uploadImg();
             });
     });
-    const delImg = useMemoizedFn((index: number) => {
-        const name = dynamic.content_img[index].name;
-
+    const delImg = useMemoizedFn((name: string) => {
         NetWorkApi<API.DeleteResource, API.ActionSucceeded>({
             method: "post",
             url: "/api/delete/resource",
@@ -305,7 +338,9 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
             .then((res) => {
                 setDynamic({
                     ...dynamic,
-                    content_img: dynamic.content_img.splice(index, 1),
+                    content_img: dynamic.content_img.filter(
+                        (item) => item.name !== name
+                    ),
                 });
             })
             .catch((err) => {});
@@ -482,7 +517,7 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
                             />
                         ) : (
                             <Upload
-                                accept=".png,.jpg,.jpeg"
+                                accept=".png,.jpg,.jpeg.,gif"
                                 showUploadList={false}
                                 multiple={true}
                                 beforeUpload={(file: RcFile) => {
@@ -646,7 +681,7 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
                                     <img src={item.src} className="img-style" />
                                     <div
                                         className="img-opt-del"
-                                        onClick={() => delImg(index)}
+                                        onClick={() => delImg(item.name)}
                                     >
                                         x
                                     </div>
@@ -655,7 +690,7 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
                         })}
                         {dynamic.content_img.length !== 18 && (
                             <Upload
-                                accept=".png,.jpg,.jpeg"
+                                accept=".png,.jpg,.jpeg,.gif"
                                 showUploadList={false}
                                 multiple={true}
                                 beforeUpload={(file: RcFile) => {

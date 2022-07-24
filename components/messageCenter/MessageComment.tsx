@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { NextPage } from "next";
 import { Button } from "antd";
 import { CaretRightOutlined } from "@ant-design/icons";
-import { useMemoizedFn } from "ahooks";
+import { useGetState, useMemoizedFn } from "ahooks";
 import { NetWorkApi } from "../../utils/fetch";
 import { API } from "../../types/api";
 import { SearchPageMeta, StarsComment } from "../../types/extraApi";
@@ -14,12 +14,13 @@ import {
     ReplyThemeIcon,
 } from "../../public/icons";
 import PostComment from "../modal/PostComment";
+import { useRouter } from "next/router";
 
 interface MessageCommentProps {}
 
 const MessageComment: NextPage<MessageCommentProps> = (props) => {
     const [lists, setLists] = useState<API.MessageCenterCommentResponse>({
-        data: [{ id: 1 }],
+        data: [],
         pagemeta: { page: 1, limit: 20, total: 0, total_page: 1 },
     });
 
@@ -29,14 +30,16 @@ const MessageComment: NextPage<MessageCommentProps> = (props) => {
             url: "/api/message/center/content",
             params: {
                 page: 1,
-                limit: 20,
+                limit: 10,
                 order: "desc",
             },
             userToken: true,
         })
             .then((res) => {
-                console.log(res);
-                setLists({ data: res.data || [], pagemeta: res.pagemeta });
+                setLists({
+                    data: lists.data.concat(res.data || []),
+                    pagemeta: res.pagemeta,
+                });
             })
             .catch((err) => {});
     });
@@ -65,15 +68,20 @@ interface CommentMessageProp {
 }
 const CommentMessage: React.FC<CommentMessageProp> = (props) => {
     const { info } = props;
+    const imgs: string[] =
+        !info.dynamic_content_img || info.dynamic_content_img === "null"
+            ? undefined
+            : JSON.parse(info.dynamic_content_img);
+
+    const router = useRouter();
 
     const [replyShow, setReplyShow] = useState<boolean>(false);
 
-    const [starsLoading, setStarLoading] = useState<boolean>(false);
+    const [starsLoading, setStarLoading, getStarLoading] =
+        useGetState<boolean>(false);
     const [starShow, setStarShow] = useState<boolean>(false);
     const onStar = useMemoizedFn(() => {
-        setStarShow(!starShow);
-
-        if (starsLoading) return;
+        if (getStarLoading()) return;
 
         setStarLoading(true);
         NetWorkApi<StarsComment, API.ActionSucceeded>({
@@ -87,7 +95,6 @@ const CommentMessage: React.FC<CommentMessageProp> = (props) => {
         })
             .then((res) => {
                 setStarShow(!starShow);
-                console.log(res);
             })
             .catch((err) => {})
             .finally(() => setTimeout(() => setStarLoading(false), 100));
@@ -97,11 +104,22 @@ const CommentMessage: React.FC<CommentMessageProp> = (props) => {
         <div className="comment-message-wrapper">
             <div className="comment-message-reply">
                 <div className="reply-img">
-                    <img src={info.by_head_img} className="img-style" />
+                    <img
+                        src={info.by_head_img}
+                        className="img-style"
+                        onClick={() =>
+                            router.push(`/userpage?user=${info.user_id}`)
+                        }
+                    />
                 </div>
 
                 <div className="reply-content">
-                    <div className="reply-name text-ellipsis-style">
+                    <div
+                        className="reply-name text-ellipsis-style"
+                        onClick={() =>
+                            router.push(`/userpage?user=${info.user_id}`)
+                        }
+                    >
                         {info.by_user_name || "123"}
                     </div>
                     <div className="reply-body">{info.by_message}</div>
@@ -111,143 +129,127 @@ const CommentMessage: React.FC<CommentMessageProp> = (props) => {
                 </div>
             </div>
 
-            {/* <div className="comment-message-dynamic">
-                <div className="dynamic-wrapper">
-                    <div className="dynamic-name text-ellipsis-style">
-                        {`@${info.dynamic_user_name}`}
-                    </div>
+            {!info.root_id && (
+                <div className="comment-message-dynamic">
+                    {imgs.length === 0 && !info.dynamic_cover && (
+                        <div className="dynamic-wrapper">
+                            <div className="dynamic-name text-ellipsis-style">
+                                {`@${info.dynamic_user_name}`}
+                            </div>
 
-                    <div className="dynamic-content">
-                        看到建筑找对称，见水拍倒影，当然，玻璃，镜子也是可以利用的小米
-                        11pro拍摄。建筑找对称，见水拍倒影，当然，玻璃，镜子也是可以利用的小米
-                        11pro拍摄。看到建筑找对称，见水拍倒影，当然，玻璃，镜子也是可以利用的小米
-                        11pro拍摄。建筑找对称，见水拍倒影，当然，玻璃，镜子也是可以利用的小米
-                        11pro拍摄。看到建筑找对称，见水拍倒影，当然，玻璃，镜子也是可以利用的小米
-                        11pro拍摄。建筑找对称，见水拍倒影，当然，玻璃，镜子也是可以利用的小米
-                        11pro拍摄。
-                    </div>
+                            <div className="dynamic-content">
+                                {info.dynamic_content}
+                            </div>
+                        </div>
+                    )}
+
+                    {imgs.length > 0 && (
+                        <div className="dynamic-img-wrapper">
+                            <div className="dynamic-img">
+                                <img src={imgs[0]} className="img-style" />
+                            </div>
+                            <div className="dynamic-content">
+                                <div className="dynamic-name text-ellipsis-style">
+                                    {`@${info.dynamic_user_name}`}
+                                </div>
+
+                                <div className="dynamic-text">
+                                    {info.dynamic_content}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {!!info.dynamic_cover && (
+                        <div className="dynamic-video-wrapper">
+                            <div className="dynamic-video">
+                                <img
+                                    src={info.dynamic_cover}
+                                    className="img-style"
+                                />
+                                <div className="video-mask">
+                                    <CaretRightOutlined className="icon-style" />
+                                </div>
+                            </div>
+                            <div className="dynamic-content">
+                                <div className="dynamic-name text-ellipsis-style">
+                                    {`@${info.dynamic_user_name}`}
+                                </div>
+
+                                <div className="video-title text-ellipsis-style">
+                                    {info.dynamic_title}
+                                </div>
+
+                                <div className="dynamic-text text-ellipsis-style">
+                                    {info.dynamic_content}
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
+            )}
 
-                <div className="dynamic-img-wrapper">
-                    <div className="dynamic-img">
-                        <img src="" className="img-style" />
+            {!!info.root_id && (
+                <div className="comment-message-dynamic-reply">
+                    <div className="dynamic-reply-content">
+                        <a></a>
                     </div>
-                    <div className="dynamic-content">
-                        <div className="dynamic-name text-ellipsis-style">
-                            {`@${info.dynamic_user_name}`}
-                        </div>
 
-                        <div className="dynamic-text">
-                            看到建筑找对称，见水拍倒影，当然，玻璃，镜子也是可以利用的小米
-                            11pro拍摄。建筑找对称，见水拍倒影，当然，玻璃，镜子也是可以利用的小米
-                            11pro拍摄。看到建筑找对称，见水拍倒影，当然，玻璃，镜子也是可以利用的小米
-                            11pro拍摄。建筑找对称，见水拍倒影，当然，玻璃，镜子也是可以利用的小米
-                            11pro拍摄。看到建筑找对称，见水拍倒影，当然，玻璃，镜子也是可以利用的小米
-                            11pro拍摄。建筑找对称，见水拍倒影，当然，玻璃，镜子也是可以利用的小米
-                            11pro拍摄。
+                    {imgs.length === 0 && !info.dynamic_cover && (
+                        <div className="dynamic-wrapper">
+                            <div className="dynamic-name text-ellipsis-style">
+                                {`@${info.dynamic_user_name}`}
+                            </div>
+
+                            <div className="dynamic-content">
+                                {info.dynamic_content}
+                            </div>
                         </div>
-                    </div>
+                    )}
+                    {imgs.length > 0 && (
+                        <div className="dynamic-img-wrapper">
+                            <div className="dynamic-img">
+                                <img src={imgs[0]} className="img-style" />
+                            </div>
+                            <div className="dynamic-content">
+                                <div className="dynamic-name text-ellipsis-style">
+                                    {`@${info.dynamic_user_name}`}
+                                </div>
+
+                                <div className="dynamic-text">
+                                    {info.dynamic_content}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                    {!!info.dynamic_cover && (
+                        <div className="dynamic-video-wrapper">
+                            <div className="dynamic-video">
+                                <img
+                                    src={info.dynamic_cover}
+                                    className="img-style"
+                                />
+                                <div className="video-mask">
+                                    <CaretRightOutlined className="icon-style" />
+                                </div>
+                            </div>
+                            <div className="dynamic-content">
+                                <div className="dynamic-name text-ellipsis-style">
+                                    {`@${info.dynamic_user_name}`}
+                                </div>
+
+                                <div className="video-title text-ellipsis-style">
+                                    {info.dynamic_title}
+                                </div>
+
+                                <div className="dynamic-text text-ellipsis-style">
+                                    {info.dynamic_content}
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
-
-                <div className="dynamic-video-wrapper">
-                    <div className="dynamic-video">
-                        <img src={info.dynamic_cover} className="img-style" />
-                        <div className="video-mask">
-                            <CaretRightOutlined className="icon-style" />
-                        </div>
-                    </div>
-                    <div className="dynamic-content">
-                        <div className="dynamic-name text-ellipsis-style">
-                            {`@${info.dynamic_user_name}`}
-                        </div>
-
-                        <div className="video-title text-ellipsis-style">
-                            {info.dynamic_content || "12312321"}
-                        </div>
-
-                        <div className="dynamic-text text-ellipsis-style">
-                            看到建筑找对称，见水拍倒影，当然，玻璃，镜子也是可以利用的小米
-                            11pro拍摄。建筑找对称，见水拍倒影，当然，玻璃，镜子也是可以利用的小米
-                            11pro拍摄。看到建筑找对称，见水拍倒影，当然，玻璃，镜子也是可以利用的小米
-                            11pro拍摄。建筑找对称，见水拍倒影，当然，玻璃，镜子也是可以利用的小米
-                            11pro拍摄。看到建筑找对称，见水拍倒影，当然，玻璃，镜子也是可以利用的小米
-                            11pro拍摄。建筑找对称，见水拍倒影，当然，玻璃，镜子也是可以利用的小米
-                            11pro拍摄。
-                        </div>
-                    </div>
-                </div>
-            </div> */}
-
-            <div className="comment-message-dynamic-reply">
-                <div className="dynamic-reply-content">
-                    <a></a>
-                </div>
-
-                <div className="dynamic-wrapper">
-                    <div className="dynamic-name text-ellipsis-style">
-                        {`@${info.dynamic_user_name}`}
-                    </div>
-
-                    <div className="dynamic-content">
-                        看到建筑找对称，见水拍倒影，当然，玻璃，镜子也是可以利用的小米
-                        11pro拍摄。建筑找对称，见水拍倒影，当然，玻璃，镜子也是可以利用的小米
-                        11pro拍摄。看到建筑找对称，见水拍倒影，当然，玻璃，镜子也是可以利用的小米
-                        11pro拍摄。建筑找对称，见水拍倒影，当然，玻璃，镜子也是可以利用的小米
-                        11pro拍摄。看到建筑找对称，见水拍倒影，当然，玻璃，镜子也是可以利用的小米
-                        11pro拍摄。建筑找对称，见水拍倒影，当然，玻璃，镜子也是可以利用的小米
-                        11pro拍摄。
-                    </div>
-                </div>
-
-                <div className="dynamic-img-wrapper">
-                    <div className="dynamic-img">
-                        <img src="" className="img-style" />
-                    </div>
-                    <div className="dynamic-content">
-                        <div className="dynamic-name text-ellipsis-style">
-                            {`@${info.dynamic_user_name}`}
-                        </div>
-
-                        <div className="dynamic-text">
-                            看到建筑找对称，见水拍倒影，当然，玻璃，镜子也是可以利用的小米
-                            11pro拍摄。建筑找对称，见水拍倒影，当然，玻璃，镜子也是可以利用的小米
-                            11pro拍摄。看到建筑找对称，见水拍倒影，当然，玻璃，镜子也是可以利用的小米
-                            11pro拍摄。建筑找对称，见水拍倒影，当然，玻璃，镜子也是可以利用的小米
-                            11pro拍摄。看到建筑找对称，见水拍倒影，当然，玻璃，镜子也是可以利用的小米
-                            11pro拍摄。建筑找对称，见水拍倒影，当然，玻璃，镜子也是可以利用的小米
-                            11pro拍摄。
-                        </div>
-                    </div>
-                </div>
-
-                <div className="dynamic-video-wrapper">
-                    <div className="dynamic-video">
-                        <img src={info.dynamic_cover} className="img-style" />
-                        <div className="video-mask">
-                            <CaretRightOutlined className="icon-style" />
-                        </div>
-                    </div>
-                    <div className="dynamic-content">
-                        <div className="dynamic-name text-ellipsis-style">
-                            {`@${info.dynamic_user_name}`}
-                        </div>
-
-                        <div className="video-title text-ellipsis-style">
-                            {info.dynamic_content || "12312321"}
-                        </div>
-
-                        <div className="dynamic-text text-ellipsis-style">
-                            看到建筑找对称，见水拍倒影，当然，玻璃，镜子也是可以利用的小米
-                            11pro拍摄。建筑找对称，见水拍倒影，当然，玻璃，镜子也是可以利用的小米
-                            11pro拍摄。看到建筑找对称，见水拍倒影，当然，玻璃，镜子也是可以利用的小米
-                            11pro拍摄。建筑找对称，见水拍倒影，当然，玻璃，镜子也是可以利用的小米
-                            11pro拍摄。看到建筑找对称，见水拍倒影，当然，玻璃，镜子也是可以利用的小米
-                            11pro拍摄。建筑找对称，见水拍倒影，当然，玻璃，镜子也是可以利用的小米
-                            11pro拍摄。
-                        </div>
-                    </div>
-                </div>
-            </div>
+            )}
 
             <div className="comment-message-operate">
                 <div className="operate-btn">
@@ -262,6 +264,7 @@ const CommentMessage: React.FC<CommentMessageProp> = (props) => {
                 </div>
                 <div className="operate-btn">
                     <Button
+                        disabled={starsLoading}
                         type="link"
                         className={`btn-style ${
                             starShow ? "btn-theme-style" : ""
@@ -280,7 +283,7 @@ const CommentMessage: React.FC<CommentMessageProp> = (props) => {
 
             <PostComment
                 dynamicId={info.dynamic_id}
-                mainCommentId={info.dynamic_id}
+                mainCommentId={info.root_id}
                 commentId={info.id}
                 commentUserId={info.user_id}
                 name={info.user_name}

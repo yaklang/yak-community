@@ -10,6 +10,8 @@ import { useMemoizedFn } from "ahooks";
 import { FetchUserFans } from "../types/extraApi";
 import { LeftOutThemeIcon } from "../public/icons";
 import UserDynamic from "../components/userinfo/UserDynamic";
+import UserFollow from "../components/userinfo/UserFollow";
+import Fans from "../components/messageCenter/Fans";
 
 const { TabPane } = Tabs;
 
@@ -19,7 +21,6 @@ const UserPage: NextPage<UserPageProps> = (props) => {
     const router = useRouter();
 
     const [user, setUser] = useState<API.UserHead>();
-
     const fetchUserInfo = useMemoizedFn((id: number) => {
         NetWorkApi<FetchUserFans, API.UserHead>({
             method: "get",
@@ -32,13 +33,14 @@ const UserPage: NextPage<UserPageProps> = (props) => {
             })
             .catch((err) => {});
     });
-
     useEffect(() => {
         const user = router.query.user;
         if (!user) return;
 
         fetchUserInfo(+(user as string));
     }, [router]);
+
+    const [activeKey, setActiveKey] = useState<string>("dynamic");
 
     return (
         <UserLayout>
@@ -65,7 +67,11 @@ const UserPage: NextPage<UserPageProps> = (props) => {
                         updateInfo={() => fetchUserInfo(user.user_id)}
                     />
 
-                    <Tabs activeKey="dynamic" className="user-page-tabs">
+                    <Tabs
+                        className="user-page-tabs"
+                        activeKey={activeKey}
+                        onChange={(key: string) => setActiveKey(key)}
+                    >
                         <TabPane
                             tab={
                                 <div className="tabs-bar-title">
@@ -94,10 +100,65 @@ const UserPage: NextPage<UserPageProps> = (props) => {
                             <UserDynamic
                                 userId={user.user_id}
                                 onlyShow={true}
-                                onUpdateUserInfo={() =>
-                                    fetchUserInfo(user.user_id)
-                                }
+                                onUpdateUserInfo={() => {}}
                             />
+                        </TabPane>
+                        <TabPane
+                            tab={
+                                <div className="tabs-bar-title">
+                                    关注
+                                    {user.dynamic_num !== 0 && (
+                                        <div
+                                            className="title-count"
+                                            style={{
+                                                right: `${
+                                                    (0 -
+                                                        4 -
+                                                        `${user.follow_num}`
+                                                            .length *
+                                                            8) /
+                                                    16
+                                                }rem`,
+                                            }}
+                                        >
+                                            {user.follow_num}
+                                        </div>
+                                    )}
+                                </div>
+                            }
+                            key="follow"
+                        >
+                            <UserFollow
+                                userId={user.user_id}
+                                onlyShow={true}
+                                onUpdateUserInfo={() => {}}
+                            />
+                        </TabPane>
+                        <TabPane
+                            tab={
+                                <div className="tabs-bar-title">
+                                    粉丝
+                                    {user.dynamic_num !== 0 && (
+                                        <div
+                                            className="title-count"
+                                            style={{
+                                                right: `${
+                                                    (0 -
+                                                        4 -
+                                                        `${user.fans}`.length *
+                                                            8) /
+                                                    16
+                                                }rem`,
+                                            }}
+                                        >
+                                            {user.fans}
+                                        </div>
+                                    )}
+                                </div>
+                            }
+                            key="fans"
+                        >
+                            <Fans userId={user.user_id} onlyShow={true} />
                         </TabPane>
                     </Tabs>
                 </div>

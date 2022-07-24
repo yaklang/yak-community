@@ -1,37 +1,52 @@
 import React, { useState, useEffect } from "react";
 import { NextPage } from "next";
-import {} from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import { useMemoizedFn } from "ahooks";
+import { useGetState, useMemoizedFn } from "ahooks";
 import { NetWorkApi } from "../../utils/fetch";
 import { API } from "../../types/api";
-import { FollowUserProps, SearchPageMeta } from "../../types/extraApi";
+import { FetchFanList, FollowUserProps } from "../../types/extraApi";
 import { timeFormat } from "../../utils/timeTool";
 import { ButtonTheme } from "../baseComponents/ButtonTheme";
+import { useStore } from "../../store";
+import { useRouter } from "next/router";
+import { Tooltip } from "antd";
+import { MutualAttentionIcon } from "../../public/icons";
 
-interface FansProps {}
+interface FansProps {
+    userId?: number;
+    onlyShow?: boolean;
+}
 
 const Fans: NextPage<FansProps> = (props) => {
-    const [lists, setLists] = useState<API.MessageCenterFollowResponse>({
-        data: [{ id: 1 }],
+    const { onlyShow = false } = props;
+    const { userInfo } = useStore();
+    const router = useRouter();
+
+    const [lists, setLists] = useState<API.MessageCenterFansResponse>({
+        data: [],
         pagemeta: { page: 1, limit: 20, total: 0, total_page: 1 },
     });
     const [showCancel, setShowCancel] = useState<boolean>(false);
 
     const fetchLists = useMemoizedFn(() => {
-        NetWorkApi<SearchPageMeta, API.MessageCenterFollowResponse>({
+        if (!userInfo.user_id) return;
+
+        NetWorkApi<FetchFanList, API.MessageCenterFansResponse>({
             method: "get",
-            url: "/api/message/center/follow",
+            url: "/api/message/center/fans",
             params: {
                 page: 1,
                 limit: 20,
                 order: "desc",
+                user_id: userInfo.user_id,
             },
             userToken: true,
         })
             .then((res) => {
-                console.log(res);
-                setLists({ data: res.data || [], pagemeta: res.pagemeta });
+                setLists({
+                    data: lists.data.concat(res.data || []),
+                    pagemeta: res.pagemeta,
+                });
             })
             .catch((err) => {});
     });
@@ -40,13 +55,18 @@ const Fans: NextPage<FansProps> = (props) => {
         fetchLists();
     }, []);
 
-    const followUser = useMemoizedFn((item: API.MessageCenterFollow) => {
+    const [followLoading, setFollowLoading, getFollowLoading] =
+        useGetState<boolean>(false);
+    const followUser = useMemoizedFn((item: API.MessageCenterFans) => {
+        if (getFollowLoading()) return;
+
+        setFollowLoading(true);
         NetWorkApi<FollowUserProps, API.ActionSucceeded>({
             method: "post",
             url: "/api/user/follow",
             params: {
                 follow_user_id: item.action_user_id,
-                operation: true ? "remove" : "add",
+                operation: item.me_follow ? "remove" : "add",
             },
             userToken: true,
         })
@@ -54,34 +74,49 @@ const Fans: NextPage<FansProps> = (props) => {
                 setLists({
                     data: lists.data.map((item) => {
                         if (item.action_user_id === item.action_user_id) {
-                            item.action_head_img = "";
+                            item.me_follow = !item.me_follow;
                         }
                         return item;
                     }),
                     pagemeta: lists.pagemeta,
                 });
             })
-            .catch((err) => {});
+            .catch((err) => {})
+            .finally(() => setTimeout(() => setFollowLoading(false), 100));
     });
 
     return (
         <div className="fans-wrapper">
-            <div className="fans-hint">
-                共 {lists.pagemeta.total} 条粉丝信息
-            </div>
+            {!onlyShow && (
+                <div className="fans-hint">
+                    共 {lists.pagemeta.total} 条粉丝信息
+                </div>
+            )}
             {lists.data.map((item, index) => {
                 return (
-                    <div key={index} className="fans-opt-wrapper">
+                    <div key={item.action_user_id} className="fans-opt-wrapper">
                         <div className="fans-opt-body">
                             <div className="fans-user">
                                 <div className="fans-user-img">
                                     <img
                                         src={item.action_head_img}
                                         className="img-style"
+                                        onClick={() =>
+                                            router.push(
+                                                `/userpage?user=${item.action_user_id}`
+                                            )
+                                        }
                                     />
                                 </div>
                                 <div className="fans-user-info">
-                                    <div className="info-name">
+                                    <div
+                                        className="info-name"
+                                        onClick={() =>
+                                            router.push(
+                                                `/userpage?user=${item.action_user_id}`
+                                            )
+                                        }
+                                    >
                                         {item.action_user_name}
                                     </div>
                                     <div className="info-text">关注了我</div>
@@ -95,9 +130,22 @@ const Fans: NextPage<FansProps> = (props) => {
                             </div>
 
                             <div className="fans-operate">
-                                {false ? (
+                                {onlyShow && item.me_follow && item.follow_me && (
+                                    <Tooltip
+                                        placement="bottom"
+                                        title={
+                                            <span className="mutual-attention-hint-style">
+                                                互相关注
+                                            </span>
+                                        }
+                                    >
+                                        <MutualAttentionIcon className="fans-operate-icon" />
+                                    </Tooltip>
+                                )}
+                                {item.me_follow ? (
                                     <ButtonTheme
                                         className="fans-operate-btn"
+                                        disabled={followLoading}
                                         isInfo={!showCancel}
                                         isDanger={showCancel}
                                         onMouseEnter={() => setShowCancel(true)}
@@ -111,6 +159,7 @@ const Fans: NextPage<FansProps> = (props) => {
                                 ) : (
                                     <ButtonTheme
                                         className="fans-operate-btn"
+                                        disabled={followLoading}
                                         onClick={() => followUser(item)}
                                     >
                                         <PlusOutlined />
