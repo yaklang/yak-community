@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import {} from "antd";
-import { UserOutlined } from "@ant-design/icons";
-import Link from "next/link";
 import AvatarCard from "../components/avatar/AvatarCard";
 import TopicList from "../components/TopicList";
 import { LeftOutThemeIcon } from "../public/icons";
@@ -19,6 +16,7 @@ interface DynamicProps {}
 
 const Dynamic: NextPage<DynamicProps> = (props) => {
     const router = useRouter();
+    const { userInfo } = useStore();
 
     const [dynamic, setDynamic] = useState<API.DynamicLists>();
     const [fans, setFans] = useState<API.UserHead>({
@@ -45,6 +43,21 @@ const Dynamic: NextPage<DynamicProps> = (props) => {
             })
             .catch((err) => {});
     });
+    const fetchUnloggedDynamicInfo = useMemoizedFn(
+        (id: number, isUpdate?: boolean) => {
+            NetWorkApi<FetchDynamicInfo, API.DynamicListDetailResponse>({
+                method: "get",
+                url: "/api/dynamic/detail/unlogged",
+                params: { id },
+            })
+                .then((res) => {
+                    setDynamic(res.data);
+                    if (!isUpdate)
+                        fetchUnloggedDynamicUserInfo(res.data.user_id);
+                })
+                .catch((err) => {});
+        }
+    );
 
     const fetchDynamicUserInfo = useMemoizedFn((user: number) => {
         NetWorkApi<FetchUserFans, API.UserHead>({
@@ -58,12 +71,23 @@ const Dynamic: NextPage<DynamicProps> = (props) => {
             })
             .catch((err) => {});
     });
+    const fetchUnloggedDynamicUserInfo = useMemoizedFn((user: number) => {
+        NetWorkApi<FetchUserFans, API.UserHead>({
+            method: "get",
+            url: "/api/dynamic/user/head/unlogged",
+            params: { user_id: user },
+        })
+            .then((res) => {
+                setFans(res);
+            })
+            .catch((err) => {});
+    });
 
     useEffect(() => {
         const id = router.query.id;
         if (!id) return;
-
-        fetchDynamicInfo(+(id as string));
+        if (userInfo.isLogin) fetchDynamicInfo(+(id as string));
+        else fetchUnloggedDynamicInfo(+(id as string));
     }, [router]);
 
     const updateDynamicInfo = useMemoizedFn(

@@ -6,6 +6,9 @@ import { ButtonTheme } from "../baseComponents/ButtonTheme";
 import { useGetState, useMemoizedFn } from "ahooks";
 import { NetWorkApi } from "../../utils/fetch";
 import { FollowUserProps } from "../../types/extraApi";
+import { useRouter } from "next/router";
+import { useStore } from "../../store";
+import { failed } from "../../utils/notification";
 
 interface AvatarProps {
     id: number;
@@ -29,11 +32,17 @@ const Avatar: NextPage<AvatarProps> = (props) => {
         showFollow = false,
         updateInfo,
     } = props;
+    const { userInfo } = useStore();
+    const router = useRouter();
 
     const [showCancel, setShowCancel] = useState<boolean>(false);
     const [loading, setLoading, getLoading] = useGetState<boolean>(false);
 
     const followUser = useMemoizedFn(() => {
+        if (!userInfo.isLogin) {
+            failed("请登录后重新操作");
+            return false;
+        }
         if (getLoading()) return;
 
         setLoading(true);
@@ -53,17 +62,36 @@ const Avatar: NextPage<AvatarProps> = (props) => {
             .finally(() => setTimeout(() => setLoading(false), 300));
     });
 
+    const visitUserInfo = useMemoizedFn(() => {
+        if (userInfo.user_id === id) {
+            router.push({
+                pathname: "/userinfo",
+                query: { tabs: "dynamic" },
+            });
+        } else {
+            router.push({
+                pathname: "/userpage",
+                query: { user: id },
+            });
+        }
+    });
+
     return (
         <div className="avatar-wrapper">
             <div className="avatar-body">
                 <div className="avatar-author-info">
                     <div className="avatar-author-info-header">
-                        <img className="img-style" src={img} />
+                        <img
+                            className="img-style"
+                            src={img}
+                            onClick={visitUserInfo}
+                        />
                     </div>
                     <div className="avatar-author-info-data">
                         <div
                             className="author-name text-ellipsis-style"
                             title={name}
+                            onClick={visitUserInfo}
                         >
                             {name}
                         </div>

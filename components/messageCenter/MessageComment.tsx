@@ -7,12 +7,7 @@ import { NetWorkApi } from "../../utils/fetch";
 import { API } from "../../types/api";
 import { SearchPageMeta, StarsComment } from "../../types/extraApi";
 import { timeFormat } from "../../utils/timeTool";
-import {
-    LikeIcon,
-    LikeThemeIcon,
-    ReplyIcon,
-    ReplyThemeIcon,
-} from "../../public/icons";
+import { LikeIcon, LikeThemeIcon, ReplyIcon } from "../../public/icons";
 import PostComment from "../modal/PostComment";
 import { useRouter } from "next/router";
 
@@ -105,7 +100,7 @@ const CommentMessage: React.FC<CommentMessageProp> = (props) => {
             <div className="comment-message-reply">
                 <div className="reply-img">
                     <img
-                        src={info.by_head_img}
+                        src={info.head_img}
                         className="img-style"
                         onClick={() =>
                             router.push(`/userpage?user=${info.user_id}`)
@@ -120,9 +115,18 @@ const CommentMessage: React.FC<CommentMessageProp> = (props) => {
                             router.push(`/userpage?user=${info.user_id}`)
                         }
                     >
-                        {info.by_user_name || "123"}
+                        {info.user_name}
                     </div>
-                    <div className="reply-body">{info.by_message}</div>
+                    <div className="reply-body">
+                        {!!info.root_id && (
+                            <>
+                                {"回复"}
+                                <span>{`@${info.by_user_name}`}</span>
+                                {": "}
+                            </>
+                        )}
+                        {info.message}
+                    </div>
                     <div className="reply-time">
                         {timeFormat(info.created_at, "YYYY/MM/DD HH:mm")}
                     </div>
@@ -192,7 +196,15 @@ const CommentMessage: React.FC<CommentMessageProp> = (props) => {
             {!!info.root_id && (
                 <div className="comment-message-dynamic-reply">
                     <div className="dynamic-reply-content">
-                        <a></a>
+                        <span
+                            onClick={() =>
+                                router.push({
+                                    pathname: "/userinfo",
+                                    query: { tabs: "dynamic" },
+                                })
+                            }
+                        >{`@${info.by_user_name}`}</span>
+                        {`: ${info.by_message}`}
                     </div>
 
                     {imgs.length === 0 && !info.dynamic_cover && (

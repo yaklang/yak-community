@@ -1,36 +1,70 @@
 import React, { ReactNode, useEffect, useRef, useState } from "react";
 
 export interface CollapseTextProps {
-    value: ReactNode;
     rows?: number;
+    isComment?: boolean;
+    value: ReactNode;
 }
 
 export const CollapseText: React.FC<CollapseTextProps> = (props) => {
-    const { value, rows = 3 } = props;
+    const { rows = 3, isComment = false, value } = props;
+    const lineHeight = isComment ? 17 : 20;
 
     const divRef = useRef<HTMLDivElement>(null);
 
-    const [key, setKey] = useState(0);
+    const [isExpand, setIsExpand] = useState<boolean>(false);
     const [fold, setFold] = useState(true);
 
-    const onExpand = () => setFold(false);
-
-    const onCollapse = () => {
-        setFold(true);
-        setKey(key + 1);
+    const setTextOffset = () => {
+        if (!divRef || !divRef.current) return;
+        const div = divRef.current;
+        const { offsetHeight, scrollHeight } = div;
+        setIsExpand(scrollHeight > offsetHeight);
     };
 
     useEffect(() => {
-        if (!divRef || !divRef.current) return;
-        console.log([divRef.current]);
+        const time = setInterval(() => {
+            if (!divRef || !divRef.current) return;
+            const div = divRef.current;
+            const { offsetHeight, scrollHeight } = div;
+            if (!offsetHeight || !scrollHeight) return;
+            else {
+                setTextOffset();
+                clearInterval(time);
+            }
+        }, 50);
     }, []);
 
     return (
         <div className="collapse-text-wrapper">
-            <div ref={divRef} className="collapse-text-body">
+            <div
+                ref={divRef}
+                style={{
+                    maxHeight: isExpand
+                        ? fold
+                            ? rows * lineHeight
+                            : "100%"
+                        : rows * lineHeight,
+                }}
+                className={`collapse-text-body ${
+                    isComment ? "comment-text-style" : "dynamic-text-style"
+                }`}
+            >
                 {value}
             </div>
-            {/* <div></div> */}
+            {isExpand && (
+                <div
+                    className="expand-text-style"
+                    style={{
+                        height: lineHeight,
+                        lineHeight: `${lineHeight}px`,
+                    }}
+                >
+                    <span onClick={() => setFold(!fold)}>
+                        {fold ? "展开" : "收起"}
+                    </span>
+                </div>
+            )}
         </div>
     );
 };

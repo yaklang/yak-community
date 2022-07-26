@@ -11,6 +11,7 @@ import { useStore } from "../../store";
 import { useRouter } from "next/router";
 import { Tooltip } from "antd";
 import { MutualAttentionIcon } from "../../public/icons";
+import { failed } from "../../utils/notification";
 
 interface FansProps {
     userId?: number;
@@ -18,7 +19,7 @@ interface FansProps {
 }
 
 const Fans: NextPage<FansProps> = (props) => {
-    const { onlyShow = false } = props;
+    const { userId, onlyShow = false } = props;
     const { userInfo } = useStore();
     const router = useRouter();
 
@@ -28,9 +29,7 @@ const Fans: NextPage<FansProps> = (props) => {
     });
     const [showCancel, setShowCancel] = useState<boolean>(false);
 
-    const fetchLists = useMemoizedFn(() => {
-        if (!userInfo.user_id) return;
-
+    const fetchLists = useMemoizedFn((page?: number) => {
         NetWorkApi<FetchFanList, API.MessageCenterFansResponse>({
             method: "get",
             url: "/api/message/center/fans",
@@ -38,13 +37,38 @@ const Fans: NextPage<FansProps> = (props) => {
                 page: 1,
                 limit: 20,
                 order: "desc",
-                user_id: userInfo.user_id,
+                user_id: userInfo.user_id || userId || 0,
             },
             userToken: true,
         })
             .then((res) => {
                 setLists({
-                    data: lists.data.concat(res.data || []),
+                    data:
+                        page === 1
+                            ? res.data || []
+                            : lists.data.concat(res.data || []),
+                    pagemeta: res.pagemeta,
+                });
+            })
+            .catch((err) => {});
+    });
+    const fetchNoLists = useMemoizedFn((page?: number) => {
+        NetWorkApi<FetchFanList, API.MessageCenterFansResponse>({
+            method: "get",
+            url: "/api/message/center/fans/unlogged",
+            params: {
+                page: 1,
+                limit: 20,
+                order: "desc",
+                user_id: userInfo.user_id || userId || 0,
+            },
+        })
+            .then((res) => {
+                setLists({
+                    data:
+                        page === 1
+                            ? res.data || []
+                            : lists.data.concat(res.data || []),
                     pagemeta: res.pagemeta,
                 });
             })
@@ -52,12 +76,17 @@ const Fans: NextPage<FansProps> = (props) => {
     });
 
     useEffect(() => {
-        fetchLists();
+        if (userInfo.isLogin) fetchLists(1);
+        else fetchNoLists(1);
     }, []);
 
     const [followLoading, setFollowLoading, getFollowLoading] =
         useGetState<boolean>(false);
-    const followUser = useMemoizedFn((item: API.MessageCenterFans) => {
+    const followUser = useMemoizedFn((info: API.MessageCenterFans) => {
+        if (!userInfo.isLogin) {
+            failed("请登录后重新操作");
+            return false;
+        }
         if (getFollowLoading()) return;
 
         setFollowLoading(true);
@@ -65,15 +94,15 @@ const Fans: NextPage<FansProps> = (props) => {
             method: "post",
             url: "/api/user/follow",
             params: {
-                follow_user_id: item.action_user_id,
-                operation: item.me_follow ? "remove" : "add",
+                follow_user_id: info.action_user_id,
+                operation: info.me_follow ? "remove" : "add",
             },
             userToken: true,
         })
             .then((res) => {
                 setLists({
                     data: lists.data.map((item) => {
-                        if (item.action_user_id === item.action_user_id) {
+                        if (item.action_user_id === info.action_user_id) {
                             item.me_follow = !item.me_follow;
                         }
                         return item;
@@ -129,44 +158,50 @@ const Fans: NextPage<FansProps> = (props) => {
                                 </div>
                             </div>
 
-                            <div className="fans-operate">
-                                {onlyShow && item.me_follow && item.follow_me && (
-                                    <Tooltip
-                                        placement="bottom"
-                                        title={
-                                            <span className="mutual-attention-hint-style">
-                                                互相关注
-                                            </span>
-                                        }
-                                    >
-                                        <MutualAttentionIcon className="fans-operate-icon" />
-                                    </Tooltip>
-                                )}
-                                {item.me_follow ? (
-                                    <ButtonTheme
-                                        className="fans-operate-btn"
-                                        disabled={followLoading}
-                                        isInfo={!showCancel}
-                                        isDanger={showCancel}
-                                        onMouseEnter={() => setShowCancel(true)}
-                                        onMouseLeave={() =>
-                                            setShowCancel(false)
-                                        }
-                                        onClick={() => followUser(item)}
-                                    >
-                                        {showCancel ? "取消关注" : "已关注"}
-                                    </ButtonTheme>
-                                ) : (
-                                    <ButtonTheme
-                                        className="fans-operate-btn"
-                                        disabled={followLoading}
-                                        onClick={() => followUser(item)}
-                                    >
-                                        <PlusOutlined />
-                                        关注
-                                    </ButtonTheme>
-                                )}
-                            </div>
+                            {userInfo.user_id !== item.action_user_id && (
+                                <div className="fans-operate">
+                                    {onlyShow &&
+                                        item.me_follow &&
+                                        item.follow_me && (
+                                            <Tooltip
+                                                placement="bottom"
+                                                title={
+                                                    <span className="mutual-attention-hint-style">
+                                                        互相关注
+                                                    </span>
+                                                }
+                                            >
+                                                <MutualAttentionIcon className="fans-operate-icon" />
+                                            </Tooltip>
+                                        )}
+                                    {item.me_follow ? (
+                                        <ButtonTheme
+                                            className="fans-operate-btn"
+                                            disabled={followLoading}
+                                            isInfo={!showCancel}
+                                            isDanger={showCancel}
+                                            // onMouseEnter={() =>
+                                            //     setShowCancel(true)
+                                            // }
+                                            // onMouseLeave={() =>
+                                            //     setShowCancel(false)
+                                            // }
+                                            onClick={() => followUser(item)}
+                                        >
+                                            {showCancel ? "取消关注" : "已关注"}
+                                        </ButtonTheme>
+                                    ) : (
+                                        <ButtonTheme
+                                            className="fans-operate-btn"
+                                            disabled={followLoading}
+                                            onClick={() => followUser(item)}
+                                        >
+                                            <PlusOutlined />
+                                            关注
+                                        </ButtonTheme>
+                                    )}
+                                </div>
+                            )}
                         </div>
                     </div>
                 );

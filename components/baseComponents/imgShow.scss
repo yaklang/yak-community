@@ -1,0 +1,39 @@
+.img-show-wrapper {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #2a2b31;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.img-show-body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.img-spin {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #d9dce170;
+}
+
+.cover-width-style {
+    width: 100%;
+}
+.cover-height-style {
+    height: 100%;
+}

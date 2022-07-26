@@ -44,7 +44,7 @@ const SettingInfo: NextPage<SettingInfoProps> = (props) => {
         return item.from_platform === "github";
     })[0];
 
-    const { signIn, setGithubAuth } = useStore();
+    const { setGithubAuth } = useStore();
 
     const platform = getPlatform();
 

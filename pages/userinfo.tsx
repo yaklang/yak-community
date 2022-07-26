@@ -38,11 +38,13 @@ const UserInfo: NextPage<ModifyUserProps> = (props) => {
             userToken: true,
         })
             .then((res) => {
-                signIn({
-                    ...userInfo,
-                    name: res.data.name,
-                    head_img: res.data.head_img,
-                });
+                if (noUpdate) {
+                    signIn({
+                        ...userInfo,
+                        name: res.data.name,
+                        head_img: res.data.head_img,
+                    });
+                }
                 setUser(res.data);
                 fetchFanHot(res.data);
             })
@@ -85,6 +87,7 @@ const UserInfo: NextPage<ModifyUserProps> = (props) => {
 
                     <Tabs
                         activeKey={activeKey}
+                        destroyInactiveTabPane={true}
                         className="user-info-tabs"
                         onChange={(key: string) => setActiveKey(key)}
                     >
@@ -184,7 +187,7 @@ const UserInfo: NextPage<ModifyUserProps> = (props) => {
                         >
                             <SettingInfo
                                 info={user}
-                                onUpdateUserInfo={fetchUserInfo}
+                                onUpdateUserInfo={() => fetchUserInfo(true)}
                             />
                         </TabPane>
                     </Tabs>

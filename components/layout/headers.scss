@@ -136,10 +136,14 @@ $REM: 16;
                 .icon-style {
                     margin-right: 4px;
                     font-size: REM(20);
+                    color: var(--base-icon-color);
                 }
             }
             li:hover {
                 color: var(--base-theme-color);
+                .icon-style {
+                    color: var(--base-theme-color);
+                }
             }
             li + li {
                 margin-top: REM(8);
@@ -160,6 +164,7 @@ $REM: 16;
                 .icon-style {
                     margin-right: 4px;
                     font-size: REM(20);
+                    color: var(--base-icon-color);
                 }
                 .message-title {
                     display: inline-flex;
@@ -177,6 +182,9 @@ $REM: 16;
             }
             li:hover {
                 color: var(--base-theme-color);
+                .icon-style {
+                    color: var(--base-theme-color);
+                }
             }
             li + li {
                 margin-top: REM(8);
@@ -195,10 +203,14 @@ $REM: 16;
             .icon-style {
                 margin-right: 4px;
                 font-size: REM(20);
+                color: var(--base-icon-color);
             }
         }
         .menu-sign-out:hover {
             color: #f73c1b;
+            .icon-style {
+                color: #f73c1b;
+            }
         }
     }
 

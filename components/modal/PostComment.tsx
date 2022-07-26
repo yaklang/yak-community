@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { NextPage } from "next";
 import { Button, Input, Modal } from "antd";
 import { CloseOutlined, PlusOutlined } from "@ant-design/icons";
-import { UploadImgIcon, UploadImgThemeIcon } from "../../public/icons";
+import { UploadImgIcon } from "../../public/icons";
 import SecondConfirm from "./SecondConfirm";
 import { NetWorkApi } from "../../utils/fetch";
 import { API } from "../../types/api";
@@ -47,6 +47,7 @@ const PostComment: NextPage<PostCommentProps> = (props) => {
     const [comment, setComment] = useState<API.NewDynamicComment>({
         ...DefaultCommentInfo,
     });
+    const [imgLoading, setImgLoading] = useState<boolean>(false);
 
     const releaseComment = useMemoizedFn(() => {
         if (!comment.message) {
@@ -87,8 +88,6 @@ const PostComment: NextPage<PostCommentProps> = (props) => {
 
     const [secondShow, setSecondShow] = useState<boolean>(false);
 
-    const [imgIcon, setImgIcon] = useState<boolean>(false);
-
     const closeModal = useMemoizedFn(() => {
         if (
             comment.message ||
@@ -97,6 +96,7 @@ const PostComment: NextPage<PostCommentProps> = (props) => {
             setSecondShow(true);
         } else {
             onCancel(false);
+            setComment({ ...DefaultCommentInfo });
         }
     });
 
@@ -128,6 +128,9 @@ const PostComment: NextPage<PostCommentProps> = (props) => {
                     onChange={(e) =>
                         setComment({ ...comment, message: e.target.value })
                     }
+                    onKeyDown={(e) => {
+                        if (e.code == "Enter") e.preventDefault();
+                    }}
                 />
 
                 <div className="post-comment-operate">
@@ -146,22 +149,18 @@ const PostComment: NextPage<PostCommentProps> = (props) => {
                                     ]),
                                 });
                             }}
+                            onProgress={() => setImgLoading(true)}
+                            onSuccess={() => setImgLoading(false)}
+                            onFailed={() => setImgLoading(false)}
                         >
                             <Button
                                 type="link"
                                 disabled={
-                                    comment.message_img &&
-                                    comment.message_img.length >= 3
+                                    (comment.message_img &&
+                                        comment.message_img.length >= 3) ||
+                                    imgLoading
                                 }
-                                onMouseEnter={() => setImgIcon(true)}
-                                onMouseLeave={() => setImgIcon(false)}
-                                icon={
-                                    imgIcon ? (
-                                        <UploadImgThemeIcon className="icon-style" />
-                                    ) : (
-                                        <UploadImgIcon className="icon-style" />
-                                    )
-                                }
+                                icon={<UploadImgIcon className="icon-style" />}
                             />
                         </SingleUpload>
                     </div>
@@ -206,6 +205,7 @@ const PostComment: NextPage<PostCommentProps> = (props) => {
                         })}
                         {comment.message_img.length < 3 && (
                             <SingleUpload
+                                disabled={imgLoading}
                                 setValue={(res) => {
                                     setComment({
                                         ...comment,
@@ -213,6 +213,9 @@ const PostComment: NextPage<PostCommentProps> = (props) => {
                                             comment.message_img?.concat([res]),
                                     });
                                 }}
+                                onProgress={() => setImgLoading(true)}
+                                onSuccess={() => setImgLoading(false)}
+                                onFailed={() => setImgLoading(false)}
                             >
                                 <div className="img-add">
                                     <PlusOutlined className="icon-style" />

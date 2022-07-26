@@ -56,6 +56,10 @@ $REM: 16;
 
                 .icon-style {
                     font-size: REM(24);
+                    color: var(--base-icon-color);
+                }
+                .icon-style:hover {
+                    color: var(--base-theme-color);
                 }
             }
 

@@ -10,18 +10,21 @@ const Footers: NextPage<FootersProps> = (props) => {
         <div className="footer-outside">
             <div className="footer-main">
                 <div className="footer-left">
-                    <a href="/" className="footer-left-home-page">
+                    <a
+                        href="https://www.yaklang.io/"
+                        className="footer-left-home-page"
+                    >
                         <img src="/images/yakLogo.png" className="img-style" />
                     </a>
                     <div className="footer-left-copyright">{`Copyright © ${new Date().getFullYear()} for Yak Project. Own by v1ll4n. Powered by Docusaurus`}</div>
                     <a
-                        href="/"
+                        href="https://www.yaklang.io/docs/intro/"
                         className="footer-left-doc footer-left-link-style"
                     >
                         官方文档
                     </a>
                     <a
-                        href="/"
+                        href="https://www.yaklang.io/team"
                         className="footer-left-team footer-left-link-style"
                     >
                         研发团队

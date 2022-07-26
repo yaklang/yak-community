@@ -12,6 +12,7 @@ import { LeftOutThemeIcon } from "../public/icons";
 import UserDynamic from "../components/userinfo/UserDynamic";
 import UserFollow from "../components/userinfo/UserFollow";
 import Fans from "../components/messageCenter/Fans";
+import { useStore } from "../store";
 
 const { TabPane } = Tabs;
 
@@ -19,6 +20,7 @@ interface UserPageProps {}
 
 const UserPage: NextPage<UserPageProps> = (props) => {
     const router = useRouter();
+    const { userInfo } = useStore();
 
     const [user, setUser] = useState<API.UserHead>();
     const fetchUserInfo = useMemoizedFn((id: number) => {
@@ -33,11 +35,22 @@ const UserPage: NextPage<UserPageProps> = (props) => {
             })
             .catch((err) => {});
     });
+    const fetchUnloggedUserInfo = useMemoizedFn((user: number) => {
+        NetWorkApi<FetchUserFans, API.UserHead>({
+            method: "get",
+            url: "/api/dynamic/user/head/unlogged",
+            params: { user_id: user },
+        })
+            .then((res) => {
+                setUser(res);
+            })
+            .catch((err) => {});
+    });
     useEffect(() => {
         const user = router.query.user;
         if (!user) return;
-
-        fetchUserInfo(+(user as string));
+        if (userInfo.isLogin) fetchUserInfo(+(user as string));
+        else fetchUnloggedUserInfo(+(user as string));
     }, [router]);
 
     const [activeKey, setActiveKey] = useState<string>("dynamic");
@@ -69,6 +82,7 @@ const UserPage: NextPage<UserPageProps> = (props) => {
 
                     <Tabs
                         className="user-page-tabs"
+                        destroyInactiveTabPane={true}
                         activeKey={activeKey}
                         onChange={(key: string) => setActiveKey(key)}
                     >

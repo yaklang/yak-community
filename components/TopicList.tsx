@@ -6,6 +6,7 @@ import { useMemoizedFn } from "ahooks";
 import { SearchPageMeta } from "../types/extraApi";
 import { NetWorkApi } from "../utils/fetch";
 import { API } from "../types/api";
+import { useStore } from "../store";
 
 const TopicIcon: string[] = [
     "/images/topic/topic-1.png",
@@ -16,6 +17,8 @@ const TopicIcon: string[] = [
 interface TopicListProps {}
 
 const TopicList: NextPage<TopicListProps> = (props) => {
+    const { homePageDynamicId } = useStore();
+
     const [loading, setLoading] = useState<boolean>(false);
     const [list, setList] = useState<API.TopicList[]>([]);
     const [showList, setShowList] = useState<API.TopicList[]>([]);
@@ -55,6 +58,7 @@ const TopicList: NextPage<TopicListProps> = (props) => {
                         res.data.length > 10 ? res.data.slice(0, 10) : res.data
                     );
                 }
+                setPage(0);
             })
             .catch((err) => {})
             .finally(() => setTimeout(() => setLoading(false), 300));
@@ -63,6 +67,10 @@ const TopicList: NextPage<TopicListProps> = (props) => {
     useEffect(() => {
         fetchTopicList();
     }, []);
+
+    useEffect(() => {
+        if (homePageDynamicId) fetchTopicList();
+    }, [homePageDynamicId]);
 
     return (
         <div className="topic-list-main">

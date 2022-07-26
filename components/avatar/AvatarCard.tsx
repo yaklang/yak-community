@@ -7,6 +7,8 @@ import { FollowUserProps } from "../../types/extraApi";
 import { NetWorkApi } from "../../utils/fetch";
 import { ButtonTheme } from "../baseComponents/ButtonTheme";
 import { useGetState, useMemoizedFn } from "ahooks";
+import { useStore } from "../../store";
+import { failed } from "../../utils/notification";
 
 interface AvatarCardProps {
     info: API.UserHead;
@@ -15,13 +17,17 @@ interface AvatarCardProps {
 
 const AvatarCard: NextPage<AvatarCardProps> = (props) => {
     const { info, updateInfo } = props;
-
+    const { userInfo } = useStore();
     const router = useRouter();
 
     const [loading, setLoading, getLoading] = useGetState<boolean>(false);
     const [showCancel, setShowCancel] = useState<boolean>(false);
 
     const followUser = useMemoizedFn(() => {
+        if (!userInfo.isLogin) {
+            failed("请登录后重新操作");
+            return false;
+        }
         if (getLoading()) return;
 
         setLoading(true);
@@ -41,14 +47,34 @@ const AvatarCard: NextPage<AvatarCardProps> = (props) => {
             .finally(() => setTimeout(() => setLoading(false), 300));
     });
 
+    const visitUserInfo = useMemoizedFn(() => {
+        if (userInfo.user_id === info.user_id) {
+            router.push({
+                pathname: "/userinfo",
+                query: { tabs: "dynamic" },
+            });
+        } else {
+            router.push({
+                pathname: "/userpage",
+                query: { user: info.user_id },
+            });
+        }
+    });
+
     return (
         <div className="avatar-card-wrapper">
             <div className="avatar-card-body">
                 <div className="avatar-card-info">
                     <div className="info-img">
-                        <img className="img-style" src={info.head_img} />
+                        <img
+                            className="img-style"
+                            src={info.head_img}
+                            onClick={visitUserInfo}
+                        />
                     </div>
-                    <div className="info-name">{info.user_name}</div>
+                    <div className="info-name" onClick={visitUserInfo}>
+                        {info.user_name}
+                    </div>
                     <div className="info-popularity">
                         <div className="info-popularity-block">
                             粉丝<span className="block-count">{info.fans}</span>
@@ -60,37 +86,37 @@ const AvatarCard: NextPage<AvatarCardProps> = (props) => {
                             </span>
                         </div>
                     </div>
-                    <div className="info-follow">
-                        {info.is_follow ? (
-                            <ButtonTheme
-                                className="info-follow-btn"
-                                disabled={loading}
-                                isInfo={!showCancel}
-                                isDanger={showCancel}
-                                onMouseEnter={() => setShowCancel(true)}
-                                onMouseLeave={() => setShowCancel(false)}
-                                onClick={followUser}
-                            >
-                                {showCancel ? "取消关注" : "已关注"}
-                            </ButtonTheme>
-                        ) : (
-                            <ButtonTheme
-                                className="info-follow-btn"
-                                disabled={loading}
-                                onClick={followUser}
-                            >
-                                <PlusOutlined />
-                                关注
-                            </ButtonTheme>
-                        )}
-                    </div>
+                    {userInfo.user_id === info.user_id && (
+                        <div className="info-follow">
+                            {info.is_follow ? (
+                                <ButtonTheme
+                                    className="info-follow-btn"
+                                    disabled={loading}
+                                    isInfo={!showCancel}
+                                    isDanger={showCancel}
+                                    onMouseEnter={() => setShowCancel(true)}
+                                    onMouseLeave={() => setShowCancel(false)}
+                                    onClick={followUser}
+                                >
+                                    {showCancel ? "取消关注" : "已关注"}
+                                </ButtonTheme>
+                            ) : (
+                                <ButtonTheme
+                                    className="info-follow-btn"
+                                    disabled={loading}
+                                    onClick={followUser}
+                                >
+                                    <PlusOutlined />
+                                    关注
+                                </ButtonTheme>
+                            )}
+                        </div>
+                    )}
                 </div>
 
                 <div
                     className="avatar-card-operate"
-                    onClick={() =>
-                        router.push(`/userpage?user=${info.user_id}`)
-                    }
+                    onClick={visitUserInfo}
                 >{`查看个人主页 >`}</div>
             </div>
         </div>

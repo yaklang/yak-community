@@ -10,7 +10,7 @@ import TopicList from "../components/TopicList";
 import CommentItem from "../components/CommentItem";
 import { ButtonTheme } from "../components/baseComponents/ButtonTheme";
 import { InputTheme } from "../components/baseComponents/InputTheme";
-import { useMemoizedFn } from "ahooks";
+import { useGetState, useMemoizedFn } from "ahooks";
 import { getToken } from "../utils/auth";
 import { useStore } from "../store";
 
@@ -27,84 +27,111 @@ const Home: NextPage<HomeProps> = (props) => {
 
     const [keyword, setKeyword] = useState<string>("");
     const [listPage, setListPage] = useState<number>(1);
+    const [loading, setLoading, getLoading] = useGetState<boolean>(false);
     const [list, setList] = useState<API.DynamicListResponse>({
         data: [
-            {
-                id: 1,
-                created_at: new Date().getTime(),
-                updated_at: new Date().getTime(),
-                user_id: 1,
-                user_name: "123",
-                head_img: "",
-                content: "123123",
-                content_img: "",
-                content_video: "",
-                topic_info: [],
-                topics: "",
-                title: "",
-                cover: "",
-                download: false,
-                stars: 11,
-                collect: 11,
-                is_collect: true,
-                is_stars: true,
-                is_follow: false,
-                comment_num: 0,
-            },
-            {
-                id: 2,
-                created_at: new Date().getTime(),
-                updated_at: new Date().getTime(),
-                user_id: 1,
-                user_name: "123",
-                head_img: "",
-                content: "123123",
-                content_img: "",
-                content_video:
-                    "https://vd4.bdstatic.com/mda-ngg5nxij6qjte326/cae_h264/1658030681621523754/mda-ngg5nxij6qjte326.mp4",
-                topic_info: [],
-                topics: "",
-                title: "123123",
-                cover: "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.jj20.com%2Fup%2Fallimg%2F4k%2Fs%2F02%2F210924233115O14-0-lp.jpg&refer=http%3A%2F%2Fimg.jj20.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1660637672&t=5faed1def09048fe5bb6bd5368519fc6",
-                download: false,
-                stars: 11,
-                collect: 11,
-                is_collect: true,
-                is_stars: true,
-                is_follow: false,
-                comment_num: 0,
-            },
-            {
-                id: 3,
-                created_at: new Date().getTime(),
-                updated_at: new Date().getTime(),
-                user_id: 1,
-                user_name: "123",
-                head_img: "",
-                content: "123123",
-                content_img:
-                    '["https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.jj20.com%2Fup%2Fallimg%2F4k%2Fs%2F02%2F210924233115O14-0-lp.jpg&refer=http%3A%2F%2Fimg.jj20.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1660637672&t=5faed1def09048fe5bb6bd5368519fc6","https://gimg2.baidu.com/image_search/src=http%3A%2F%2Ftupian.qqjay.com%2Fu%2F2017%2F1020%2F1_14136_2.jpg&refer=http%3A%2F%2Ftupian.qqjay.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1660650646&t=eaf78717a4b1f99a11a40944176be149","https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.jj20.com%2Fup%2Fallimg%2F4k%2Fs%2F02%2F210924233115O14-0-lp.jpg&refer=http%3A%2F%2Fimg.jj20.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1660637672&t=5faed1def09048fe5bb6bd5368519fc6","https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.jj20.com%2Fup%2Fallimg%2F4k%2Fs%2F02%2F210924233115O14-0-lp.jpg&refer=http%3A%2F%2Fimg.jj20.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1660637672&t=5faed1def09048fe5bb6bd5368519fc6","https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.jj20.com%2Fup%2Fallimg%2F4k%2Fs%2F02%2F210924233115O14-0-lp.jpg&refer=http%3A%2F%2Fimg.jj20.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1660637672&t=5faed1def09048fe5bb6bd5368519fc6","https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.jj20.com%2Fup%2Fallimg%2F4k%2Fs%2F02%2F210924233115O14-0-lp.jpg&refer=http%3A%2F%2Fimg.jj20.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1660637672&t=5faed1def09048fe5bb6bd5368519fc6","https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.jj20.com%2Fup%2Fallimg%2F4k%2Fs%2F02%2F210924233115O14-0-lp.jpg&refer=http%3A%2F%2Fimg.jj20.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1660637672&t=5faed1def09048fe5bb6bd5368519fc6","https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.jj20.com%2Fup%2Fallimg%2F4k%2Fs%2F02%2F210924233115O14-0-lp.jpg&refer=http%3A%2F%2Fimg.jj20.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1660637672&t=5faed1def09048fe5bb6bd5368519fc6","https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.jj20.com%2Fup%2Fallimg%2F4k%2Fs%2F02%2F210924233115O14-0-lp.jpg&refer=http%3A%2F%2Fimg.jj20.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1660637672&t=5faed1def09048fe5bb6bd5368519fc6","https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.jj20.com%2Fup%2Fallimg%2F4k%2Fs%2F02%2F210924233115O14-0-lp.jpg&refer=http%3A%2F%2Fimg.jj20.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1660637672&t=5faed1def09048fe5bb6bd5368519fc6","https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.jj20.com%2Fup%2Fallimg%2F4k%2Fs%2F02%2F210924233115O14-0-lp.jpg&refer=http%3A%2F%2Fimg.jj20.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1660637672&t=5faed1def09048fe5bb6bd5368519fc6"]',
-                content_video: "",
-                topic_info: [],
-                topics: "",
-                title: "",
-                cover: "",
-                download: false,
-                stars: 11,
-                collect: 11,
-                is_collect: true,
-                is_stars: true,
-                is_follow: false,
-                comment_num: 0,
-            },
+            // {
+            //     id: 1,
+            //     created_at: new Date().getTime(),
+            //     updated_at: new Date().getTime(),
+            //     user_id: 1,
+            //     user_name: "123",
+            //     head_img: "",
+            //     content:
+            //         "123123123123123123123123\n1231231\n3123123\n123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123\n123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123",
+            //     content_img: "",
+            //     content_video: "",
+            //     topic_info: [],
+            //     topics: "",
+            //     title: "",
+            //     cover: "",
+            //     download: false,
+            //     stars: 11,
+            //     collect: 11,
+            //     is_collect: true,
+            //     is_stars: false,
+            //     is_follow: false,
+            //     comment_num: 10,
+            // },
+            // {
+            //     id: 2,
+            //     created_at: new Date().getTime(),
+            //     updated_at: new Date().getTime(),
+            //     user_id: 1,
+            //     user_name: "123",
+            //     head_img: "",
+            //     content: "123123",
+            //     content_img: "",
+            //     content_video:
+            //         "https://vd4.bdstatic.com/mda-ngg5nxij6qjte326/cae_h264/1658030681621523754/mda-ngg5nxij6qjte326.mp4",
+            //     topic_info: [],
+            //     topics: "",
+            //     title: "123123",
+            //     cover: "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.jj20.com%2Fup%2Fallimg%2F4k%2Fs%2F02%2F210924233115O14-0-lp.jpg&refer=http%3A%2F%2Fimg.jj20.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1660637672&t=5faed1def09048fe5bb6bd5368519fc6",
+            //     download: false,
+            //     stars: 11,
+            //     collect: 11,
+            //     is_collect: true,
+            //     is_stars: true,
+            //     is_follow: false,
+            //     comment_num: 0,
+            // },
+            // {
+            //     id: 3,
+            //     created_at: new Date().getTime(),
+            //     updated_at: new Date().getTime(),
+            //     user_id: 1,
+            //     user_name: "123",
+            //     head_img: "",
+            //     content: "123123",
+            //     content_img:
+            //         '["https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.jj20.com%2Fup%2Fallimg%2F4k%2Fs%2F02%2F210924233115O14-0-lp.jpg&refer=http%3A%2F%2Fimg.jj20.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1660637672&t=5faed1def09048fe5bb6bd5368519fc6","https://gimg2.baidu.com/image_search/src=http%3A%2F%2Ftupian.qqjay.com%2Fu%2F2017%2F1020%2F1_14136_2.jpg&refer=http%3A%2F%2Ftupian.qqjay.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1660650646&t=eaf78717a4b1f99a11a40944176be149","https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.jj20.com%2Fup%2Fallimg%2F4k%2Fs%2F02%2F210924233115O14-0-lp.jpg&refer=http%3A%2F%2Fimg.jj20.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1660637672&t=5faed1def09048fe5bb6bd5368519fc6","https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.jj20.com%2Fup%2Fallimg%2F4k%2Fs%2F02%2F210924233115O14-0-lp.jpg&refer=http%3A%2F%2Fimg.jj20.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1660637672&t=5faed1def09048fe5bb6bd5368519fc6","https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.jj20.com%2Fup%2Fallimg%2F4k%2Fs%2F02%2F210924233115O14-0-lp.jpg&refer=http%3A%2F%2Fimg.jj20.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1660637672&t=5faed1def09048fe5bb6bd5368519fc6","https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.jj20.com%2Fup%2Fallimg%2F4k%2Fs%2F02%2F210924233115O14-0-lp.jpg&refer=http%3A%2F%2Fimg.jj20.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1660637672&t=5faed1def09048fe5bb6bd5368519fc6","https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.jj20.com%2Fup%2Fallimg%2F4k%2Fs%2F02%2F210924233115O14-0-lp.jpg&refer=http%3A%2F%2Fimg.jj20.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1660637672&t=5faed1def09048fe5bb6bd5368519fc6","https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.jj20.com%2Fup%2Fallimg%2F4k%2Fs%2F02%2F210924233115O14-0-lp.jpg&refer=http%3A%2F%2Fimg.jj20.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1660637672&t=5faed1def09048fe5bb6bd5368519fc6","https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.jj20.com%2Fup%2Fallimg%2F4k%2Fs%2F02%2F210924233115O14-0-lp.jpg&refer=http%3A%2F%2Fimg.jj20.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1660637672&t=5faed1def09048fe5bb6bd5368519fc6","https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.jj20.com%2Fup%2Fallimg%2F4k%2Fs%2F02%2F210924233115O14-0-lp.jpg&refer=http%3A%2F%2Fimg.jj20.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1660637672&t=5faed1def09048fe5bb6bd5368519fc6","https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.jj20.com%2Fup%2Fallimg%2F4k%2Fs%2F02%2F210924233115O14-0-lp.jpg&refer=http%3A%2F%2Fimg.jj20.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1660637672&t=5faed1def09048fe5bb6bd5368519fc6"]',
+            //     content_video: "",
+            //     topic_info: [],
+            //     topics: "",
+            //     title: "",
+            //     cover: "",
+            //     download: false,
+            //     stars: 11,
+            //     collect: 11,
+            //     is_collect: true,
+            //     is_stars: true,
+            //     is_follow: false,
+            //     comment_num: 0,
+            // },
         ],
         pagemeta: {
             page: 1,
-            limit: 20,
-            total: 3,
+            limit: 10,
+            total: 0,
             total_page: 1,
         },
     });
+
+    const nextPage = useMemoizedFn((e: Event) => {
+        if (getLoading()) return;
+        if (list.data.length === list.pagemeta.total) return;
+
+        if (e && e.target && (e.target as any).scrollingElement) {
+            const scroll = (e.target as any).scrollingElement as HTMLElement;
+            if (
+                scroll.scrollTop + scroll.clientHeight >=
+                scroll.scrollHeight - 100
+            ) {
+                const isToken = !!getToken();
+                const pages = listPage;
+                setListPage(pages + 1);
+                if (isToken) fetchDynamics(pages + 1);
+                else fetchNoDynamics(pages + 1);
+            }
+        }
+    });
+    useEffect(() => {
+        document.addEventListener("scroll", nextPage);
+        return () => {
+            window.removeEventListener("scroll", nextPage);
+        };
+    }, []);
 
     useEffect(() => {
         if (homePageDynamicId) {
@@ -126,9 +153,12 @@ const Home: NextPage<HomeProps> = (props) => {
     }, [homePageDynamicId]);
 
     const fetchDynamics = useMemoizedFn((page?: number, keywords?: string) => {
+        if (getLoading()) return;
+
+        setLoading(true);
         const params: FetchDynamicList = {
             page: page || listPage,
-            limit: 20,
+            limit: 10,
             order: "desc",
         };
         if (keywords !== undefined || keyword)
@@ -141,15 +171,25 @@ const Home: NextPage<HomeProps> = (props) => {
             userToken: true,
         })
             .then((res) => {
-                setList({ data: res.data || [], pagemeta: res.pagemeta });
+                setList({
+                    data:
+                        page === 1
+                            ? res.data || []
+                            : list.data.concat(res.data || []),
+                    pagemeta: res.pagemeta,
+                });
             })
-            .catch((err) => {});
+            .catch((err) => {})
+            .finally(() => setTimeout(() => setLoading(false), 50));
     });
     const fetchNoDynamics = useMemoizedFn(
         (page?: number, keywords?: string) => {
+            if (getLoading()) return;
+
+            setLoading(true);
             const params: FetchDynamicList = {
                 page: page || listPage,
-                limit: 20,
+                limit: 10,
                 order: "desc",
             };
             if (keywords || keyword) params.keywords = keywords || keyword;
@@ -160,9 +200,16 @@ const Home: NextPage<HomeProps> = (props) => {
                 params: { ...params },
             })
                 .then((res) => {
-                    setList({ data: res.data || [], pagemeta: res.pagemeta });
+                    setList({
+                        data:
+                            page === 1
+                                ? res.data || []
+                                : list.data.concat(res.data || []),
+                        pagemeta: res.pagemeta,
+                    });
                 })
-                .catch((err) => {});
+                .catch((err) => {})
+                .finally(() => setTimeout(() => setLoading(false), 50));
         }
     );
 
@@ -193,18 +240,18 @@ const Home: NextPage<HomeProps> = (props) => {
 
     useEffect(() => {
         const isToken = !!getToken();
-        setListPage(0);
-        if (isToken) fetchDynamics(0);
-        else fetchNoDynamics(0);
+        setListPage(1);
+        if (isToken) fetchDynamics(1);
+        else fetchNoDynamics(1);
     }, [userInfo]);
 
     useEffect(() => {
         const isToken = !!getToken();
         if (homePageKeywords.trigger) {
-            setListPage(0);
+            setListPage(1);
             setKeyword("");
-            if (isToken) fetchDynamics(0, homePageKeywords.value);
-            else fetchNoDynamics(0, homePageKeywords.value);
+            if (isToken) fetchDynamics(1, homePageKeywords.value);
+            else fetchNoDynamics(1, homePageKeywords.value);
         }
     }, [homePageKeywords]);
 
@@ -227,6 +274,16 @@ const Home: NextPage<HomeProps> = (props) => {
             })
             .catch((err) => {});
     });
+    // 页面内搜索功能
+    const searchKeyword = useMemoizedFn(() => {
+        setListPage(1);
+        setHomePageKeywords({
+            value: "",
+            trigger: false,
+        });
+        if (userInfo.isLogin) fetchDynamics(1);
+        else fetchNoDynamics(1);
+    });
 
     return (
         <HomeLayout>
@@ -243,23 +300,11 @@ const Home: NextPage<HomeProps> = (props) => {
                             placeholder="搜索..."
                             value={keyword}
                             onChange={(e) => setKeyword(e.target.value)}
-                            onPressEnter={() => {
-                                setListPage(0);
-                                if (userInfo.isLogin) fetchDynamics(0);
-                                else fetchNoDynamics(0);
-                            }}
+                            onPressEnter={() => searchKeyword()}
                         />
                         <ButtonTheme
                             className="search-btn"
-                            onClick={() => {
-                                setListPage(0);
-                                setHomePageKeywords({
-                                    value: "",
-                                    trigger: false,
-                                });
-                                if (userInfo.isLogin) fetchDynamics(0);
-                                else fetchNoDynamics(0);
-                            }}
+                            onClick={() => searchKeyword()}
                         >
                             搜索
                         </ButtonTheme>
@@ -278,6 +323,10 @@ const Home: NextPage<HomeProps> = (props) => {
                                 />
                             );
                         })}
+
+                        {loading && (
+                            <div className="list-loading">正在加载中。。。</div>
+                        )}
                     </div>
 
                     <div className="content-topic-list">

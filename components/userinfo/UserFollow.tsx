@@ -7,6 +7,8 @@ import { API } from "../../types/api";
 import { useMemoizedFn } from "ahooks";
 import { NetWorkApi } from "../../utils/fetch";
 import { FetchFollowList, FollowUserProps } from "../../types/extraApi";
+import { useStore } from "../../store";
+import { failed } from "../../utils/notification";
 
 interface UserFollowProps {
     userId: number;
@@ -16,13 +18,14 @@ interface UserFollowProps {
 
 const UserFollow: NextPage<UserFollowProps> = (props) => {
     const { userId, onlyShow = false, onUpdateUserInfo } = props;
-
+    const { userInfo } = useStore();
     const router = useRouter();
 
     const [list, setList] = useState<API.UserFollowResponse>({
         data: [],
         pagemeta: { page: 1, limit: 50, total: 0, total_page: 1 },
     });
+    const [crossNum, setCrossNum] = useState<number>(0);
 
     const fetchList = useMemoizedFn(() => {
         NetWorkApi<FetchFollowList, API.UserFollowResponse>({
@@ -39,12 +42,45 @@ const UserFollow: NextPage<UserFollowProps> = (props) => {
             })
             .catch((err) => {});
     });
+    const fetchUnloggedList = useMemoizedFn(() => {
+        NetWorkApi<FetchFollowList, API.UserFollowResponse>({
+            method: "get",
+            url: "/api/user/follow/unlogged",
+            params: { page: 1, limit: 10, order: "desc", user_id: userId },
+        })
+            .then((res) => {
+                setList({
+                    data: res.data || [],
+                    pagemeta: res.pagemeta,
+                });
+            })
+            .catch((err) => {});
+    });
+    const fetchCrossNum = useMemoizedFn(() => {
+        NetWorkApi<undefined, number>({
+            method: "get",
+            url: "/api/cross/follow",
+            userToken: true,
+        })
+            .then((res) => {
+                setCrossNum(res);
+            })
+            .catch((err) => {});
+    });
 
-    const cancelFollow = useMemoizedFn((id: number) => {
+    const cancelFollow = useMemoizedFn((id: number, flag?: boolean) => {
+        if (!userInfo.isLogin) {
+            failed("请登录后重新操作");
+            return false;
+        }
+
         NetWorkApi<FollowUserProps, API.ActionSucceeded>({
             method: "post",
             url: "/api/user/follow",
-            params: { follow_user_id: id, operation: "remove" },
+            params: {
+                follow_user_id: id,
+                operation: onlyShow ? (flag ? "remove" : "add") : "remove",
+            },
             userToken: true,
         })
             .then((res) => {
@@ -73,8 +109,13 @@ const UserFollow: NextPage<UserFollowProps> = (props) => {
     });
 
     useEffect(() => {
-        fetchList();
-    }, []);
+        if (userInfo.isLogin) {
+            fetchList();
+            fetchCrossNum();
+        } else {
+            fetchUnloggedList();
+        }
+    }, [userInfo]);
 
     return (
         <div className="user-follow-wrapper">
@@ -82,7 +123,7 @@ const UserFollow: NextPage<UserFollowProps> = (props) => {
                 <div className="user-follow-hint">
                     {list.pagemeta.total === 0
                         ? `你一共关注了 0 位小伙伴`
-                        : `你一共关注了 ${list.pagemeta.total} 位小伙伴，其中 15 位与你互相关注`}
+                        : `你一共关注了 ${list.pagemeta.total} 位小伙伴，其中 ${crossNum} 位与你互相关注`}
                 </div>
             )}
             {list.data.map((item, index) => {
@@ -124,7 +165,7 @@ const UserFollow: NextPage<UserFollowProps> = (props) => {
                                     >
                                         {item.follow_user_name}
                                     </div>
-                                    <div className="info-dynamic">
+                                    <div className="info-dynamic text-ellipsis-style">
                                         {item.content ? (
                                             <>
                                                 <span>{item.content}</span>
@@ -154,39 +195,48 @@ const UserFollow: NextPage<UserFollowProps> = (props) => {
                                 </div>
                             </div>
 
-                            <div className="follow-operate">
-                                {item.me_follow && item.follow_me && (
-                                    <Tooltip
-                                        placement="bottom"
-                                        title={
-                                            <span className="mutual-attention-hint-style">
-                                                互相关注
-                                            </span>
-                                        }
-                                    >
-                                        <MutualAttentionIcon className="follow-operate-icon" />
-                                    </Tooltip>
-                                )}
-                                {onlyShow ? (
-                                    <div
-                                        className={`follow-operate-btn-${item.me_follow}`}
-                                        onClick={() =>
-                                            cancelFollow(item.follow_user_id)
-                                        }
-                                    >
-                                        {item.me_follow ? "取消关注" : "关注"}
-                                    </div>
-                                ) : (
-                                    <div
-                                        className="follow-operate-btn-true"
-                                        onClick={() =>
-                                            cancelFollow(item.follow_user_id)
-                                        }
-                                    >
-                                        取消关注
-                                    </div>
-                                )}
-                            </div>
+                            {userInfo.user_id !== item.follow_user_id && (
+                                <div className="follow-operate">
+                                    {item.me_follow && item.follow_me && (
+                                        <Tooltip
+                                            placement="bottom"
+                                            title={
+                                                <span className="mutual-attention-hint-style">
+                                                    互相关注
+                                                </span>
+                                            }
+                                        >
+                                            <MutualAttentionIcon className="follow-operate-icon" />
+                                        </Tooltip>
+                                    )}
+                                    {onlyShow ? (
+                                        <div
+                                            className={`follow-operate-btn-${item.me_follow}`}
+                                            onClick={() =>
+                                                cancelFollow(
+                                                    item.follow_user_id,
+                                                    item.me_follow
+                                                )
+                                            }
+                                        >
+                                            {item.me_follow
+                                                ? "取消关注"
+                                                : "关注"}
+                                        </div>
+                                    ) : (
+                                        <div
+                                            className="follow-operate-btn-true"
+                                            onClick={() =>
+                                                cancelFollow(
+                                                    item.follow_user_id
+                                                )
+                                            }
+                                        >
+                                            取消关注
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                         </div>
                     </div>
                 );

@@ -16,7 +16,6 @@ import {
     ReplyThemeIcon,
     UploadImgIcon,
 } from "../public/icons";
-import { CollapseParagraph } from "./baseComponents/CollapseParagraph";
 import ImgCropper from "./modal/ImgCropper";
 import { API } from "../types/api";
 import { timeFormat } from "../utils/timeTool";
@@ -34,6 +33,9 @@ import { failed } from "../utils/notification";
 import PostComment from "./modal/PostComment";
 import { SendCommentPng, SendCommentThemePng } from "../utils/btnImgBase64";
 import { CommentContentInfo } from "./CommentContentInfo";
+import MediaShow from "./modal/MediaShow";
+import { ImgShow } from "./baseComponents/ImgShow";
+import { CollapseText } from "./baseComponents/CollapseText";
 
 const { TextArea } = Input;
 
@@ -82,6 +84,14 @@ const CommentItem: NextPage<CommentItemProps> = (props) => {
     const { userInfo } = useStore();
     const router = useRouter();
 
+    const judgeAuth = useMemoizedFn(() => {
+        if (!userInfo.isLogin) {
+            failed("请登录后重新操作");
+            return false;
+        }
+        return true;
+    });
+
     const [followLoading, setFollowLoading] = useState<boolean>(false);
     const [collectLoading, setCollectLoading] = useState<boolean>(false);
     const [starsLoading, setStarsLoading] = useState<boolean>(false);
@@ -94,7 +104,26 @@ const CommentItem: NextPage<CommentItemProps> = (props) => {
 
     const [listLoading, setListloading] = useState<boolean>(false);
     const [commentList, setCommentList] = useState<API.DynamicComment>({
-        data: [],
+        data: [
+            {
+                id: 1,
+                created_at: new Date().getTime(),
+                updated_at: new Date().getTime(),
+                dynamic_id: 1,
+                root_id: 1,
+                parent_id: 1,
+                user_id: 1,
+                user_name: "123",
+                head_img: "",
+                message: "123",
+                message_img: "",
+                like_num: 1,
+                by_user_id: 1,
+                by_user_name: "123",
+                by_head_img: "",
+                reply_num: 1,
+            },
+        ],
         pagemeta: { page: 1, limit: 10, total: 0, total_page: 1 },
     });
     // const [signCommentId, setSignCommentId] = useState<number>(0);
@@ -306,14 +335,31 @@ const CommentItem: NextPage<CommentItemProps> = (props) => {
             <div className="comment-item-body">
                 <div className="item-left-body">
                     <div className="body-img">
-                        <img src={info.head_img} className="img-style" />
+                        <img
+                            src={info.head_img}
+                            className="img-style"
+                            onClick={() =>
+                                router.push({
+                                    pathname: "/userpage",
+                                    query: { user: info.user_id },
+                                })
+                            }
+                        />
                     </div>
                 </div>
 
                 <div className="item-right-body">
                     <div className="body-avatar">
                         <div className="avatar-info">
-                            <div className="avatar-info-name">
+                            <div
+                                className="avatar-info-name"
+                                onClick={() =>
+                                    router.push({
+                                        pathname: "/userpage",
+                                        query: { user: info.user_id },
+                                    })
+                                }
+                            >
                                 {info.user_name}
                             </div>
                             <div className="avatar-info-time">
@@ -329,7 +375,10 @@ const CommentItem: NextPage<CommentItemProps> = (props) => {
                                             : "follow-style"
                                     }`}
                                     disabled={followLoading}
-                                    onClick={followUser}
+                                    onClick={() => {
+                                        if (!judgeAuth()) return;
+                                        followUser();
+                                    }}
                                 >
                                     {info.is_follow ? "已关注" : "关注"}
                                 </Button>
@@ -340,6 +389,7 @@ const CommentItem: NextPage<CommentItemProps> = (props) => {
                                         type="link"
                                         className="btn-style edit-btn"
                                         onClick={() => {
+                                            if (!judgeAuth()) return;
                                             if (onEdit) onEdit();
                                         }}
                                     >
@@ -353,6 +403,7 @@ const CommentItem: NextPage<CommentItemProps> = (props) => {
                                         placement="bottomLeft"
                                         title="确定是否删除该动态吗?"
                                         onConfirm={() => {
+                                            if (!judgeAuth()) return;
                                             if (onDel) onDel();
                                         }}
                                         okText="确定"
@@ -382,7 +433,10 @@ const CommentItem: NextPage<CommentItemProps> = (props) => {
                                 <Col span={8}>
                                     <div
                                         className="body-operation-btn"
-                                        onClick={() => userAction("collect")}
+                                        onClick={() => {
+                                            if (!judgeAuth()) return;
+                                            userAction("collect");
+                                        }}
                                     >
                                         {info.is_collect ? (
                                             <CollectionThemeIcon className="icon-style" />
@@ -429,7 +483,10 @@ const CommentItem: NextPage<CommentItemProps> = (props) => {
                                 <Col span={8}>
                                     <div
                                         className="body-operation-btn"
-                                        onClick={() => userAction("stars")}
+                                        onClick={() => {
+                                            if (!judgeAuth()) return;
+                                            userAction("stars");
+                                        }}
                                     >
                                         {info.is_stars ? (
                                             <LikeThemeIcon className="icon-style" />
@@ -469,6 +526,9 @@ const CommentItem: NextPage<CommentItemProps> = (props) => {
                                     message: e.target.value,
                                 })
                             }
+                            onKeyDown={(e) => {
+                                if (e.code == "Enter") e.preventDefault();
+                            }}
                         />
 
                         <div className="reply-img-and-btn">
@@ -529,8 +589,9 @@ const CommentItem: NextPage<CommentItemProps> = (props) => {
                                         className="reply-btn-style"
                                         type="link"
                                         disabled={
-                                            comment.message_img &&
-                                            comment.message_img.length >= 3
+                                            !userInfo.isLogin ||
+                                            (comment.message_img &&
+                                                comment.message_img.length >= 3)
                                         }
                                         icon={
                                             <UploadImgIcon className="icon-style" />
@@ -544,7 +605,10 @@ const CommentItem: NextPage<CommentItemProps> = (props) => {
                                     disabled={
                                         !comment.message || commentLoading
                                     }
-                                    onClick={publishComment}
+                                    onClick={() => {
+                                        if (!judgeAuth()) return;
+                                        publishComment();
+                                    }}
                                 >
                                     <img
                                         src={`${
@@ -636,7 +700,7 @@ const CommentWord: React.FC<CommentWordProp> = (props) => {
     const { info } = props;
     return (
         <div className="comment-word-wrapper">
-            <CollapseParagraph value={info.content} rows={3} />
+            <CollapseText value={info.content} />
         </div>
     );
 };
@@ -652,9 +716,12 @@ const CommentImg: React.FC<CommentImgProp> = (props) => {
             : JSON.parse(info.content_img);
     const arr = imgs.length > 9 ? imgs.slice(0, 9) : [...imgs];
 
+    const [isShow, setIsShow] = useState<boolean>(false);
+    const [showIndex, setShowIndex] = useState<number>(0);
+
     return (
         <div className="comment-img-wrapper">
-            <CollapseParagraph value={info.content} topic="话题" rows={3} />
+            <CollapseText value={info.content} />
             <div className="comment-img-body">
                 <div
                     className={
@@ -666,17 +733,39 @@ const CommentImg: React.FC<CommentImgProp> = (props) => {
                     {arr.map((item, index) => {
                         return (
                             <div className="img-grid-opt" key={index}>
-                                <img className="img-style" src={item} />
+                                <ImgShow
+                                    src={item}
+                                    onclick={() => {
+                                        setShowIndex(index);
+                                        setTimeout(() => setIsShow(true), 100);
+                                    }}
+                                />
                                 {index === 8 && arr.length < imgs.length && (
-                                    <div className="img-grid-opt-mask">{`+${
-                                        imgs.length - arr.length
-                                    }`}</div>
+                                    <div
+                                        className="img-grid-opt-mask"
+                                        onClick={() => {
+                                            setShowIndex(9);
+                                            setTimeout(
+                                                () => setIsShow(true),
+                                                100
+                                            );
+                                        }}
+                                    >{`+${imgs.length - arr.length}`}</div>
                                 )}
                             </div>
                         );
                     })}
                 </div>
             </div>
+
+            {isShow && (
+                <MediaShow
+                    imgs={imgs}
+                    imgsIndex={showIndex}
+                    visible={isShow}
+                    onCancel={() => setIsShow(false)}
+                />
+            )}
         </div>
     );
 };
@@ -687,30 +776,28 @@ interface CommentVideoProp {
 const CommentVideo: React.FC<CommentVideoProp> = (props) => {
     const { info } = props;
 
-    const [top, setTop] = useState<number>(0);
-    const imgRef = useRef<HTMLImageElement>(null);
-
-    useEffect(() => {
-        if (!imgRef || !imgRef.current) return;
-
-        const img = imgRef.current;
-        setTop(img.offsetHeight / 2 - 178);
-    }, [imgRef.current]);
+    const [isShow, setIsShow] = useState<boolean>(false);
 
     return (
         <div className="comment-video-wrapper">
-            <CollapseParagraph value={info.content} rows={3} />
+            <CollapseText value={info.content} />
             <div className="comment-video-body">
-                <img
-                    ref={imgRef}
-                    style={{ top: -top }}
-                    src={info.cover}
-                    className="img-style"
-                />
-                <div className="comment-video-mask">
+                <ImgShow isCover={true} src={info.cover} />
+                <div
+                    className="comment-video-mask"
+                    onClick={() => setIsShow(true)}
+                >
                     <CaretRightOutlined className="icon-style" />
                 </div>
             </div>
+            {isShow && (
+                <MediaShow
+                    isVideo={true}
+                    video={info.content_video}
+                    visible={isShow}
+                    onCancel={() => setIsShow(false)}
+                />
+            )}
         </div>
     );
 };
@@ -726,7 +813,7 @@ const ReplyFunctionImg: React.FC<ReplyFunctionImgProps> = (props) => {
 
     return (
         <div className="reply-img-opt" key={index}>
-            <img src={src} className="img-style" />
+            <ImgShow src={src} />
             <div className="img-opt-del" onClick={() => onDel(index)}>
                 x
             </div>

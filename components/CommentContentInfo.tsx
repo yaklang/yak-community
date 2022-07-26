@@ -5,10 +5,13 @@ import { CaretDownOutlined } from "@ant-design/icons";
 import { NetWorkApi } from "../utils/fetch";
 import { API } from "../types/api";
 import { StarsComment } from "../types/extraApi";
-import { CollapseParagraph } from "./baseComponents/CollapseParagraph";
 import { timeFormat } from "../utils/timeTool";
 import { LikeIcon, LikeThemeIcon, ReplyIcon } from "../public/icons";
 import SubComment from "./modal/SubComment";
+import { useRouter } from "next/router";
+import { useStore } from "../store";
+import { failed } from "../utils/notification";
+import { CollapseText } from "./baseComponents/CollapseText";
 
 export interface CommentContentInfoProps {
     dynamicInfo?: API.DynamicLists;
@@ -40,6 +43,9 @@ export const CommentContentInfo: React.FC<CommentContentInfoProps> = (
             ? JSON.parse(info.message_img)
             : [];
 
+    const router = useRouter();
+    const { userInfo } = useStore();
+
     const [loading, setLoading] = useState<boolean>(false);
     const [flag, setFlag] = useState<boolean>(false);
     //评论点赞操作
@@ -70,6 +76,14 @@ export const CommentContentInfo: React.FC<CommentContentInfoProps> = (
         if (signCommentId === info.id) setFlag(!flag);
     }, [signCommentId]);
 
+    const judgeAuth = useMemoizedFn(() => {
+        if (!userInfo.isLogin) {
+            failed("请登录后重新操作");
+            return false;
+        }
+        return true;
+    });
+
     return (
         <div
             className={`${
@@ -82,16 +96,33 @@ export const CommentContentInfo: React.FC<CommentContentInfoProps> = (
         >
             <div className="comment-content-info-body">
                 <div className="body-img">
-                    <img src={info.head_img} className="img-style" />
+                    <img
+                        src={info.head_img}
+                        className="img-style"
+                        onClick={() =>
+                            router.push({
+                                pathname: "/userpage",
+                                query: { user: info.user_id },
+                            })
+                        }
+                    />
                 </div>
 
                 <div className="body-data">
-                    <div className="body-data-name text-ellipsis-style">
+                    <div
+                        className="body-data-name text-ellipsis-style"
+                        onClick={() =>
+                            router.push({
+                                pathname: "/userpage",
+                                query: { user: info.user_id },
+                            })
+                        }
+                    >
                         {info.user_name}
                     </div>
 
                     <div className="body-data-text">
-                        <CollapseParagraph
+                        <CollapseText
                             value={
                                 <>
                                     {info.message}
@@ -109,6 +140,7 @@ export const CommentContentInfo: React.FC<CommentContentInfoProps> = (
                                 </>
                             }
                             rows={2}
+                            isComment={true}
                         />
                     </div>
 
@@ -119,12 +151,21 @@ export const CommentContentInfo: React.FC<CommentContentInfoProps> = (
                         <div className="body-data-operation">
                             <div
                                 className="operation-btn"
-                                onClick={() => onReply(info)}
+                                onClick={() => {
+                                    if (!judgeAuth()) return;
+                                    onReply(info);
+                                }}
                             >
                                 <ReplyIcon className="icon-style" />
                                 {/* {info.reply_num} */}
                             </div>
-                            <div className="operation-btn" onClick={onLike}>
+                            <div
+                                className="operation-btn"
+                                onClick={() => {
+                                    if (!judgeAuth()) return;
+                                    onLike();
+                                }}
+                            >
                                 {flag ? (
                                     <LikeThemeIcon className="icon-style" />
                                 ) : (

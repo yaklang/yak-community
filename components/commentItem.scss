@@ -21,6 +21,7 @@ $REM: 16;
             .img-style {
                 @include width-height-100;
                 border-radius: 50%;
+                cursor: pointer;
             }
         }
     }
@@ -41,6 +42,10 @@ $REM: 16;
                     font-weight: 600;
                     color: var(--base-font-color);
                     line-height: REM(22);
+                    cursor: pointer;
+                }
+                .avatar-info-name:hover {
+                    color: var(--base-theme-color);
                 }
                 .avatar-info-time {
                     margin-top: REM(4);
@@ -188,6 +193,7 @@ $REM: 16;
                 }
                 .icon-style {
                     font-size: REM(24);
+                    color: var(--base-icon-color);
                 }
                 .img-style {
                     width: REM(24);
@@ -251,13 +257,8 @@ $REM: 16;
         }
         .img-grid-opt {
             width: 100%;
-            height: 152px;
+            padding-top: 100%;
             position: relative;
-            .img-style {
-                width: 100%;
-                height: 100%;
-                border-radius: 4px;
-            }
             .img-grid-opt-mask {
                 position: absolute;
                 top: 0;
@@ -284,12 +285,6 @@ $REM: 16;
         margin-top: REM(8);
         height: REM(356);
         position: relative;
-        overflow: hidden;
-        border-radius: 4px;
-        .img-style {
-            position: absolute;
-            width: 100%;
-        }
 
         .comment-video-mask {
             position: absolute;
@@ -312,13 +307,7 @@ $REM: 16;
 .reply-img-opt {
     width: REM(72);
     height: REM(72);
-    border-radius: 4px;
     position: relative;
-    overflow: hidden;
-    .img-style {
-        width: 100%;
-        height: 100%;
-    }
     .img-opt-del {
         position: absolute;
         right: 2px;

@@ -12,14 +12,7 @@ import {
     Upload,
 } from "antd";
 import { CloseOutlined, PlusOutlined, UploadOutlined } from "@ant-design/icons";
-import {
-    TopicIcon,
-    TopicThemeIcon,
-    UploadImgIcon,
-    UploadImgThemeIcon,
-    UploadVideoIcon,
-    UploadVideoThemeIcon,
-} from "../../public/icons";
+import { TopicIcon, UploadImgIcon, UploadVideoIcon } from "../../public/icons";
 import SecondConfirm from "./SecondConfirm";
 import { NetWorkApi } from "../../utils/fetch";
 import { API } from "../../types/api";
@@ -31,6 +24,7 @@ import { failed } from "../../utils/notification";
 import { imgJudge, SingleUpload } from "../baseComponents/SingleUpload";
 import { useStore } from "../../store";
 import { generateTimeName } from "../../utils/timeTool";
+import { ImgShow } from "../baseComponents/ImgShow";
 
 const { TextArea } = Input;
 const { Item } = Form;
@@ -70,13 +64,13 @@ const DefaultNewDynamicInfo: NewDynamicInfoProps = {
 const PostDynamic: NextPage<PostDynamicProps> = (props) => {
     const { existId, visible, onCancel } = props;
 
-    const { setHomePageDynamicId } = useStore();
+    const { userInfo, setHomePageDynamicId } = useStore();
 
     const [loading, setLoading] = useState<boolean>(false);
     const [dynamic, setDynamic, getDynamic] = useGetState<NewDynamicInfoProps>({
         ...DefaultNewDynamicInfo,
     });
-
+    // 获取随机token标识
     const fetchCsrfToken = useMemoizedFn(() => {
         NetWorkApi<undefined, string>({
             method: "get",
@@ -84,11 +78,10 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
             userToken: true,
         })
             .then((res) => {
-                setDynamic({ ...dynamic, csrf_token: res });
+                setDynamic({ ...getDynamic(), csrf_token: res });
             })
             .catch((err) => {});
     });
-
     useEffect(() => {
         if (visible) fetchCsrfToken();
     }, [visible]);
@@ -103,7 +96,6 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
             })
                 .then((res) => {
                     const { data } = res;
-                    console.log(123);
                     const imgs: string[] =
                         !data.content_img || data.content_img === "null"
                             ? []
@@ -116,17 +108,13 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
                             content_img: imgs.map((item) => {
                                 const imgInfo: { src: string; name: string } = {
                                     src: item,
-                                    name: (item.split("/").pop() || "").split(
-                                        "."
-                                    )[0],
+                                    name: item.split("/").pop() || "",
                                 };
                                 return imgInfo;
                             }),
                             content_video: {
                                 src: data.content_video,
-                                name: (
-                                    data.content_video.split("/").pop() || ""
-                                ).split(".")[0],
+                                name: data.content_video.split("/").pop() || "",
                             },
                             topics: data.topic_info
                                 ? data.topic_info.map((item) => {
@@ -144,39 +132,7 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
                             cover: data.cover,
                             download: data.download,
                         });
-                    }, 200);
-                    setDynamic({
-                        ...getDynamic(),
-                        content: data.content,
-                        content_img: imgs.map((item) => {
-                            const imgInfo: { src: string; name: string } = {
-                                src: item,
-                                name: (item.split("/").pop() || "").split(
-                                    "."
-                                )[0],
-                            };
-                            return imgInfo;
-                        }),
-                        content_video: {
-                            src: data.content_video,
-                            name: (
-                                data.content_video.split("/").pop() || ""
-                            ).split(".")[0],
-                        },
-                        topics: data.topic_info.map((item) => {
-                            const topicInfo: API.TopicList = {
-                                id: item.id,
-                                created_at: 0,
-                                updated_at: 0,
-                                topics: item.topics,
-                                hot_num: 0,
-                            };
-                            return topicInfo;
-                        }),
-                        title: data.title,
-                        cover: data.cover,
-                        download: data.download,
-                    });
+                    }, 50);
                 })
                 .catch((err) => {});
         }
@@ -186,7 +142,7 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
         if (
             dynamic.content ||
             dynamic.content_img.length !== 0 ||
-            dynamic.content_video ||
+            dynamic.content_video.src ||
             dynamic.title ||
             dynamic.cover
         ) {
@@ -198,7 +154,9 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
     });
     // 重置弹窗内数据
     const resetDynamic = () => {
+        setLoading(false);
         setDynamic({ ...DefaultNewDynamicInfo });
+        imgTime.current = null;
         fileList.current = [];
         imgList.current = [];
         videoTime.current = null;
@@ -208,8 +166,13 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
         setTopiCList([]);
         setTopicSearch("");
     };
-    // 视频内容的判断还是有点问题
+
     const releaseDynamic = useMemoizedFn(() => {
+        if (!userInfo.isLogin) {
+            failed("请先登录账户后再使用");
+            return;
+        }
+
         if (!dynamic.content) {
             failed("请输入动态内容");
             return;
@@ -250,7 +213,7 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
         }
         if (existId && dynamic.content_img.length !== 0) {
             params.old_content_img = dynamic.content_img
-                .filter((item) => item.src)
+                .filter((item) => item.src.indexOf("yakit-online.oss") > -1)
                 .map((item) => item.src);
         }
         if (dynamic.content_video.src) {
@@ -277,7 +240,7 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
 
     const [secondShow, setSecondShow] = useState<boolean>(false);
 
-    const [imgIcon, setImgIcon] = useState<boolean>(false);
+    const [imgLoading, setImgLoading] = useState<boolean>();
     const imgTime = useRef<any>(null);
     const fileList = useRef<RcFile[]>([]);
     const imgList = useRef<{ src: string; name: string }[]>([]);
@@ -285,15 +248,27 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
     const uploadImg = useMemoizedFn(() => {
         if (!dynamic.csrf_token) {
             failed("获取关键信息失败，请关闭弹窗重新打开");
+            setImgLoading(false);
             return;
         }
-        if (imgList.current.length + dynamic.content_img.length >= 18) return;
+        if (imgList.current.length + dynamic.content_img.length >= 18) {
+            setDynamic({
+                ...dynamic,
+                content_img: dynamic.content_img.concat(imgList.current),
+            });
+            imgList.current = [];
+            fileList.current = [];
+            setImgLoading(false);
+            return;
+        }
         if (fileList.current.length === 0) {
             setDynamic({
                 ...dynamic,
                 content_img: dynamic.content_img.concat(imgList.current),
             });
             imgList.current = [];
+            fileList.current = [];
+            setImgLoading(false);
             return;
         }
 
@@ -346,7 +321,6 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
             .catch((err) => {});
     });
 
-    const [videoIcon, setVideoIcon] = useState<boolean>(false);
     const videoTime = useRef<any>(null);
     const videoCount = useRef<number>(0);
     const [videoRate, setVideoRate] = useState<number>(0);
@@ -437,11 +411,16 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
                 title: uploadWarnType === 1 ? "" : dynamic.title,
                 cover: uploadWarnType === 1 ? "" : dynamic.cover,
             });
+            if (uploadWarnType === 1) {
+                clearInterval(videoTime.current);
+                videoCount.current = 0;
+                setVideoRate(0);
+                setVideoSize(0);
+            }
         }
         setUploadWarn(false);
     });
 
-    const [topicIcon, setTopicIcon] = useState<boolean>(false);
     const [topicShow, setTopicShow] = useState<boolean>(false);
     const [topicList, setTopiCList] = useState<API.TopicList[]>([]);
     const [topicSearch, setTopicSearch] = useState<string>("");
@@ -504,15 +483,8 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
                         {!!dynamic.content_video.src ? (
                             <Button
                                 type="link"
-                                onMouseEnter={() => setImgIcon(true)}
-                                onMouseLeave={() => setImgIcon(false)}
-                                icon={
-                                    imgIcon ? (
-                                        <UploadImgThemeIcon className="icon-style" />
-                                    ) : (
-                                        <UploadImgIcon className="icon-style" />
-                                    )
-                                }
+                                disabled={imgLoading}
+                                icon={<UploadImgIcon className="icon-style" />}
                                 onClick={() => showUploadWarn(1)}
                             />
                         ) : (
@@ -531,24 +503,21 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
                                         clearTimeout(imgTime.current);
                                         imgTime.current = null;
                                     }
-                                    imgTime.current = setTimeout(
-                                        () => uploadImg(),
-                                        200
-                                    );
+                                    imgTime.current = setTimeout(() => {
+                                        setImgLoading(true);
+                                        uploadImg();
+                                    }, 200);
                                     return Promise.reject();
                                 }}
                             >
                                 <Button
                                     type="link"
-                                    onMouseEnter={() => setImgIcon(true)}
-                                    onMouseLeave={() => setImgIcon(false)}
-                                    disabled={dynamic.content_img.length >= 18}
+                                    disabled={
+                                        dynamic.content_img.length >= 18 ||
+                                        imgLoading
+                                    }
                                     icon={
-                                        imgIcon ? (
-                                            <UploadImgThemeIcon className="icon-style" />
-                                        ) : (
-                                            <UploadImgIcon className="icon-style" />
-                                        )
+                                        <UploadImgIcon className="icon-style" />
                                     }
                                 />
                             </Upload>
@@ -556,14 +525,9 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
                         {dynamic.content_img.length !== 0 ? (
                             <Button
                                 type="link"
-                                onMouseEnter={() => setVideoIcon(true)}
-                                onMouseLeave={() => setVideoIcon(false)}
+                                disabled={videoRate > 0 && videoRate < 100}
                                 icon={
-                                    videoIcon ? (
-                                        <UploadVideoThemeIcon className="icon-style" />
-                                    ) : (
-                                        <UploadVideoIcon className="icon-style" />
-                                    )
+                                    <UploadVideoIcon className="icon-style" />
                                 }
                                 onClick={() => showUploadWarn(2)}
                             />
@@ -585,15 +549,9 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
                             >
                                 <Button
                                     type="link"
-                                    onMouseEnter={() => setVideoIcon(true)}
-                                    onMouseLeave={() => setVideoIcon(false)}
-                                    disabled={videoSize > 0 && videoSize < 100}
+                                    disabled={videoRate > 0 && videoRate < 100}
                                     icon={
-                                        videoIcon ? (
-                                            <UploadVideoThemeIcon className="icon-style" />
-                                        ) : (
-                                            <UploadVideoIcon className="icon-style" />
-                                        )
+                                        <UploadVideoIcon className="icon-style" />
                                     }
                                 />
                             </SingleUpload>
@@ -649,15 +607,7 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
                         >
                             <Button
                                 type="link"
-                                onMouseEnter={() => setTopicIcon(true)}
-                                onMouseLeave={() => setTopicIcon(false)}
-                                icon={
-                                    topicIcon ? (
-                                        <TopicThemeIcon className="icon-style" />
-                                    ) : (
-                                        <TopicIcon className="icon-style" />
-                                    )
-                                }
+                                icon={<TopicIcon className="icon-style" />}
                             />
                         </Popover>
                     </div>
@@ -678,7 +628,7 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
                         {dynamic.content_img.map((item, index) => {
                             return (
                                 <div className="img-opt" key={item.src}>
-                                    <img src={item.src} className="img-style" />
+                                    <ImgShow src={item.src} />
                                     <div
                                         className="img-opt-del"
                                         onClick={() => delImg(item.name)}
@@ -693,6 +643,7 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
                                 accept=".png,.jpg,.jpeg,.gif"
                                 showUploadList={false}
                                 multiple={true}
+                                disabled={imgLoading}
                                 beforeUpload={(file: RcFile) => {
                                     if (!imgJudge(file)) {
                                         return Promise.reject();
@@ -740,6 +691,7 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
                             ) : ( */}
                             <div className="video-operate">
                                 <SingleUpload
+                                    disabled={videoRate > 0 && videoRate < 100}
                                     isVideo={true}
                                     setValue={(res, name) =>
                                         setDynamic({
@@ -758,7 +710,9 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
                                         href="#"
                                         className="text-style video-replace"
                                     >
-                                        替换
+                                        {dynamic.content_video.src
+                                            ? "替换"
+                                            : "添加"}
                                     </a>
                                 </SingleUpload>
                                 <Popconfirm
@@ -768,12 +722,14 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
                                     okText="确定"
                                     cancelText="取消"
                                 >
-                                    <a
-                                        href="#"
-                                        className="text-style video-del"
-                                    >
-                                        删除
-                                    </a>
+                                    {!!dynamic.content_video.src && (
+                                        <a
+                                            href="#"
+                                            className="text-style video-del"
+                                        >
+                                            删除
+                                        </a>
+                                    )}
                                 </Popconfirm>
                             </div>
                         </div>

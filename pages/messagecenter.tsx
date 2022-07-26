@@ -54,6 +54,7 @@ const MessageCenter: NextPage<MessageCenterProps> = (props) => {
             <div className="message-center-wrapper">
                 <Tabs
                     activeKey={activeKey}
+                    destroyInactiveTabPane={true}
                     className="message-center-tabs"
                     onChange={(key: string) => setActiveKey(key)}
                 >

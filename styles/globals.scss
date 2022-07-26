@@ -27,6 +27,7 @@ video {
     --base-font-gray-color: #999ea8;
 
     --base-theme-color: #ff7d23;
+    --base-icon-color: #686c78;
 }
 
 $REM: 16;
@@ -69,6 +70,7 @@ $REM: 16;
 @import "../components/baseComponents/inputTheme.scss";
 @import "../components/baseComponents/buttonTheme.scss";
 @import "../components/baseComponents/collapseText.scss";
+@import "../components/baseComponents/imgShow.scss";
 
 // components
 @import "../components/TopicList.scss";
@@ -82,6 +84,7 @@ $REM: 16;
 @import "../components/modal/imgCropper.scss";
 @import "../components/modal/infoConfirm.scss";
 @import "../components/modal/subComment.scss";
+@import "../components/modal/mediaShow.scss";
 
 // avatar
 @import "../components/avatar/avatar.scss";

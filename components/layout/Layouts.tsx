@@ -4,12 +4,16 @@ import { FormOutlined, UpOutlined } from "@ant-design/icons";
 import Headers from "./Headers";
 import Footers from "./Footers";
 import PostDynamic from "../modal/PostDynamic";
+import { useStore } from "../../store";
+import { failed } from "../../utils/notification";
 
 interface LayoutsProps {
     children?: React.ReactNode;
 }
 
 const Layouts: NextPage<LayoutsProps> = (props) => {
+    const { userInfo } = useStore();
+
     const [postMessage, setPostMessage] = useState<boolean>(false);
 
     useEffect(() => {
@@ -40,7 +44,13 @@ const Layouts: NextPage<LayoutsProps> = (props) => {
             <div className="layout-back-top">
                 <div
                     className="btn-style publish-btn"
-                    onClick={() => setPostMessage(true)}
+                    onClick={() => {
+                        if (!userInfo.isLogin) {
+                            failed("请先登录账户后再使用");
+                            return;
+                        }
+                        setPostMessage(true);
+                    }}
                 >
                     <FormOutlined className="icon-style" />
                 </div>
@@ -57,10 +67,12 @@ const Layouts: NextPage<LayoutsProps> = (props) => {
                 </div>
             </div>
 
-            <PostDynamic
-                visible={postMessage}
-                onCancel={() => setPostMessage(false)}
-            />
+            {postMessage && (
+                <PostDynamic
+                    visible={postMessage}
+                    onCancel={() => setPostMessage(false)}
+                />
+            )}
         </div>
     );
 };

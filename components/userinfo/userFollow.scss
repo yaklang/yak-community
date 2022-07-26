@@ -26,11 +26,16 @@ $REM: 16;
     }
 
     .user-follow-opt-body {
+        width: 100%;
         height: REM(48);
         display: flex;
         justify-content: space-between;
+        overflow: hidden;
 
         .follow-user {
+            flex: 1;
+            width: 100%;
+            overflow: hidden;
             display: flex;
             &-img {
                 margin-top: 1px;
@@ -42,6 +47,8 @@ $REM: 16;
                 }
             }
             &-info {
+                flex: 1;
+                overflow: hidden;
                 margin-left: REM(16);
                 font-size: REM(14);
                 .info-name {
@@ -51,6 +58,7 @@ $REM: 16;
                     line-height: REM(20);
                 }
                 .info-dynamic {
+                    width: 100%;
                     margin-top: REM(8);
                     height: REM(20);
                     color: #ff7d23;
@@ -63,9 +71,11 @@ $REM: 16;
         }
 
         .follow-operate {
+            width: REM(100);
             font-size: REM(14);
             color: #686c78;
             display: flex;
+            justify-content: right;
 
             .follow-operate-icon {
                 margin-right: REM(8);

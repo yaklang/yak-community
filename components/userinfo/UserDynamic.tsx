@@ -6,6 +6,8 @@ import { NetWorkApi } from "../../utils/fetch";
 import { FetchDynamicInfo, FetchDynamicList } from "../../types/extraApi";
 import CommentItem from "../CommentItem";
 import PostDynamic from "../modal/PostDynamic";
+import { useStore } from "../../store";
+import { userInfo } from "os";
 
 interface UserDynamicProps {
     userId: number;
@@ -15,11 +17,31 @@ interface UserDynamicProps {
 
 const UserDynamic: NextPage<UserDynamicProps> = (props) => {
     const { userId, onlyShow = false, onUpdateUserInfo } = props;
+    const { userInfo, homePageDynamicId, setHomePageDynamicId } = useStore();
 
     const [list, setList] = useState<API.DynamicListResponse>({
         data: [],
         pagemeta: { page: 1, limit: 10, total: 0, total_page: 1 },
     });
+
+    useEffect(() => {
+        if (homePageDynamicId) {
+            NetWorkApi<FetchDynamicInfo, API.DynamicListDetailResponse>({
+                method: "get",
+                url: "/api/dynamic/detail",
+                params: { id: homePageDynamicId },
+                userToken: true,
+            })
+                .then((res) => {
+                    setList({
+                        data: [res.data].concat(list.data),
+                        pagemeta: list.pagemeta,
+                    });
+                    setHomePageDynamicId(0);
+                })
+                .catch((err) => {});
+        }
+    }, [homePageDynamicId]);
 
     const fetchList = useMemoizedFn(() => {
         NetWorkApi<FetchDynamicList, API.DynamicListResponse>({
@@ -36,9 +58,24 @@ const UserDynamic: NextPage<UserDynamicProps> = (props) => {
             })
             .catch((err) => {});
     });
+    const fetchUnloggedList = useMemoizedFn(() => {
+        NetWorkApi<FetchDynamicList, API.DynamicListResponse>({
+            method: "get",
+            url: "/api/dynamic/issue/unlogged",
+            params: { page: 1, limit: 10, order: "desc", user_id: userId },
+        })
+            .then((res) => {
+                setList({
+                    data: list.data.concat(res.data || []),
+                    pagemeta: res.pagemeta,
+                });
+            })
+            .catch((err) => {});
+    });
 
     useEffect(() => {
-        fetchList();
+        if (userInfo.isLogin) fetchList();
+        else fetchUnloggedList();
     }, []);
 
     const updateDynamicInfo = useMemoizedFn(
