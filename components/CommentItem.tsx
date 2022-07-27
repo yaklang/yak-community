@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { Button, Col, Divider, Input, Popconfirm, Row } from "antd";
@@ -19,7 +19,7 @@ import {
 import ImgCropper from "./modal/ImgCropper";
 import { API } from "../types/api";
 import { timeFormat } from "../utils/timeTool";
-import { useDebounce, useMemoizedFn } from "ahooks";
+import { useDebounce, useGetState, useMemoizedFn } from "ahooks";
 import cloneDeep from "lodash/cloneDeep";
 import { NetWorkApi } from "../utils/fetch";
 import {
@@ -60,6 +60,8 @@ interface CommentItemProps {
     isOwner?: boolean;
     onEdit?: () => any;
     onDel?: () => any;
+
+    isRole?: boolean;
 }
 
 const CommentItem: NextPage<CommentItemProps> = (props) => {
@@ -71,6 +73,7 @@ const CommentItem: NextPage<CommentItemProps> = (props) => {
         isOwner = false,
         onEdit,
         onDel,
+        isRole = false,
     } = props;
     const imgs: string[] =
         !info.content_img || info.content_img === "null"
@@ -92,7 +95,8 @@ const CommentItem: NextPage<CommentItemProps> = (props) => {
         return true;
     });
 
-    const [followLoading, setFollowLoading] = useState<boolean>(false);
+    const [followLoading, setFollowLoading, getFollowLoading] =
+        useGetState<boolean>(false);
     const [collectLoading, setCollectLoading] = useState<boolean>(false);
     const [starsLoading, setStarsLoading] = useState<boolean>(false);
 
@@ -102,31 +106,37 @@ const CommentItem: NextPage<CommentItemProps> = (props) => {
         ...DefaultCommentInfo,
     });
 
-    const [listLoading, setListloading] = useState<boolean>(false);
+    const [listLoading, setListloading, getListloading] =
+        useGetState<boolean>(false);
+    const [listPage, setListPage] = useState<number>(1);
     const [commentList, setCommentList] = useState<API.DynamicComment>({
-        data: [
-            {
-                id: 1,
-                created_at: new Date().getTime(),
-                updated_at: new Date().getTime(),
-                dynamic_id: 1,
-                root_id: 1,
-                parent_id: 1,
-                user_id: 1,
-                user_name: "123",
-                head_img: "",
-                message: "123",
-                message_img: "",
-                like_num: 1,
-                by_user_id: 1,
-                by_user_name: "123",
-                by_head_img: "",
-                reply_num: 1,
-            },
-        ],
+        data: [],
         pagemeta: { page: 1, limit: 10, total: 0, total_page: 1 },
     });
-    // const [signCommentId, setSignCommentId] = useState<number>(0);
+
+    const nextPage = useMemoizedFn((e: Event) => {
+        if (!isDetail) return;
+        if (getListloading()) return;
+        if (commentList.data.length === commentList.pagemeta.total) return;
+
+        if (e && e.target && (e.target as any).scrollingElement) {
+            const scroll = (e.target as any).scrollingElement as HTMLElement;
+            if (
+                scroll.scrollTop + scroll.clientHeight >=
+                scroll.scrollHeight - 100
+            ) {
+                const pages = listPage;
+                setListPage(pages + 1);
+                fetchAllComment(pages + 1);
+            }
+        }
+    });
+    useEffect(() => {
+        if (isDetail) document.addEventListener("scroll", nextPage);
+        return () => {
+            window.removeEventListener("scroll", nextPage);
+        };
+    }, []);
 
     const addCommentReply = useMemoizedFn((id: number) => {
         setCommentList({
@@ -151,7 +161,6 @@ const CommentItem: NextPage<CommentItemProps> = (props) => {
             }),
             pagemeta: commentList.pagemeta,
         });
-        // setSignCommentId(isStar ? 0 : id);
     });
 
     const delReplyImg = useMemoizedFn((index: number) => {
@@ -200,7 +209,7 @@ const CommentItem: NextPage<CommentItemProps> = (props) => {
 
     // 关注按钮功能
     const followUser = useMemoizedFn(() => {
-        if (followLoading) return;
+        if (getFollowLoading()) return;
 
         setFollowLoading(true);
         NetWorkApi<FollowUserProps, API.ActionSucceeded>({
@@ -278,7 +287,6 @@ const CommentItem: NextPage<CommentItemProps> = (props) => {
                 order: "desc",
                 dynamic_id: info.id,
             },
-            userToken: true,
         })
             .then((res) => {
                 setCommentList({
@@ -291,22 +299,23 @@ const CommentItem: NextPage<CommentItemProps> = (props) => {
     });
 
     // 查询动态主评论(所有)
-    const fetchAllComment = useMemoizedFn(() => {
+    const fetchAllComment = useMemoizedFn((page?: number) => {
+        if (getListloading()) return;
+
         setListloading(true);
         NetWorkApi<FetchMainComments, API.DynamicComment>({
             method: "get",
             url: "/api/forum/comment",
             params: {
-                page: 1,
+                page: page || listPage,
                 limit: 10,
                 order: "desc",
                 dynamic_id: info.id,
             },
-            userToken: true,
         })
             .then((res) => {
                 setCommentList({
-                    data: res.data || [],
+                    data: commentList.data.concat(res.data || []),
                     pagemeta: res.pagemeta,
                 });
             })
@@ -367,6 +376,25 @@ const CommentItem: NextPage<CommentItemProps> = (props) => {
                             </div>
                         </div>
                         <div className="avatar-follow">
+                            {isRole && (
+                                <Popconfirm
+                                    placement="bottomLeft"
+                                    title="确定是否删除该动态吗?"
+                                    onConfirm={() => {
+                                        if (!judgeAuth()) return;
+                                        if (onDel) onDel();
+                                    }}
+                                    okText="确定"
+                                    cancelText="取消"
+                                >
+                                    <Button
+                                        type="link"
+                                        className="btn-style del-btn"
+                                    >
+                                        删除
+                                    </Button>
+                                </Popconfirm>
+                            )}
                             {userInfo.user_id !== info.user_id && (
                                 <Button
                                     className={`avatar-follow-btn ${
@@ -639,6 +667,7 @@ const CommentItem: NextPage<CommentItemProps> = (props) => {
                                     />
                                 );
                             })}
+                            {listLoading && <div className="list-loading">正在加载中。。。</div>}
                         </div>
                     ) : (
                         <div className="comment-content-container">

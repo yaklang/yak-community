@@ -33,134 +33,7 @@ const SubComment: NextPage<SubCommentProps> = (props) => {
     const [loading, setLoading, getLoading] = useGetState<boolean>(false);
     const pageRef = useRef<number>(1);
     const [lists, setLists] = useState<API.DynamicComment>({
-        data: [
-            {
-                id: 1,
-                created_at: new Date().getTime(),
-                updated_at: new Date().getTime(),
-                dynamic_id: 1,
-                root_id: 1,
-                parent_id: 1,
-                user_id: 1,
-                user_name: "123",
-                head_img: "",
-                message: "123",
-                message_img: "",
-                like_num: 1,
-                by_user_id: 1,
-                by_user_name: "123",
-                by_head_img: "",
-                reply_num: 1,
-            },
-            {
-                id: 1,
-                created_at: new Date().getTime(),
-                updated_at: new Date().getTime(),
-                dynamic_id: 1,
-                root_id: 1,
-                parent_id: 1,
-                user_id: 1,
-                user_name: "123",
-                head_img: "",
-                message: "123",
-                message_img: "",
-                like_num: 1,
-                by_user_id: 1,
-                by_user_name: "123",
-                by_head_img: "",
-                reply_num: 1,
-            },
-            {
-                id: 1,
-                created_at: new Date().getTime(),
-                updated_at: new Date().getTime(),
-                dynamic_id: 1,
-                root_id: 1,
-                parent_id: 1,
-                user_id: 1,
-                user_name: "123",
-                head_img: "",
-                message: "123",
-                message_img: "",
-                like_num: 1,
-                by_user_id: 1,
-                by_user_name: "123",
-                by_head_img: "",
-                reply_num: 1,
-            },
-            {
-                id: 1,
-                created_at: new Date().getTime(),
-                updated_at: new Date().getTime(),
-                dynamic_id: 1,
-                root_id: 1,
-                parent_id: 1,
-                user_id: 1,
-                user_name: "123",
-                head_img: "",
-                message: "123",
-                message_img: "",
-                like_num: 1,
-                by_user_id: 1,
-                by_user_name: "123",
-                by_head_img: "",
-                reply_num: 1,
-            },
-            {
-                id: 1,
-                created_at: new Date().getTime(),
-                updated_at: new Date().getTime(),
-                dynamic_id: 1,
-                root_id: 1,
-                parent_id: 1,
-                user_id: 1,
-                user_name: "123",
-                head_img: "",
-                message: "123",
-                message_img: "",
-                like_num: 1,
-                by_user_id: 1,
-                by_user_name: "123",
-                by_head_img: "",
-                reply_num: 1,
-            },
-            {
-                id: 1,
-                created_at: new Date().getTime(),
-                updated_at: new Date().getTime(),
-                dynamic_id: 1,
-                root_id: 1,
-                parent_id: 1,
-                user_id: 1,
-                user_name: "123",
-                head_img: "",
-                message: "123",
-                message_img: "",
-                like_num: 1,
-                by_user_id: 1,
-                by_user_name: "123",
-                by_head_img: "",
-                reply_num: 1,
-            },
-            {
-                id: 1,
-                created_at: new Date().getTime(),
-                updated_at: new Date().getTime(),
-                dynamic_id: 1,
-                root_id: 1,
-                parent_id: 1,
-                user_id: 1,
-                user_name: "123",
-                head_img: "",
-                message: "123",
-                message_img: "",
-                like_num: 1,
-                by_user_id: 1,
-                by_user_name: "123",
-                by_head_img: "",
-                reply_num: 1,
-            },
-        ],
+        data: [],
         pagemeta: { page: 1, limit: 10, total: 12, total_page: 1 },
     });
 
@@ -188,7 +61,6 @@ const SubComment: NextPage<SubCommentProps> = (props) => {
                 root_id: info.id,
                 dynamic_id: dynamicInfo.id,
             },
-            userToken: true,
         })
             .then((res) => {
                 if (isNew) {
@@ -211,11 +83,11 @@ const SubComment: NextPage<SubCommentProps> = (props) => {
 
     const moreList = useMemoizedFn((e) => {
         if (getLoading()) return;
-        if (lists.data.length >= lists.pagemeta.total) return;
+        if (lists.data.length === lists.pagemeta.total) return;
 
         if (
             e.target.offsetHeight + e.target.scrollTop >
-            e.target.scrollHeight - 10
+            e.target.scrollHeight - 30
         ) {
             pageRef.current += 1;
             fetchSubCommentList();

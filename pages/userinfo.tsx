@@ -89,7 +89,12 @@ const UserInfo: NextPage<ModifyUserProps> = (props) => {
                         activeKey={activeKey}
                         destroyInactiveTabPane={true}
                         className="user-info-tabs"
-                        onChange={(key: string) => setActiveKey(key)}
+                        onChange={(key: string) => {
+                            router.push({
+                                pathname: "/userinfo",
+                                query: { tabs: key },
+                            });
+                        }}
                     >
                         <TabPane
                             tab={

@@ -16,10 +16,6 @@ interface StoreProps {
     signIn: (info: LoginUserInfoProps) => void;
     signOut: () => void;
 
-    /** 触发全局更新用户信息 */
-    triggerUpdate: boolean;
-    setTriggerUpdate: (flag: boolean) => void;
-
     /** github授权临时数据 */
     githubAuth: GithubAuth;
     setGithubAuth: (info: GithubAuth) => void;
@@ -42,9 +38,6 @@ export const useStore = create<StoreProps>((set, get) => ({
     },
     signIn: (info) => set({ userInfo: info }),
     signOut: () => set({ userInfo: DefaultUserInfo }),
-
-    triggerUpdate: false,
-    setTriggerUpdate: (flag) => set({ triggerUpdate: flag }),
 
     githubAuth: { ...DefaultGithubAuth },
     setGithubAuth: (info) => set({ githubAuth: { ...info } }),

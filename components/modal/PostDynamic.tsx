@@ -246,11 +246,11 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
     const imgList = useRef<{ src: string; name: string }[]>([]);
 
     const uploadImg = useMemoizedFn(() => {
-        if (!dynamic.csrf_token) {
-            failed("获取关键信息失败，请关闭弹窗重新打开");
-            setImgLoading(false);
-            return;
-        }
+        // if (!dynamic.csrf_token) {
+        //     failed("获取关键信息失败，请关闭弹窗重新打开");
+        //     setImgLoading(false);
+        //     return;
+        // }
         if (imgList.current.length + dynamic.content_img.length >= 18) {
             setDynamic({
                 ...dynamic,
@@ -290,7 +290,7 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
         })
             .then((res) => {
                 imgList.current.push({
-                    src: (file as any).path,
+                    src: URL.createObjectURL(file),
                     name: `${fileName}.${file.name.split(".").pop()}`,
                 });
                 uploadImg();
@@ -640,6 +640,7 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
                         })}
                         {dynamic.content_img.length !== 18 && (
                             <Upload
+                                className="img-upload"
                                 accept=".png,.jpg,.jpeg,.gif"
                                 showUploadList={false}
                                 multiple={true}

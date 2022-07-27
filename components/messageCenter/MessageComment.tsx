@@ -14,17 +14,22 @@ import { useRouter } from "next/router";
 interface MessageCommentProps {}
 
 const MessageComment: NextPage<MessageCommentProps> = (props) => {
+    const [listPage, setListPage] = useState<number>(1);
+    const [loading, setLoading, getLoading] = useGetState<boolean>(false);
     const [lists, setLists] = useState<API.MessageCenterCommentResponse>({
         data: [],
-        pagemeta: { page: 1, limit: 20, total: 0, total_page: 1 },
+        pagemeta: { page: 1, limit: 10, total: 0, total_page: 1 },
     });
 
-    const fetchLists = useMemoizedFn(() => {
+    const fetchLists = useMemoizedFn((page?: number) => {
+        if (getLoading()) return;
+
+        setLoading(true);
         NetWorkApi<SearchPageMeta, API.MessageCenterCommentResponse>({
             method: "get",
             url: "/api/message/center/content",
             params: {
-                page: 1,
+                page: page || listPage,
                 limit: 10,
                 order: "desc",
             },
@@ -36,8 +41,32 @@ const MessageComment: NextPage<MessageCommentProps> = (props) => {
                     pagemeta: res.pagemeta,
                 });
             })
-            .catch((err) => {});
+            .catch((err) => {})
+            .finally(() => setTimeout(() => setLoading(false), 100));
     });
+
+    const nextPage = useMemoizedFn((e: Event) => {
+        if (getLoading()) return;
+        if (lists.data.length === lists.pagemeta.total) return;
+
+        if (e && e.target && (e.target as any).scrollingElement) {
+            const scroll = (e.target as any).scrollingElement as HTMLElement;
+            if (
+                scroll.scrollTop + scroll.clientHeight >=
+                scroll.scrollHeight - 100
+            ) {
+                const pages = listPage;
+                setListPage(pages + 1);
+                fetchLists(pages + 1);
+            }
+        }
+    });
+    useEffect(() => {
+        document.addEventListener("scroll", nextPage);
+        return () => {
+            window.removeEventListener("scroll", nextPage);
+        };
+    }, []);
 
     useEffect(() => {
         fetchLists();
@@ -51,6 +80,7 @@ const MessageComment: NextPage<MessageCommentProps> = (props) => {
             {lists.data.map((item, index) => {
                 return <CommentMessage key={item.id} info={item} />;
             })}
+            {loading && <div className="list-loading">正在加载中。。。</div>}
         </div>
     );
 };

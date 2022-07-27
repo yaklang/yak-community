@@ -4,11 +4,12 @@ import { useRouter } from "next/router";
 import { Tooltip } from "antd";
 import { MutualAttentionIcon } from "../../public/icons";
 import { API } from "../../types/api";
-import { useMemoizedFn } from "ahooks";
+import { useGetState, useMemoizedFn } from "ahooks";
 import { NetWorkApi } from "../../utils/fetch";
 import { FetchFollowList, FollowUserProps } from "../../types/extraApi";
 import { useStore } from "../../store";
 import { failed } from "../../utils/notification";
+import { getToken } from "../../utils/auth";
 
 interface UserFollowProps {
     userId: number;
@@ -21,40 +22,60 @@ const UserFollow: NextPage<UserFollowProps> = (props) => {
     const { userInfo } = useStore();
     const router = useRouter();
 
+    const [listPage, setListPage] = useState<number>(1);
+    const [loading, setLoading, getLoading] = useGetState<boolean>(false);
     const [list, setList] = useState<API.UserFollowResponse>({
         data: [],
         pagemeta: { page: 1, limit: 50, total: 0, total_page: 1 },
     });
     const [crossNum, setCrossNum] = useState<number>(0);
 
-    const fetchList = useMemoizedFn(() => {
+    const fetchList = useMemoizedFn((page?: number) => {
+        if (getLoading()) return;
+
+        setLoading(true);
         NetWorkApi<FetchFollowList, API.UserFollowResponse>({
             method: "get",
             url: "/api/user/follow",
-            params: { page: 1, limit: 10, order: "desc", user_id: userId },
+            params: {
+                page: page || listPage,
+                limit: 10,
+                order: "desc",
+                user_id: userId,
+            },
             userToken: true,
         })
             .then((res) => {
                 setList({
-                    data: res.data || [],
+                    data: list.data.concat(res.data || []),
                     pagemeta: res.pagemeta,
                 });
             })
-            .catch((err) => {});
+            .catch((err) => {})
+            .finally(() => setTimeout(() => setLoading(false), 50));
     });
-    const fetchUnloggedList = useMemoizedFn(() => {
+    const fetchUnloggedList = useMemoizedFn((page?: number) => {
+        if (getLoading()) return;
+
+        setLoading(true);
         NetWorkApi<FetchFollowList, API.UserFollowResponse>({
             method: "get",
             url: "/api/user/follow/unlogged",
-            params: { page: 1, limit: 10, order: "desc", user_id: userId },
+            params: {
+                page: page || listPage,
+                limit: 10,
+                order: "desc",
+                user_id: userId,
+            },
         })
             .then((res) => {
                 setList({
-                    data: res.data || [],
+                    data: list.data.concat(res.data || []),
                     pagemeta: res.pagemeta,
                 });
             })
-            .catch((err) => {});
+            .catch((err) => {})
+            .finally(() => setTimeout(() => setLoading(false), 50));
     });
     const fetchCrossNum = useMemoizedFn(() => {
         NetWorkApi<undefined, number>({
@@ -67,6 +88,31 @@ const UserFollow: NextPage<UserFollowProps> = (props) => {
             })
             .catch((err) => {});
     });
+
+    const nextPage = useMemoizedFn((e: Event) => {
+        if (getLoading()) return;
+        if (list.data.length === list.pagemeta.total) return;
+
+        if (e && e.target && (e.target as any).scrollingElement) {
+            const scroll = (e.target as any).scrollingElement as HTMLElement;
+            if (
+                scroll.scrollTop + scroll.clientHeight >=
+                scroll.scrollHeight - 100
+            ) {
+                const isToken = !!getToken();
+                const pages = listPage;
+                setListPage(pages + 1);
+                if (isToken) fetchList(pages + 1);
+                else fetchUnloggedList(pages + 1);
+            }
+        }
+    });
+    useEffect(() => {
+        document.addEventListener("scroll", nextPage);
+        return () => {
+            window.removeEventListener("scroll", nextPage);
+        };
+    }, []);
 
     const cancelFollow = useMemoizedFn((id: number, flag?: boolean) => {
         if (!userInfo.isLogin) {
@@ -156,7 +202,7 @@ const UserFollow: NextPage<UserFollowProps> = (props) => {
                                 </div>
                                 <div className="follow-user-info">
                                     <div
-                                        className="info-name"
+                                        className="info-name text-ellipsis-style"
                                         onClick={() =>
                                             router.push(
                                                 `/userpage?user=${item.follow_user_id}`
@@ -165,18 +211,24 @@ const UserFollow: NextPage<UserFollowProps> = (props) => {
                                     >
                                         {item.follow_user_name}
                                     </div>
-                                    <div className="info-dynamic text-ellipsis-style">
+                                    <div
+                                        className="info-dynamic text-ellipsis-style"
+                                        onClick={() => {
+                                            if (item.dynamic_id)
+                                                router.push(
+                                                    `/dynamic?id=${item.dynamic_id}`
+                                                );
+                                        }}
+                                    >
                                         {item.content ? (
                                             <>
-                                                <span>{item.content}</span>
+                                                <span>{item.content}</span>{" "}
                                                 {!!imgs &&
                                                     imgs.map((imgItem) => {
                                                         return (
-                                                            <a
+                                                            <span
                                                                 key={imgItem}
-                                                                href={imgItem}
-                                                                target="_blank"
-                                                            >{`[图片]`}</a>
+                                                            >{`[图片]`}</span>
                                                         );
                                                     })}
                                                 {!!videos && (
@@ -241,6 +293,8 @@ const UserFollow: NextPage<UserFollowProps> = (props) => {
                     </div>
                 );
             })}
+
+            {loading && <div className="list-loading">正在加载中。。。</div>}
         </div>
     );
 };

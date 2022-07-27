@@ -180,7 +180,7 @@ const Home: NextPage<HomeProps> = (props) => {
                 });
             })
             .catch((err) => {})
-            .finally(() => setTimeout(() => setLoading(false), 50));
+            .finally(() => setTimeout(() => setLoading(false), 100));
     });
     const fetchNoDynamics = useMemoizedFn(
         (page?: number, keywords?: string) => {
@@ -317,6 +317,7 @@ const Home: NextPage<HomeProps> = (props) => {
                             return (
                                 <CommentItem
                                     key={item.id}
+                                    isRole={userInfo.isLogin && userInfo.isRole}
                                     info={item}
                                     updateInfo={updateDynamicInfo}
                                     updateDynamicInfo={updateDynamicInfoApi}

@@ -80,7 +80,6 @@ $REM: 16;
             padding: REM(16) REM(16) REM(12) REM(16);
             background: #f7f8fa;
             border-radius: 4px;
-            cursor: pointer;
             .dynamic-name {
                 width: 100%;
                 height: REM(20);
@@ -97,9 +96,6 @@ $REM: 16;
                 color: #686c78;
                 line-height: REM(20);
                 overflow: hidden;
-                display: -webkit-box;
-                -webkit-box-orient: vertical;
-                -webkit-line-clamp: 2;
             }
         }
 
@@ -110,11 +106,12 @@ $REM: 16;
             border-radius: 4px;
             display: flex;
             overflow: hidden;
-            cursor: pointer;
             .dynamic-img {
                 width: REM(96);
-                height: REM(96);
-                position: relative;
+                .img-style {
+                    width: REM(96);
+                    height: REM(96);
+                }
             }
             .dynamic-content {
                 flex: 1;
@@ -137,9 +134,6 @@ $REM: 16;
                     color: #686c78;
                     line-height: REM(20);
                     overflow: hidden;
-                    display: -webkit-box;
-                    -webkit-box-orient: vertical;
-                    -webkit-line-clamp: 2;
                 }
             }
         }
@@ -151,11 +145,13 @@ $REM: 16;
             border-radius: 4px;
             display: flex;
             overflow: hidden;
-            cursor: pointer;
             .dynamic-video {
                 width: REM(96);
-                height: REM(96);
                 position: relative;
+                .img-style {
+                    width: REM(96);
+                    height: REM(96);
+                }
                 .video-mask {
                     position: absolute;
                     top: 0;

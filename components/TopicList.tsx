@@ -49,7 +49,6 @@ const TopicList: NextPage<TopicListProps> = (props) => {
                 limit: 30,
                 order: "desc",
             },
-            userToken: true,
         })
             .then((res) => {
                 setList(res.data || []);

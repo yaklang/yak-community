@@ -9,6 +9,7 @@ import MessageComment from "../components/messageCenter/MessageComment";
 import { useMemoizedFn } from "ahooks";
 import { NetWorkApi } from "../utils/fetch";
 import { API } from "../types/api";
+import MessageHint from "../components/messageCenter/MessageHint";
 
 const { TabPane } = Tabs;
 
@@ -56,7 +57,12 @@ const MessageCenter: NextPage<MessageCenterProps> = (props) => {
                     activeKey={activeKey}
                     destroyInactiveTabPane={true}
                     className="message-center-tabs"
-                    onChange={(key: string) => setActiveKey(key)}
+                    onChange={(key: string) =>
+                        router.push({
+                            pathname: "/messagecenter",
+                            query: { tabs: key },
+                        })
+                    }
                 >
                     <TabPane
                         tab={
@@ -152,6 +158,38 @@ const MessageCenter: NextPage<MessageCenterProps> = (props) => {
                         key="fans"
                     >
                         <Fans />
+                    </TabPane>
+                    <TabPane
+                        tab={
+                            <div className="tabs-bar-title">
+                                消息
+                                <div
+                                    className="title-count"
+                                    style={{
+                                        right: `${
+                                            (0 -
+                                                4 -
+                                                (`${messageNum.stars_num}`
+                                                    .length > 4
+                                                    ? 4
+                                                    : `${messageNum.stars_num}`
+                                                          .length) *
+                                                    8) /
+                                            16
+                                        }rem`,
+                                    }}
+                                >
+                                    {`${
+                                        messageNum.stars_num > 999
+                                            ? "999+"
+                                            : messageNum.stars_num
+                                    }`}
+                                </div>
+                            </div>
+                        }
+                        key="hint"
+                    >
+                        <MessageHint />
                     </TabPane>
                 </Tabs>
             </div>

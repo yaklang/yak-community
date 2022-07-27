@@ -52,6 +52,7 @@ $REM: 16;
                 margin-left: REM(16);
                 font-size: REM(14);
                 .info-name {
+                    width: 100%;
                     height: REM(20);
                     font-weight: 600;
                     color: var(--base-font-color);
@@ -61,8 +62,9 @@ $REM: 16;
                     width: 100%;
                     margin-top: REM(8);
                     height: REM(20);
-                    color: #ff7d23;
+                    color: var(--base-font-color);
                     line-height: REM(20);
+                    cursor: pointer;
                     .no-dynamic {
                         color: #cbd1da;
                     }
@@ -73,17 +75,14 @@ $REM: 16;
         .follow-operate {
             width: REM(100);
             font-size: REM(14);
-            color: #686c78;
+            color: var(--base-icon-color);
             display: flex;
             justify-content: right;
+            align-items: center;
 
             .follow-operate-icon {
                 margin-right: REM(8);
                 font-size: REM(24);
-                height: REM(20);
-                overflow: hidden;
-                margin-top: REM(-2);
-                border-radius: 4px;
             }
 
             .follow-operate-btn-true {
@@ -99,6 +98,15 @@ $REM: 16;
                 color: var(--base-theme-color);
             }
         }
+    }
+
+    .list-loading {
+        width: 100%;
+        text-align: center;
+        margin-top: REM(16);
+        line-height: 20px;
+        font-size: 16px;
+        color: var(--base-icon-color);
     }
 }
 

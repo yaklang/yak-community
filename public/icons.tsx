@@ -1085,3 +1085,51 @@ const FansSvg = () => (
 export const FansIcon = (props: Partial<CustomIconComponentProps>) => {
     return <Icon component={FansSvg} {...props} />;
 };
+// 未读消息图标
+const HintSvg = () => (
+    <svg
+        width="1em"
+        height="1em"
+        viewBox="0 0 24 25"
+        version="1.1"
+        xmlns="http://www.w3.org/2000/svg"
+        xmlnsXlink="http://www.w3.org/1999/xlink"
+    >
+        <title>切片</title>
+        <g
+            id="Yak-官网"
+            stroke="none"
+            strokeWidth="1"
+            fill="none"
+            fillRule="evenodd"
+        >
+            <g
+                id="社区/消息中心/点赞"
+                transform="translate(-1755.000000, -165.000000)"
+            >
+                <g id="编组-67" transform="translate(1686.000000, 49.124050)">
+                    <g
+                        id="icon/操作编辑类/文件夹打开备份-5"
+                        transform="translate(69.000000, 116.000000)"
+                    >
+                        <path
+                            d="M13.2,5.1 C13.3947332,5.35964426 13.5,5.67544468 13.5,6 L13.5,18 C13.5,18.8284271 12.8284271,19.5 12,19.5 C11.6754447,19.5 11.3596443,19.3947332 11.1,19.2 L7.5,16.5 L4.5,16.5 C3.67157288,16.5 3,15.8284271 3,15 L3,9 C3,8.17157288 3.67157288,7.5 4.5,7.5 L7.5,7.5 L11.1,4.8 C11.7627417,4.30294373 12.7029437,4.4372583 13.2,5.1 Z M15.6764428,15.4754809 L19.5735572,17.7254809 L18.8235572,19.0245191 L14.9264428,16.7745191 L15.6764428,15.4754809 Z M12,6 L8,9 L4.5,9 L4.5,15 L8,15 L12,18 L12,6 Z M21,11.25 L21,12.75 L16.5,12.75 L16.5,11.25 L21,11.25 Z M18.8235572,4.97548095 L19.5735572,6.27451905 L15.6764428,8.52451905 L14.9264428,7.22548095 L18.8235572,4.97548095 Z"
+                            id="形状"
+                            fill="currentColor"
+                        ></path>
+                        <rect
+                            id="矩形-copy-67"
+                            x="0"
+                            y="0"
+                            width="24"
+                            height="24"
+                        ></rect>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </svg>
+);
+export const HintIcon = (props: Partial<CustomIconComponentProps>) => {
+    return <Icon component={HintSvg} {...props} />;
+};

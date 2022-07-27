@@ -20,5 +20,14 @@ $REM: 16;
         .comment-item-wrapper + .comment-item-wrapper {
             margin-top: REM(16);
         }
+
+        .list-loading {
+            width: 100%;
+            text-align: center;
+            margin-top: REM(16);
+            line-height: 20px;
+            font-size: 16px;
+            color: var(--base-icon-color);
+        }
     }
 }

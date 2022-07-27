@@ -7,11 +7,10 @@ import { API } from "../../types/api";
 import { SearchPageMeta } from "../../types/extraApi";
 import { timeFormat } from "../../utils/timeTool";
 import { useRouter } from "next/router";
-import { ImgShow } from "../baseComponents/ImgShow";
 
-interface MessageLikeProps {}
+interface MessageHintProps {}
 
-const MessageLike: NextPage<MessageLikeProps> = (props) => {
+const MessageHint: NextPage<MessageHintProps> = (props) => {
     const [listPage, setListPage] = useState<number>(1);
     const [loading, setLoading, getLoading] = useGetState<boolean>(false);
     const [lists, setLists] = useState<API.MessageCenterStarsResponse>({
@@ -35,10 +34,7 @@ const MessageLike: NextPage<MessageLikeProps> = (props) => {
         })
             .then((res) => {
                 setLists({
-                    data:
-                        page === 1
-                            ? res.data || []
-                            : lists.data.concat(res.data || []),
+                    data: lists.data.concat(res.data || []),
                     pagemeta: res.pagemeta,
                 });
             })
@@ -47,7 +43,7 @@ const MessageLike: NextPage<MessageLikeProps> = (props) => {
     });
 
     useEffect(() => {
-        fetchLists(1);
+        fetchLists();
     }, []);
 
     const nextPage = useMemoizedFn((e: Event) => {
@@ -91,7 +87,7 @@ const MessageLike: NextPage<MessageLikeProps> = (props) => {
     );
 };
 
-export default MessageLike;
+export default MessageHint;
 
 // 点赞组件
 interface LikeMessageProp {
@@ -128,18 +124,15 @@ const LikeMessage: React.FC<LikeMessageProp> = (props) => {
                     >
                         {info.action_user_name}
                     </div>
-                    <div className="content-text">赞了这条动态</div>
+                    <div className="content-text">
+                        该条动态已被管理员删除。原因：所发布内容不合规或含有广告或垃圾信息。为维护网站良好氛围，请遵守《Yak平台使用原则》，谢谢你的理解与支持。
+                    </div>
                     <div className="content-time">
                         {timeFormat(info.created_at, "YYYY/MM/DD HH:mm")}
                     </div>
 
                     {imgs.length === 0 && !info.dynamic_cover && (
-                        <div
-                            className="dynamic-wrapper"
-                            onClick={() =>
-                                router.push(`/dynamic?id=${info.dynamic_id}`)
-                            }
-                        >
+                        <div className="dynamic-wrapper">
                             <div className="dynamic-name text-ellipsis-style">
                                 {`@${info.dynamic_user_name}`}
                             </div>
@@ -151,14 +144,9 @@ const LikeMessage: React.FC<LikeMessageProp> = (props) => {
                     )}
 
                     {imgs.length > 0 && (
-                        <div
-                            className="dynamic-img-wrapper"
-                            onClick={() =>
-                                router.push(`/dynamic?id=${info.dynamic_id}`)
-                            }
-                        >
+                        <div className="dynamic-img-wrapper">
                             <div className="dynamic-img">
-                                <ImgShow src={imgs[0]} />
+                                <img src={imgs[0]} className="img-style" />
                             </div>
                             <div className="dynamic-content">
                                 <div className="dynamic-name text-ellipsis-style">
@@ -173,16 +161,11 @@ const LikeMessage: React.FC<LikeMessageProp> = (props) => {
                     )}
 
                     {info.dynamic_cover && (
-                        <div
-                            className="dynamic-video-wrapper"
-                            onClick={() =>
-                                router.push(`/dynamic?id=${info.dynamic_id}`)
-                            }
-                        >
+                        <div className="dynamic-video-wrapper">
                             <div className="dynamic-video">
-                                <ImgShow
-                                    isCover={true}
+                                <img
                                     src={info.dynamic_cover}
+                                    className="img-style"
                                 />
                                 <div className="video-mask">
                                     <CaretRightOutlined className="icon-style" />

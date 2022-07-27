@@ -3,6 +3,7 @@ export interface LoginUserInfoProps {
     user_id?: number;
     name?: string;
     head_img?: string;
+    isRole?: boolean;
 }
 
 export interface GithubAuth {

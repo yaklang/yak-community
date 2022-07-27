@@ -10,6 +10,7 @@ import {
     FansIcon,
     FollowIcon,
     FormOutIcon,
+    HintIcon,
     LikeIcon,
     ReplyIcon,
     SettingIcon,
@@ -27,14 +28,7 @@ import PostDynamic from "../modal/PostDynamic";
 interface HeadersProps {}
 
 const Headers: NextPage<HeadersProps> = React.memo((props) => {
-    const {
-        userInfo,
-        signIn,
-        signOut,
-        setHomePageKeywords,
-        triggerUpdate,
-        setTriggerUpdate,
-    } = useStore();
+    const { userInfo, signIn, signOut, setHomePageKeywords } = useStore();
     const router = useRouter();
 
     const headerRef = useRef(null);
@@ -61,15 +55,16 @@ const Headers: NextPage<HeadersProps> = React.memo((props) => {
             .catch((err) => {});
     });
     useEffect(() => {
+        const tokenFlag = !!getToken();
         let messageTime: any = undefined;
-        if (userInfo.isLogin) {
+        if (tokenFlag) {
             fetchUnreadMessage();
             messageTime = setInterval(() => {
                 fetchUnreadMessage();
             }, 60000);
         } else {
             clearInterval(messageTime);
-            // setTimeout(() => router.push("/"), 50);
+            setTimeout(() => router.push("/"), 50);
         }
 
         return () => {
@@ -77,7 +72,7 @@ const Headers: NextPage<HeadersProps> = React.memo((props) => {
         };
     }, [userInfo]);
 
-    const userMessageLink = (flag: "like" | "comment" | "fans") => {
+    const userMessageLink = (flag: "like" | "comment" | "fans" | "hint") => {
         setMessageNum({
             comment_num: 0,
             fans: 0,
@@ -162,26 +157,6 @@ const Headers: NextPage<HeadersProps> = React.memo((props) => {
         const tokenFlag = !!getToken();
         if (tokenFlag) fetchUserInfo();
     }, []);
-
-    useEffect(() => {
-        if (triggerUpdate) {
-            NetWorkApi<undefined, API.UserResponse>({
-                method: "get",
-                url: "/api/forum/user",
-                userToken: true,
-            })
-                .then((res) => {
-                    signIn({
-                        isLogin: true,
-                        user_id: res.data.id,
-                        name: res.data.name,
-                        head_img: res.data.head_img,
-                    });
-                    setTriggerUpdate(false);
-                })
-                .catch((err) => {});
-        }
-    }, [triggerUpdate]);
 
     return (
         <div
@@ -304,6 +279,21 @@ const Headers: NextPage<HeadersProps> = React.memo((props) => {
                                                     <div className="message-title">
                                                         <FansIcon className="icon-style" />
                                                         粉丝
+                                                    </div>
+                                                    {!!messageNum.fans && (
+                                                        <div className="message-hint">
+                                                            {messageNum.fans}
+                                                        </div>
+                                                    )}
+                                                </li>
+                                                <li
+                                                    onClick={() =>
+                                                        userMessageLink("hint")
+                                                    }
+                                                >
+                                                    <div className="message-title">
+                                                        <HintIcon className="icon-style" />
+                                                        消息
                                                     </div>
                                                     {!!messageNum.fans && (
                                                         <div className="message-hint">

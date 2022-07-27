@@ -12,6 +12,7 @@ import { useRouter } from "next/router";
 import { Tooltip } from "antd";
 import { MutualAttentionIcon } from "../../public/icons";
 import { failed } from "../../utils/notification";
+import { getToken } from "../../utils/auth";
 
 interface FansProps {
     userId?: number;
@@ -23,18 +24,23 @@ const Fans: NextPage<FansProps> = (props) => {
     const { userInfo } = useStore();
     const router = useRouter();
 
+    const [listPage, setListPage] = useState<number>(1);
+    const [loading, setLoading, getLoading] = useGetState<boolean>(false);
     const [lists, setLists] = useState<API.MessageCenterFansResponse>({
         data: [],
         pagemeta: { page: 1, limit: 20, total: 0, total_page: 1 },
     });
-    const [showCancel, setShowCancel] = useState<boolean>(false);
+    const [showCancel, setShowCancel] = useState<number>(0);
 
     const fetchLists = useMemoizedFn((page?: number) => {
+        if (getLoading()) return;
+
+        setLoading(true);
         NetWorkApi<FetchFanList, API.MessageCenterFansResponse>({
             method: "get",
             url: "/api/message/center/fans",
             params: {
-                page: 1,
+                page: page || listPage,
                 limit: 20,
                 order: "desc",
                 user_id: userInfo.user_id || userId || 0,
@@ -50,14 +56,18 @@ const Fans: NextPage<FansProps> = (props) => {
                     pagemeta: res.pagemeta,
                 });
             })
-            .catch((err) => {});
+            .catch((err) => {})
+            .finally(() => setTimeout(() => setLoading(false), 100));
     });
     const fetchNoLists = useMemoizedFn((page?: number) => {
+        if (getLoading()) return;
+
+        setLoading(true);
         NetWorkApi<FetchFanList, API.MessageCenterFansResponse>({
             method: "get",
             url: "/api/message/center/fans/unlogged",
             params: {
-                page: 1,
+                page: page || listPage,
                 limit: 20,
                 order: "desc",
                 user_id: userInfo.user_id || userId || 0,
@@ -72,12 +82,38 @@ const Fans: NextPage<FansProps> = (props) => {
                     pagemeta: res.pagemeta,
                 });
             })
-            .catch((err) => {});
+            .catch((err) => {})
+            .finally(() => setTimeout(() => setLoading(false), 100));
     });
 
     useEffect(() => {
         if (userInfo.isLogin) fetchLists(1);
         else fetchNoLists(1);
+    }, []);
+
+    const nextPage = useMemoizedFn((e: Event) => {
+        if (getLoading()) return;
+        if (lists.data.length === lists.pagemeta.total) return;
+
+        if (e && e.target && (e.target as any).scrollingElement) {
+            const scroll = (e.target as any).scrollingElement as HTMLElement;
+            if (
+                scroll.scrollTop + scroll.clientHeight >=
+                scroll.scrollHeight - 100
+            ) {
+                const isToken = !!getToken();
+                const pages = listPage;
+                setListPage(pages + 1);
+                if (isToken) fetchLists(pages + 1);
+                else fetchNoLists(pages + 1);
+            }
+        }
+    });
+    useEffect(() => {
+        document.addEventListener("scroll", nextPage);
+        return () => {
+            window.removeEventListener("scroll", nextPage);
+        };
     }, []);
 
     const [followLoading, setFollowLoading, getFollowLoading] =
@@ -179,16 +215,20 @@ const Fans: NextPage<FansProps> = (props) => {
                                             className="fans-operate-btn"
                                             disabled={followLoading}
                                             isInfo={!showCancel}
-                                            isDanger={showCancel}
-                                            // onMouseEnter={() =>
-                                            //     setShowCancel(true)
-                                            // }
-                                            // onMouseLeave={() =>
-                                            //     setShowCancel(false)
-                                            // }
+                                            isDanger={!!showCancel}
+                                            onMouseEnter={() =>
+                                                setShowCancel(
+                                                    item.action_user_id
+                                                )
+                                            }
+                                            onMouseLeave={() =>
+                                                setShowCancel(0)
+                                            }
                                             onClick={() => followUser(item)}
                                         >
-                                            {showCancel ? "取消关注" : "已关注"}
+                                            {showCancel === item.action_user_id
+                                                ? "取消关注"
+                                                : "已关注"}
                                         </ButtonTheme>
                                     ) : (
                                         <ButtonTheme
@@ -206,6 +246,7 @@ const Fans: NextPage<FansProps> = (props) => {
                     </div>
                 );
             })}
+            {loading && <div className="list-loading">正在加载中。。。</div>}
         </div>
     );
 };

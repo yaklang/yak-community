@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { NextPage } from "next";
 import { API } from "../../types/api";
-import { useMemoizedFn } from "ahooks";
+import { useGetState, useMemoizedFn } from "ahooks";
 import { NetWorkApi } from "../../utils/fetch";
 import { FetchDynamicInfo, FetchDynamicList } from "../../types/extraApi";
 import CommentItem from "../CommentItem";
 import PostDynamic from "../modal/PostDynamic";
 import { useStore } from "../../store";
-import { userInfo } from "os";
+import { getToken } from "../../utils/auth";
 
 interface UserDynamicProps {
     userId: number;
@@ -19,6 +19,9 @@ const UserDynamic: NextPage<UserDynamicProps> = (props) => {
     const { userId, onlyShow = false, onUpdateUserInfo } = props;
     const { userInfo, homePageDynamicId, setHomePageDynamicId } = useStore();
 
+    const [listLoading, setListLoading, getListLoading] =
+        useGetState<boolean>(false);
+    const [pageList, setPageList] = useState<number>(1);
     const [list, setList] = useState<API.DynamicListResponse>({
         data: [],
         pagemeta: { page: 1, limit: 10, total: 0, total_page: 1 },
@@ -43,11 +46,19 @@ const UserDynamic: NextPage<UserDynamicProps> = (props) => {
         }
     }, [homePageDynamicId]);
 
-    const fetchList = useMemoizedFn(() => {
+    const fetchList = useMemoizedFn((page?: number) => {
+        if (getListLoading()) return;
+
+        setListLoading(true);
         NetWorkApi<FetchDynamicList, API.DynamicListResponse>({
             method: "get",
             url: "/api/dynamic/issue",
-            params: { page: 1, limit: 10, order: "desc", user_id: userId },
+            params: {
+                page: page || pageList,
+                limit: 10,
+                order: "desc",
+                user_id: userId,
+            },
             userToken: true,
         })
             .then((res) => {
@@ -56,13 +67,22 @@ const UserDynamic: NextPage<UserDynamicProps> = (props) => {
                     pagemeta: res.pagemeta,
                 });
             })
-            .catch((err) => {});
+            .catch((err) => {})
+            .finally(() => setTimeout(() => setListLoading(false), 100));
     });
-    const fetchUnloggedList = useMemoizedFn(() => {
+    const fetchUnloggedList = useMemoizedFn((page?: number) => {
+        if (getListLoading()) return;
+
+        setListLoading(true);
         NetWorkApi<FetchDynamicList, API.DynamicListResponse>({
             method: "get",
             url: "/api/dynamic/issue/unlogged",
-            params: { page: 1, limit: 10, order: "desc", user_id: userId },
+            params: {
+                page: page || pageList,
+                limit: 10,
+                order: "desc",
+                user_id: userId,
+            },
         })
             .then((res) => {
                 setList({
@@ -70,8 +90,34 @@ const UserDynamic: NextPage<UserDynamicProps> = (props) => {
                     pagemeta: res.pagemeta,
                 });
             })
-            .catch((err) => {});
+            .catch((err) => {})
+            .finally(() => setTimeout(() => setListLoading(false), 100));
     });
+
+    const nextPage = useMemoizedFn((e: Event) => {
+        if (getListLoading()) return;
+        if (list.data.length === list.pagemeta.total) return;
+
+        if (e && e.target && (e.target as any).scrollingElement) {
+            const scroll = (e.target as any).scrollingElement as HTMLElement;
+            if (
+                scroll.scrollTop + scroll.clientHeight >=
+                scroll.scrollHeight - 100
+            ) {
+                const isToken = !!getToken();
+                const pages = pageList;
+                setPageList(pages + 1);
+                if (isToken) fetchList(pages + 1);
+                else fetchUnloggedList(pages + 1);
+            }
+        }
+    });
+    useEffect(() => {
+        document.addEventListener("scroll", nextPage);
+        return () => {
+            window.removeEventListener("scroll", nextPage);
+        };
+    }, []);
 
     useEffect(() => {
         if (userInfo.isLogin) fetchList();
@@ -186,18 +232,23 @@ const UserDynamic: NextPage<UserDynamicProps> = (props) => {
                         />
                     );
                 })}
+                {listLoading && (
+                    <div className="list-loading">正在加载中。。。</div>
+                )}
             </div>
 
-            <PostDynamic
-                existId={dynamicId}
-                visible={postDynamic}
-                onCancel={(flag) => {
-                    if (flag) updateDynamicOptInfo(dynamicId);
+            {postDynamic && (
+                <PostDynamic
+                    existId={dynamicId}
+                    visible={postDynamic}
+                    onCancel={(flag) => {
+                        if (flag) updateDynamicOptInfo(dynamicId);
 
-                    setDynamicId(0);
-                    setPostDynamic(false);
-                }}
-            />
+                        setDynamicId(0);
+                        setPostDynamic(false);
+                    }}
+                />
+            )}
         </div>
     );
 };
