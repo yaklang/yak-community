@@ -27,6 +27,7 @@ import PostDynamic from "../modal/PostDynamic";
 
 interface HeadersProps {}
 
+// eslint-disable-next-line react/display-name
 const Headers: NextPage<HeadersProps> = React.memo((props) => {
     const { userInfo, signIn, signOut, setHomePageKeywords } = useStore();
     const router = useRouter();

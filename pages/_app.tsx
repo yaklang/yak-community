@@ -4,6 +4,7 @@ import Head from "next/head";
 import Layouts from "../components/layout/Layouts";
 import "../styles/globals.scss";
 import "antd/dist/antd.css";
+import Script from "next/script";
 
 const App: NextPage<AppProps> = (props) => {
     const { Component, pageProps } = props;
@@ -25,12 +26,15 @@ const App: NextPage<AppProps> = (props) => {
                         }
                     `}
                 </style>
-                <script src="http://res.wx.qq.com/connect/zh_CN/htmledition/js/wxLogin.js"></script>
             </Head>
             {pageProps.isLogin || pageProps.isMiddle ? (
-                <Component {...pageProps} />
+                <>
+                    <Script src="http://res.wx.qq.com/connect/zh_CN/htmledition/js/wxLogin.js"></Script>
+                    <Component {...pageProps} />
+                </>
             ) : (
                 <Layouts>
+                    <Script src="http://res.wx.qq.com/connect/zh_CN/htmledition/js/wxLogin.js"></Script>
                     <Component {...pageProps} />
                 </Layouts>
             )}

@@ -164,7 +164,7 @@ const ChildProtection: NextPage<ChildProtectionProps> = (props) => {
             <p>
                 3.2. 同时，
                 <span className="high-light">
-                    如您不希望儿童个人信息保留在cookie中，您可以对儿童设备的浏览器进行配置：选择"拒绝cookie"或"当网站发送cookie时通知您"。鉴于我们的服务是通过支持cookies来实现的，完成关闭cookies的操作后，儿童访问Yak可能受到影响或不能充分获得我们的服务。
+                    {`如您不希望儿童个人信息保留在cookie中，您可以对儿童设备的浏览器进行配置：选择"拒绝cookie"或"当网站发送cookie时通知您"。鉴于我们的服务是通过支持cookies来实现的，完成关闭cookies的操作后，儿童访问Yak可能受到影响或不能充分获得我们的服务。`}
                 </span>
                 您不禁用cookie时，可能会得到提示，例如是否在下一次进入此网站时保留用户信息以便简化登录手续（如自动登录）。
             </p>

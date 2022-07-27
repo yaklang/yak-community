@@ -286,7 +286,7 @@ const PersonalProtection: NextPage<PersonalProtectionProps> = (props) => {
             </p>
             <p className="high-light">
                 2
-                如您希望禁用cookies，您可以对浏览器进行配置：选择"拒绝cookies"或"当网站发送cookies时通知您"。鉴于我们的服务是通过支持cookies来实现的，完成关闭cookies的操作后，您访问Yak可能受到影响或不能充分获得我们的服务。您不禁用cookies时，可能会得到提示，例如是否在下一次进入此网站时保留用户信息以便简化登录手续（如自动登录）。
+                {`如您希望禁用cookies，您可以对浏览器进行配置：选择"拒绝cookies"或"当网站发送cookies时通知您"。鉴于我们的服务是通过支持cookies来实现的，完成关闭cookies的操作后，您访问Yak可能受到影响或不能充分获得我们的服务。您不禁用cookies时，可能会得到提示，例如是否在下一次进入此网站时保留用户信息以便简化登录手续（如自动登录）。`}
             </p>
 
             <p className="head-first">

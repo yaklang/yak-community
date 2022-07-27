@@ -11,7 +11,7 @@ import { NetWorkApi } from "../../utils/fetch";
 import { SingleUpload } from "../baseComponents/SingleUpload";
 import { queryURLParams, replaceParamVal } from "../../utils/urlTool";
 import { useStore } from "../../store";
-import { getPlatform, setTokenUser } from "../../utils/auth";
+import { getPlatform } from "../../utils/auth";
 import { UpdateAuthProps } from "../../types/extraApi";
 
 type ModalType = "name" | "phone" | "wechat" | "github" | "";
