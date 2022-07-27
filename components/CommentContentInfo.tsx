@@ -129,6 +129,8 @@ export const CommentContentInfo: React.FC<CommentContentInfoProps> = (
                                     {imgs.map((item) => {
                                         return (
                                             <a
+                                                rel="noopener noreferrer"
+                                                key={item}
                                                 className="comment-content-img"
                                                 href={item}
                                                 target="_blank"

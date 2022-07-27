@@ -44,7 +44,7 @@ export interface SingleUploadProps extends UploadProps {
     onSuccess?: (file: RcFile) => any;
     onFailed?: () => any;
 }
-
+// eslint-disable-next-line react/display-name
 export const SingleUpload: React.FC<SingleUploadProps> = React.memo((props) => {
     const {
         isVideo = false,

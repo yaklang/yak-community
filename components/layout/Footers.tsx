@@ -32,6 +32,7 @@ const Footers: NextPage<FootersProps> = (props) => {
                 </div>
                 <div className="footer-right">
                     <a
+                        rel="noopener noreferrer"
                         href="https://github.com/yaklang/yakit"
                         target="_blank"
                         className="footer-right-github"

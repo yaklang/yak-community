@@ -233,6 +233,7 @@ const UserFollow: NextPage<UserFollowProps> = (props) => {
                                                     })}
                                                 {!!videos && (
                                                     <a
+                                                        rel="noopener noreferrer"
                                                         href={videos}
                                                         target="_blank"
                                                     >{`[视频]`}</a>
