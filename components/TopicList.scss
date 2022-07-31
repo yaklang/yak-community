@@ -13,22 +13,22 @@ $REM: 16;
         .topic-list-header {
             display: flex;
             justify-content: space-between;
-            height: REM(22);
+            height: 22px;
             &-title {
-                font-size: REM(16);
+                font-size: 16px;
                 font-weight: 600;
                 color: var(--base-font-color);
-                line-height: REM(22);
+                line-height: 22px;
             }
             .refresh-btn {
-                height: REM(22);
+                height: 22px;
                 padding: 0 15px;
-                font-size: REM(12);
+                font-size: 12px;
                 color: #999ea8;
                 display: flex;
                 align-items: center;
                 .icon-style {
-                    font-size: REM(13);
+                    font-size: 13px;
                     color: #686c78;
                     display: flex;
                 }
@@ -93,5 +93,9 @@ $REM: 16;
         font-weight: 500;
         color: var(--base-font-color);
         line-height: REM(24);
+        cursor: pointer;
+    }
+    .topic-item-main-title:hover {
+        color: var(--base-theme-color);
     }
 }

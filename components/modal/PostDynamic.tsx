@@ -455,6 +455,7 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
             closable={false}
             footer={null}
             destroyOnClose={true}
+            width={520}
             className="post-dynamic-modal"
             onCancel={cancelModal}
         >
@@ -780,9 +781,9 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
                                         onMouseEnter={() => setCoverMask(true)}
                                         onMouseLeave={() => setCoverMask(false)}
                                     >
-                                        <img
+                                        <ImgShow
+                                            isCover={true}
                                             src={dynamic.cover}
-                                            className="img-style"
                                         />
                                         <div
                                             className={`mask-cover ${

@@ -19,12 +19,10 @@ $REM: 16;
     display: flex;
     .body-img {
         margin-right: REM(16);
-        padding-top: 1px;
-        .img-style {
-            width: REM(40);
-            height: REM(40);
-            border-radius: 50%;
-        }
+        margin-top: 1px;
+        width: REM(40);
+        height: REM(40);
+        @include head-img-style;
     }
 
     .body-data {
@@ -45,6 +43,11 @@ $REM: 16;
             font-size: REM(12);
             color: #686c78;
             line-height: REM(17);
+
+            .sub-comment-by-name {
+                color: var(--base-theme-color);
+                cursor: pointer;
+            }
 
             .comment-content-img {
                 color: var(--base-theme-color);
@@ -74,6 +77,9 @@ $REM: 16;
                     .icon-style {
                         font-size: REM(16);
                         margin-right: 2px;
+                    }
+                    .icon-theme-style {
+                        color: var(--base-theme-color);
                     }
                 }
                 .operation-btn + .operation-btn {

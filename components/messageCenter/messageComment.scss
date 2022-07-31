@@ -41,12 +41,9 @@ $REM: 16;
 
     .reply-img {
         width: REM(40);
-        padding-top: 1px;
-        .img-style {
-            width: REM(40);
-            height: REM(40);
-            border-radius: 50%;
-        }
+        height: REM(40);
+        margin-top: 1px;
+        @include head-img-style;
     }
 
     .reply-content {
@@ -66,6 +63,9 @@ $REM: 16;
             font-size: 12px;
             color: #686c78;
             line-height: REM(17);
+            .link-img-style {
+                color: var(--base-theme-color);
+            }
         }
         .reply-time {
             margin-top: REM(8);
@@ -80,130 +80,7 @@ $REM: 16;
 .comment-message-dynamic {
     margin-top: REM(8);
     margin-left: REM(56);
-
-    .dynamic-wrapper {
-        width: 100%;
-        padding: REM(16) REM(16) REM(12) REM(16);
-        background: #f7f8fa;
-        border-radius: 4px;
-        .dynamic-name {
-            width: 100%;
-            height: REM(20);
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--base-font-color);
-            line-height: REM(20);
-        }
-        .dynamic-content {
-            margin-top: REM(8);
-            width: 100%;
-            height: REM(40);
-            font-size: 12px;
-            color: #686c78;
-            line-height: REM(20);
-            overflow: hidden;
-        }
-    }
-
-    .dynamic-img-wrapper {
-        width: 100%;
-        background: #f7f8fa;
-        border-radius: 4px;
-        display: flex;
-        overflow: hidden;
-        .dynamic-img {
-            width: REM(96);
-            .img-style {
-                width: REM(96);
-                height: REM(96);
-            }
-        }
-        .dynamic-content {
-            flex: 1;
-            overflow: hidden;
-            padding: REM(16) REM(16) REM(12) REM(16);
-
-            .dynamic-name {
-                width: 100%;
-                height: REM(20);
-                font-size: 14px;
-                font-weight: 600;
-                color: var(--base-font-color);
-                line-height: REM(20);
-            }
-            .dynamic-text {
-                margin-top: REM(8);
-                width: 100%;
-                height: REM(40);
-                font-size: 12px;
-                color: #686c78;
-                line-height: REM(20);
-                overflow: hidden;
-            }
-        }
-    }
-
-    .dynamic-video-wrapper {
-        width: 100%;
-        background: #f7f8fa;
-        border-radius: 4px;
-        display: flex;
-        overflow: hidden;
-        .dynamic-video {
-            width: REM(96);
-            position: relative;
-            .img-style {
-                width: REM(96);
-                height: REM(96);
-            }
-            .video-mask {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                .icon-style {
-                    font-size: 20px;
-                    color: #ffffff;
-                }
-            }
-        }
-        .dynamic-content {
-            flex: 1;
-            overflow: hidden;
-            padding: REM(16) REM(16) REM(12) REM(16);
-
-            .dynamic-name {
-                width: 100%;
-                height: REM(20);
-                font-size: 14px;
-                font-weight: 600;
-                color: var(--base-font-color);
-                line-height: REM(20);
-            }
-            .video-title {
-                margin-top: REM(8);
-                width: 100%;
-                height: REM(20);
-                font-size: 12px;
-                font-weight: 500;
-                color: var(--base-font-color);
-                line-height: REM(20);
-            }
-            .dynamic-text {
-                margin-top: REM(4);
-                width: 100%;
-                height: REM(20);
-                font-size: 12px;
-                color: #686c78;
-                line-height: REM(20);
-                overflow: hidden;
-            }
-        }
-    }
+    width: 100%;
 }
 
 .comment-message-dynamic-reply {
@@ -216,131 +93,11 @@ $REM: 16;
     .dynamic-reply-content {
         margin-bottom: REM(8);
         font-size: 12px;
-        color: var(--base-theme-color);
+        color: var(--base-icon-color);
         line-height: 17px;
-    }
-
-    .dynamic-wrapper {
-        width: 100%;
-        padding: REM(16) REM(16) REM(12) REM(16);
-        background: #ffffff;
-        border-radius: 4px;
-        .dynamic-name {
-            width: 100%;
-            height: REM(20);
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--base-font-color);
-            line-height: REM(20);
-        }
-        .dynamic-content {
-            margin-top: REM(8);
-            width: 100%;
-            height: REM(40);
-            font-size: 12px;
-            color: #686c78;
-            line-height: REM(20);
-            overflow: hidden;
-        }
-    }
-
-    .dynamic-img-wrapper {
-        width: 100%;
-        background: #ffffff;
-        border-radius: 4px;
-        display: flex;
-        overflow: hidden;
-        .dynamic-img {
-            width: REM(96);
-            .img-style {
-                width: REM(96);
-                height: REM(96);
-            }
-        }
-        .dynamic-content {
-            flex: 1;
-            overflow: hidden;
-            padding: REM(16) REM(16) REM(12) REM(16);
-
-            .dynamic-name {
-                width: 100%;
-                height: REM(20);
-                font-size: 14px;
-                font-weight: 600;
-                color: var(--base-font-color);
-                line-height: REM(20);
-            }
-            .dynamic-text {
-                margin-top: REM(8);
-                width: 100%;
-                height: REM(40);
-                font-size: 12px;
-                color: #686c78;
-                line-height: REM(20);
-                overflow: hidden;
-            }
-        }
-    }
-
-    .dynamic-video-wrapper {
-        width: 100%;
-        background: #ffffff;
-        border-radius: 4px;
-        display: flex;
-        overflow: hidden;
-        .dynamic-video {
-            width: REM(96);
-            position: relative;
-            .img-style {
-                width: REM(96);
-                height: REM(96);
-            }
-            .video-mask {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                .icon-style {
-                    font-size: 20px;
-                    color: #ffffff;
-                }
-            }
-        }
-        .dynamic-content {
-            flex: 1;
-            overflow: hidden;
-            padding: REM(16) REM(16) REM(12) REM(16);
-
-            .dynamic-name {
-                width: 100%;
-                height: REM(20);
-                font-size: 14px;
-                font-weight: 600;
-                color: var(--base-font-color);
-                line-height: REM(20);
-            }
-            .video-title {
-                margin-top: REM(8);
-                width: 100%;
-                height: REM(20);
-                font-size: 12px;
-                font-weight: 500;
-                color: var(--base-font-color);
-                line-height: REM(20);
-            }
-            .dynamic-text {
-                margin-top: REM(4);
-                width: 100%;
-                height: REM(20);
-                font-size: 12px;
-                color: #686c78;
-                line-height: REM(20);
-                overflow: hidden;
-            }
+        .reply-user-style {
+            color: var(--base-theme-color);
+            cursor: pointer;
         }
     }
 }
@@ -364,9 +121,9 @@ $REM: 16;
         .btn-theme-style {
             color: var(--base-theme-color);
         }
+
         .icon-style {
             font-size: 20px;
-            color: var(--base-icon-color);
         }
         .btn-style:hover {
             color: var(--base-theme-color);

@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useMemoizedFn } from "ahooks";
-import {} from "antd";
 import { CaretDownOutlined } from "@ant-design/icons";
 import { NetWorkApi } from "../utils/fetch";
 import { API } from "../types/api";
 import { StarsComment } from "../types/extraApi";
 import { timeFormat } from "../utils/timeTool";
-import { LikeIcon, LikeThemeIcon, ReplyIcon } from "../public/icons";
+import { LikeIcon, ReplyIcon } from "../public/icons";
 import SubComment from "./modal/SubComment";
 import { useRouter } from "next/router";
 import { useStore } from "../store";
 import { failed } from "../utils/notification";
 import { CollapseText } from "./baseComponents/CollapseText";
+import { ImgShow } from "./baseComponents/ImgShow";
 
 export interface CommentContentInfoProps {
     dynamicInfo?: API.DynamicLists;
@@ -96,10 +96,9 @@ export const CommentContentInfo: React.FC<CommentContentInfoProps> = (
         >
             <div className="comment-content-info-body">
                 <div className="body-img">
-                    <img
+                    <ImgShow
                         src={info.head_img}
-                        className="img-style"
-                        onClick={() =>
+                        onclick={() =>
                             router.push({
                                 pathname: "/userpage",
                                 query: { user: info.user_id },
@@ -125,6 +124,19 @@ export const CommentContentInfo: React.FC<CommentContentInfoProps> = (
                         <CollapseText
                             value={
                                 <>
+                                    {isSubComment && (
+                                        <>
+                                            <span
+                                                className="sub-comment-by-name"
+                                                onClick={() =>
+                                                    router.push(
+                                                        `/userpage?user=${info.by_user_id}`
+                                                    )
+                                                }
+                                            >{`@${info.by_user_name}`}</span>
+                                            {": "}
+                                        </>
+                                    )}
                                     {info.message}
                                     {imgs.map((item) => {
                                         return (
@@ -168,11 +180,12 @@ export const CommentContentInfo: React.FC<CommentContentInfoProps> = (
                                     onLike();
                                 }}
                             >
-                                {flag ? (
-                                    <LikeThemeIcon className="icon-style" />
-                                ) : (
-                                    <LikeIcon className="icon-style" />
-                                )}
+                                <LikeIcon
+                                    className={`icon-style ${
+                                        flag ? "icon-theme-style" : ""
+                                    }`}
+                                />
+
                                 {info.like_num}
                             </div>
                         </div>

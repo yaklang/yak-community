@@ -31,7 +31,8 @@ $REM: 16;
             overflow: hidden;
             .search-input {
                 height: 100%;
-                border-radius: 28px 28px 0 0;
+                border-radius: 28px 0 0 28px !important;
+                border-right-width: 0 !important;
             }
             .icon-style {
                 font-size: REM(20);
@@ -42,7 +43,7 @@ $REM: 16;
             .search-btn {
                 width: 72px;
                 height: 100%;
-                border-radius: 0 0 28px 28px;
+                border-radius: 0 28px 28px 0 !important;
             }
         }
     }

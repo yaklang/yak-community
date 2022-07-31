@@ -24,6 +24,7 @@ const MessageCenter: NextPage<MessageCenterProps> = (props) => {
         comment_num: 0,
         fans: 0,
         stars_num: 0,
+        delete_message: 0,
     });
 
     const fetchUnreadMessage = useMemoizedFn(() => {
@@ -57,12 +58,13 @@ const MessageCenter: NextPage<MessageCenterProps> = (props) => {
                     activeKey={activeKey}
                     destroyInactiveTabPane={true}
                     className="message-center-tabs"
-                    onChange={(key: string) =>
+                    onChange={(key: string) => {
                         router.push({
                             pathname: "/messagecenter",
                             query: { tabs: key },
-                        })
-                    }
+                        });
+                        fetchUnreadMessage();
+                    }}
                 >
                     <TabPane
                         tab={
@@ -169,10 +171,10 @@ const MessageCenter: NextPage<MessageCenterProps> = (props) => {
                                         right: `${
                                             (0 -
                                                 4 -
-                                                (`${messageNum.stars_num}`
+                                                (`${messageNum.delete_message}`
                                                     .length > 4
                                                     ? 4
-                                                    : `${messageNum.stars_num}`
+                                                    : `${messageNum.delete_message}`
                                                           .length) *
                                                     8) /
                                             16
@@ -180,9 +182,9 @@ const MessageCenter: NextPage<MessageCenterProps> = (props) => {
                                     }}
                                 >
                                     {`${
-                                        messageNum.stars_num > 999
+                                        messageNum.delete_message > 999
                                             ? "999+"
-                                            : messageNum.stars_num
+                                            : messageNum.delete_message
                                     }`}
                                 </div>
                             </div>

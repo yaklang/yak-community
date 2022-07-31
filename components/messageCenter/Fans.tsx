@@ -13,6 +13,7 @@ import { Tooltip } from "antd";
 import { MutualAttentionIcon } from "../../public/icons";
 import { failed } from "../../utils/notification";
 import { getToken } from "../../utils/auth";
+import { ImgShow } from "../baseComponents/ImgShow";
 
 interface FansProps {
     userId?: number;
@@ -163,10 +164,9 @@ const Fans: NextPage<FansProps> = (props) => {
                         <div className="fans-opt-body">
                             <div className="fans-user">
                                 <div className="fans-user-img">
-                                    <img
+                                    <ImgShow
                                         src={item.action_head_img}
-                                        className="img-style"
-                                        onClick={() =>
+                                        onclick={() =>
                                             router.push(
                                                 `/userpage?user=${item.action_user_id}`
                                             )

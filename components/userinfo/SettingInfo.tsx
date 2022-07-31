@@ -11,8 +11,8 @@ import { NetWorkApi } from "../../utils/fetch";
 import { SingleUpload } from "../baseComponents/SingleUpload";
 import { queryURLParams, replaceParamVal } from "../../utils/urlTool";
 import { useStore } from "../../store";
-import { getPlatform } from "../../utils/auth";
 import { UpdateAuthProps } from "../../types/extraApi";
+import { ImgShow } from "../baseComponents/ImgShow";
 
 type ModalType = "name" | "phone" | "wechat" | "github" | "";
 const ModalTypeTitle: { [key: string]: string } = {
@@ -45,8 +45,6 @@ const SettingInfo: NextPage<SettingInfoProps> = (props) => {
     })[0];
 
     const { setGithubAuth } = useStore();
-
-    const platform = getPlatform();
 
     const [modalVisible, setModalVisible] = useState<boolean>(false);
     const [modalIndex, setModalIndex] = useState<ModalType>("");
@@ -107,8 +105,8 @@ const SettingInfo: NextPage<SettingInfoProps> = (props) => {
             });
     });
 
-    const getAuthUlr = (source: "github" | "wechat") => {
-        NetWorkApi<{ source: "github" | "wechat" }, string>({
+    const getAuthUlr = (source: "forum_github" | "wechat") => {
+        NetWorkApi<{ source: "forum_github" | "wechat" }, string>({
             method: "get",
             url: "/api/auth/from",
             params: { source: source },
@@ -126,8 +124,8 @@ const SettingInfo: NextPage<SettingInfoProps> = (props) => {
             })
             .catch((err) => {});
     };
-    const setAuthUrl = (source: "github" | "wechat", url: string) => {
-        if (source === "github") {
+    const setAuthUrl = (source: "forum_github" | "wechat", url: string) => {
+        if (source === "forum_github") {
             setGithubAuth({
                 auth_id: Github?.auth_id || 0,
                 head_img: "",
@@ -184,7 +182,7 @@ const SettingInfo: NextPage<SettingInfoProps> = (props) => {
 
     const showModal = useMemoizedFn((flag: ModalType) => {
         if (flag === "github") {
-            getAuthUlr("github");
+            getAuthUlr("forum_github");
             return;
         }
         if (flag === "wechat") {
@@ -267,7 +265,7 @@ const SettingInfo: NextPage<SettingInfoProps> = (props) => {
             <div className="setting-info-row">
                 <div className="info-show">
                     <div className="info-show-img">
-                        <img src={info.head_img} className="img-style" />
+                        <ImgShow src={info.head_img} />
                     </div>
                     <div
                         className="info-show-content text-ellipsis-style"
@@ -329,7 +327,7 @@ const SettingInfo: NextPage<SettingInfoProps> = (props) => {
                             <div className="info-operate-name">
                                 {Github.name}
                             </div>
-                            {Wechat && platform !== "github" && (
+                            {Wechat && (
                                 <>
                                     <div
                                         className="info-operate-unbind"
@@ -381,7 +379,7 @@ const SettingInfo: NextPage<SettingInfoProps> = (props) => {
                             <div className="info-operate-name">
                                 {Wechat.name}
                             </div>
-                            {Github && platform !== "wechat" && (
+                            {Github && (
                                 <>
                                     <div
                                         className="info-operate-unbind"
@@ -436,7 +434,7 @@ const SettingInfo: NextPage<SettingInfoProps> = (props) => {
                                 onMouseEnter={() => setShowUpload(true)}
                                 onMouseLeave={() => setShowUpload(false)}
                             >
-                                <img src={img} className="img-style" />
+                                <ImgShow src={img} />
                                 <SingleUpload
                                     setValue={(res) => setImg(res)}
                                     onProgress={() => setImgLoading(true)}
@@ -466,7 +464,7 @@ const SettingInfo: NextPage<SettingInfoProps> = (props) => {
                                     </div>
                                 }
                                 placeholder="请输入昵称"
-                                maxLength={50}
+                                maxLength={30}
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
                             />

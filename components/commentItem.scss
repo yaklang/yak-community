@@ -18,11 +18,8 @@ $REM: 16;
         .body-img {
             width: REM(64);
             height: REM(64);
-            .img-style {
-                @include width-height-100;
-                border-radius: 50%;
-                cursor: pointer;
-            }
+            @include head-img-style;
+            cursor: pointer;
         }
     }
 
@@ -99,6 +96,23 @@ $REM: 16;
         .body-container {
             margin-top: REM(8);
 
+            .body-comment {
+                .del-dynamic-info {
+                    width: 100%;
+                    margin: 10px 0;
+                    padding: 16px;
+                    background-color: #f9f9f9;
+                    border-radius: 8px;
+                    text-align: center;
+                    font-size: 14px;
+                    color: var(--base-icon-color);
+                    .icon-style {
+                        font-size: 16px;
+                        margin-right: 8px;
+                    }
+                }
+            }
+
             .body-operation {
                 margin-top: REM(24);
                 margin-bottom: REM(16);
@@ -115,10 +129,10 @@ $REM: 16;
                         cursor: pointer;
                     }
                     .text-active {
-                        color: #ff7d23;
+                        color: var(--base-theme-color);
                     }
                     .text-normal {
-                        color: #686c78;
+                        color: var(--base-icon-color);
                     }
                 }
             }

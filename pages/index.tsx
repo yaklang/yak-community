@@ -23,6 +23,8 @@ const Home: NextPage<HomeProps> = (props) => {
         setHomePageKeywords,
         homePageDynamicId,
         setHomePageDynamicId,
+        hotTopicContent,
+        setHotTopicContent,
     } = useStore();
 
     const [keyword, setKeyword] = useState<string>("");
@@ -52,52 +54,7 @@ const Home: NextPage<HomeProps> = (props) => {
             //     is_stars: false,
             //     is_follow: false,
             //     comment_num: 10,
-            // },
-            // {
-            //     id: 2,
-            //     created_at: new Date().getTime(),
-            //     updated_at: new Date().getTime(),
-            //     user_id: 1,
-            //     user_name: "123",
-            //     head_img: "",
-            //     content: "123123",
-            //     content_img: "",
-            //     content_video:
-            //         "https://vd4.bdstatic.com/mda-ngg5nxij6qjte326/cae_h264/1658030681621523754/mda-ngg5nxij6qjte326.mp4",
-            //     topic_info: [],
-            //     topics: "",
-            //     title: "123123",
-            //     cover: "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.jj20.com%2Fup%2Fallimg%2F4k%2Fs%2F02%2F210924233115O14-0-lp.jpg&refer=http%3A%2F%2Fimg.jj20.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1660637672&t=5faed1def09048fe5bb6bd5368519fc6",
-            //     download: false,
-            //     stars: 11,
-            //     collect: 11,
-            //     is_collect: true,
-            //     is_stars: true,
-            //     is_follow: false,
-            //     comment_num: 0,
-            // },
-            // {
-            //     id: 3,
-            //     created_at: new Date().getTime(),
-            //     updated_at: new Date().getTime(),
-            //     user_id: 1,
-            //     user_name: "123",
-            //     head_img: "",
-            //     content: "123123",
-            //     content_img:
-            //         '["https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.jj20.com%2Fup%2Fallimg%2F4k%2Fs%2F02%2F210924233115O14-0-lp.jpg&refer=http%3A%2F%2Fimg.jj20.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1660637672&t=5faed1def09048fe5bb6bd5368519fc6","https://gimg2.baidu.com/image_search/src=http%3A%2F%2Ftupian.qqjay.com%2Fu%2F2017%2F1020%2F1_14136_2.jpg&refer=http%3A%2F%2Ftupian.qqjay.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1660650646&t=eaf78717a4b1f99a11a40944176be149","https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.jj20.com%2Fup%2Fallimg%2F4k%2Fs%2F02%2F210924233115O14-0-lp.jpg&refer=http%3A%2F%2Fimg.jj20.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1660637672&t=5faed1def09048fe5bb6bd5368519fc6","https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.jj20.com%2Fup%2Fallimg%2F4k%2Fs%2F02%2F210924233115O14-0-lp.jpg&refer=http%3A%2F%2Fimg.jj20.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1660637672&t=5faed1def09048fe5bb6bd5368519fc6","https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.jj20.com%2Fup%2Fallimg%2F4k%2Fs%2F02%2F210924233115O14-0-lp.jpg&refer=http%3A%2F%2Fimg.jj20.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1660637672&t=5faed1def09048fe5bb6bd5368519fc6","https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.jj20.com%2Fup%2Fallimg%2F4k%2Fs%2F02%2F210924233115O14-0-lp.jpg&refer=http%3A%2F%2Fimg.jj20.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1660637672&t=5faed1def09048fe5bb6bd5368519fc6","https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.jj20.com%2Fup%2Fallimg%2F4k%2Fs%2F02%2F210924233115O14-0-lp.jpg&refer=http%3A%2F%2Fimg.jj20.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1660637672&t=5faed1def09048fe5bb6bd5368519fc6","https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.jj20.com%2Fup%2Fallimg%2F4k%2Fs%2F02%2F210924233115O14-0-lp.jpg&refer=http%3A%2F%2Fimg.jj20.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1660637672&t=5faed1def09048fe5bb6bd5368519fc6","https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.jj20.com%2Fup%2Fallimg%2F4k%2Fs%2F02%2F210924233115O14-0-lp.jpg&refer=http%3A%2F%2Fimg.jj20.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1660637672&t=5faed1def09048fe5bb6bd5368519fc6","https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.jj20.com%2Fup%2Fallimg%2F4k%2Fs%2F02%2F210924233115O14-0-lp.jpg&refer=http%3A%2F%2Fimg.jj20.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1660637672&t=5faed1def09048fe5bb6bd5368519fc6","https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.jj20.com%2Fup%2Fallimg%2F4k%2Fs%2F02%2F210924233115O14-0-lp.jpg&refer=http%3A%2F%2Fimg.jj20.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1660637672&t=5faed1def09048fe5bb6bd5368519fc6"]',
-            //     content_video: "",
-            //     topic_info: [],
-            //     topics: "",
-            //     title: "",
-            //     cover: "",
-            //     download: false,
-            //     stars: 11,
-            //     collect: 11,
-            //     is_collect: true,
-            //     is_stars: true,
-            //     is_follow: false,
-            //     comment_num: 0,
+            //     status: 1,
             // },
         ],
         pagemeta: {
@@ -285,6 +242,33 @@ const Home: NextPage<HomeProps> = (props) => {
         else fetchNoDynamics(1);
     });
 
+    const delDynamic = useMemoizedFn((info: API.DynamicLists) => {
+        NetWorkApi<{ id: number }, API.ActionSucceeded>({
+            method: "post",
+            url: "/api/dynamic/violations/delete",
+            params: { id: info.id },
+            userToken: true,
+        })
+            .then((res) => {
+                setList({
+                    data: list.data.filter((item) => item.id !== info.id),
+                    pagemeta: list.pagemeta,
+                });
+            })
+            .catch((err) => {});
+    });
+
+    useEffect(() => {
+        const isToken = !!getToken();
+        if (hotTopicContent) {
+            setListPage(1);
+            setKeyword(hotTopicContent);
+            if (isToken) fetchDynamics(1, hotTopicContent);
+            else fetchNoDynamics(1, hotTopicContent);
+            setHotTopicContent("");
+        }
+    }, [hotTopicContent]);
+
     return (
         <HomeLayout>
             <div className="home-page-wrapper">
@@ -318,6 +302,7 @@ const Home: NextPage<HomeProps> = (props) => {
                                 <CommentItem
                                     key={item.id}
                                     isRole={userInfo.isLogin && userInfo.isRole}
+                                    onRoleDel={() => delDynamic(item)}
                                     info={item}
                                     updateInfo={updateDynamicInfo}
                                     updateDynamicInfo={updateDynamicInfoApi}
@@ -327,6 +312,12 @@ const Home: NextPage<HomeProps> = (props) => {
 
                         {loading && (
                             <div className="list-loading">正在加载中。。。</div>
+                        )}
+
+                        {!loading && list.data.length === 0 && (
+                            <div className="list-loading">
+                                暂无动态，期待您的发布
+                            </div>
                         )}
                     </div>
 

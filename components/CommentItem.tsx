@@ -6,17 +6,15 @@ import {
     CaretRightOutlined,
     PlusOutlined,
     RightOutlined,
+    InfoCircleOutlined,
 } from "@ant-design/icons";
 import {
     CollectionIcon,
-    CollectionThemeIcon,
     LikeIcon,
-    LikeThemeIcon,
     ReplyIcon,
-    ReplyThemeIcon,
     UploadImgIcon,
 } from "../public/icons";
-import ImgCropper from "./modal/ImgCropper";
+// import ImgCropper from "./modal/ImgCropper";
 import { API } from "../types/api";
 import { timeFormat } from "../utils/timeTool";
 import { useDebounce, useGetState, useMemoizedFn } from "ahooks";
@@ -62,6 +60,7 @@ interface CommentItemProps {
     onDel?: () => any;
 
     isRole?: boolean;
+    onRoleDel?: () => any;
 }
 
 const CommentItem: NextPage<CommentItemProps> = (props) => {
@@ -74,6 +73,7 @@ const CommentItem: NextPage<CommentItemProps> = (props) => {
         onEdit,
         onDel,
         isRole = false,
+        onRoleDel,
     } = props;
     const imgs: string[] =
         !info.content_img || info.content_img === "null"
@@ -90,6 +90,13 @@ const CommentItem: NextPage<CommentItemProps> = (props) => {
     const judgeAuth = useMemoizedFn(() => {
         if (!userInfo.isLogin) {
             failed("请登录后重新操作");
+            return false;
+        }
+        return true;
+    });
+    const judgeRole = useMemoizedFn(() => {
+        if (!userInfo.isLogin) {
+            failed("无权操作");
             return false;
         }
         return true;
@@ -174,7 +181,7 @@ const CommentItem: NextPage<CommentItemProps> = (props) => {
     });
 
     const publishComment = useMemoizedFn(() => {
-        if (comment.message.length > 150) {
+        if (comment.message && comment.message.length > 150) {
             failed("评论内容限制长度为150个字以内");
             return;
         }
@@ -344,10 +351,9 @@ const CommentItem: NextPage<CommentItemProps> = (props) => {
             <div className="comment-item-body">
                 <div className="item-left-body">
                     <div className="body-img">
-                        <img
+                        <ImgShow
                             src={info.head_img}
-                            className="img-style"
-                            onClick={() =>
+                            onclick={() =>
                                 router.push({
                                     pathname: "/userpage",
                                     query: { user: info.user_id },
@@ -381,8 +387,8 @@ const CommentItem: NextPage<CommentItemProps> = (props) => {
                                     placement="bottomLeft"
                                     title="确定是否删除该动态吗?"
                                     onConfirm={() => {
-                                        if (!judgeAuth()) return;
-                                        if (onDel) onDel();
+                                        if (!judgeRole()) return;
+                                        if (onRoleDel) onRoleDel();
                                     }}
                                     okText="确定"
                                     cancelText="取消"
@@ -451,90 +457,119 @@ const CommentItem: NextPage<CommentItemProps> = (props) => {
 
                     <div className="body-container">
                         <div className="body-comment">
-                            {!imgs && !videos && <CommentWord info={info} />}
-                            {imgs && <CommentImg info={info} />}
-                            {videos && <CommentVideo info={info} />}
+                            {info.status === 2 && (
+                                <div className="del-dynamic-info">
+                                    <InfoCircleOutlined className="icon-style" />
+                                    抱歉、此动态已被删除
+                                </div>
+                            )}
+                            {info.status !== 2 && !imgs && !videos && (
+                                <CommentWord info={info} />
+                            )}
+                            {info.status !== 2 && imgs && (
+                                <CommentImg info={info} />
+                            )}
+                            {info.status !== 2 && videos && (
+                                <CommentVideo info={info} />
+                            )}
                         </div>
 
-                        <div className="body-operation">
-                            <Row>
-                                <Col span={8}>
-                                    <div
-                                        className="body-operation-btn"
-                                        onClick={() => {
-                                            if (!judgeAuth()) return;
-                                            userAction("collect");
-                                        }}
-                                    >
-                                        {info.is_collect ? (
-                                            <CollectionThemeIcon className="icon-style" />
-                                        ) : (
-                                            <CollectionIcon className="icon-style" />
-                                        )}
-                                        <span
-                                            onClick={(e) => e.stopPropagation()}
-                                            className={
-                                                info.is_collect
-                                                    ? "text-active"
-                                                    : "text-normal"
-                                            }
+                        {info.status !== 2 && (
+                            <div className="body-operation">
+                                <Row>
+                                    <Col span={8}>
+                                        <div
+                                            className="body-operation-btn"
+                                            onClick={() => {
+                                                if (!judgeAuth()) return;
+                                                userAction("collect");
+                                            }}
                                         >
-                                            {info.collect}
-                                        </span>
-                                    </div>
-                                </Col>
-                                <Col span={8}>
-                                    <div
-                                        className="body-operation-btn"
-                                        onClick={() => {
-                                            if (isDetail) return;
-                                            setShowComment(!showComment);
-                                        }}
-                                    >
-                                        {isDetail || showComment ? (
-                                            <ReplyThemeIcon className="icon-style" />
-                                        ) : (
-                                            <ReplyIcon className="icon-style" />
-                                        )}
-                                        <span
-                                            onClick={(e) => e.stopPropagation()}
-                                            className={
-                                                isDetail || showComment
-                                                    ? "text-active"
-                                                    : "text-normal"
-                                            }
+                                            <CollectionIcon
+                                                className={`icon-style ${
+                                                    info.is_collect
+                                                        ? "text-active"
+                                                        : "text-normal"
+                                                }`}
+                                            />
+
+                                            <span
+                                                onClick={(e) =>
+                                                    e.stopPropagation()
+                                                }
+                                                className={
+                                                    info.is_collect
+                                                        ? "text-active"
+                                                        : "text-normal"
+                                                }
+                                            >
+                                                {info.collect}
+                                            </span>
+                                        </div>
+                                    </Col>
+                                    <Col span={8}>
+                                        <div
+                                            className="body-operation-btn"
+                                            onClick={() => {
+                                                if (isDetail) return;
+                                                setShowComment(!showComment);
+                                            }}
                                         >
-                                            {info.comment_num}
-                                        </span>
-                                    </div>
-                                </Col>
-                                <Col span={8}>
-                                    <div
-                                        className="body-operation-btn"
-                                        onClick={() => {
-                                            if (!judgeAuth()) return;
-                                            userAction("stars");
-                                        }}
-                                    >
-                                        {info.is_stars ? (
-                                            <LikeThemeIcon className="icon-style" />
-                                        ) : (
-                                            <LikeIcon className="icon-style" />
-                                        )}
-                                        <span
-                                            onClick={(e) => e.stopPropagation()}
-                                            className={
-                                                info.is_stars
-                                                    ? "text-active"
-                                                    : "text-normal"
-                                            }
+                                            <ReplyIcon
+                                                className={`icon-style ${
+                                                    isDetail || showComment
+                                                        ? "text-active"
+                                                        : "text-normal"
+                                                }`}
+                                            />
+
+                                            <span
+                                                onClick={(e) =>
+                                                    e.stopPropagation()
+                                                }
+                                                className={
+                                                    isDetail || showComment
+                                                        ? "text-active"
+                                                        : "text-normal"
+                                                }
+                                            >
+                                                {info.comment_num}
+                                            </span>
+                                        </div>
+                                    </Col>
+                                    <Col span={8}>
+                                        <div
+                                            className="body-operation-btn"
+                                            onClick={() => {
+                                                if (!judgeAuth()) return;
+                                                userAction("stars");
+                                            }}
                                         >
-                                            {info.stars}
-                                        </span>
-                                    </div>
-                                </Col>
-                            </Row>
-                        </div>
+                                            <LikeIcon
+                                                className={`icon-style ${
+                                                    info.is_stars
+                                                        ? "text-active"
+                                                        : "text-normal"
+                                                }`}
+                                            />
+
+                                            <span
+                                                onClick={(e) =>
+                                                    e.stopPropagation()
+                                                }
+                                                className={
+                                                    info.is_stars
+                                                        ? "text-active"
+                                                        : "text-normal"
+                                                }
+                                            >
+                                                {info.stars}
+                                            </span>
+                                        </div>
+                                    </Col>
+                                </Row>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
@@ -667,7 +702,11 @@ const CommentItem: NextPage<CommentItemProps> = (props) => {
                                     />
                                 );
                             })}
-                            {listLoading && <div className="list-loading">正在加载中。。。</div>}
+                            {listLoading && (
+                                <div className="list-loading">
+                                    正在加载中。。。
+                                </div>
+                            )}
                         </div>
                     ) : (
                         <div className="comment-content-container">

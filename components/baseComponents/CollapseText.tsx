@@ -8,7 +8,7 @@ export interface CollapseTextProps {
 
 export const CollapseText: React.FC<CollapseTextProps> = (props) => {
     const { rows = 3, isComment = false, value } = props;
-    const lineHeight = isComment ? 17 : 20;
+    const lineHeight = isComment ? 17 : 24;
 
     const divRef = useRef<HTMLDivElement>(null);
 

@@ -36,9 +36,7 @@ $REM: 16;
                 margin-top: 1px;
                 width: REM(40);
                 height: REM(40);
-                .img-style {
-                    @include width-height-100;
-                }
+                @include head-img-style;
             }
 
             &-info {

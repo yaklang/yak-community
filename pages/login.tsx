@@ -21,17 +21,18 @@ import { useStore } from "../store";
 import { setPlatform, setTokenUser, userSignOut } from "../utils/auth";
 import { queryURLParams, replaceParamVal } from "../utils/urlTool";
 import { SingleUpload } from "../components/baseComponents/SingleUpload";
+import { ImgShow } from "../components/baseComponents/ImgShow";
 
 interface LoginProps {}
 
-type source = "github" | "wechat";
+type source = "forum_github" | "wechat";
 
 interface FetchCodeUrl {
     source: source;
 }
 export interface LoginCode {
     code: string;
-    type: source;
+    type: "github" | "wechat";
 }
 
 const Login: NextPage<LoginProps> = (props) => {
@@ -39,12 +40,14 @@ const Login: NextPage<LoginProps> = (props) => {
     const [codeUrl, setCodeUrl] = useState<{
         url: string;
         type: source;
-    }>({ url: "", type: "github" });
+    }>({ url: "", type: "forum_github" });
     const [authId, setAuthId] = useState<number>(0);
     const [name, setName] = useState<string>("");
     const [headImg, setHeadImg] = useState<string>("");
 
     const router = useRouter();
+
+    const wrapperRef = useRef<HTMLDivElement>(null);
 
     const { userInfo, signIn, signOut, githubAuth, clearGithubAuth } =
         useStore();
@@ -65,10 +68,23 @@ const Login: NextPage<LoginProps> = (props) => {
         }
     }, [router]);
 
+    useEffect(() => {
+        window.addEventListener(
+            "onorientationchange" in window ? "orientationchange" : "resize",
+            () => {
+                if (!wrapperRef || !wrapperRef.current) return;
+                const wrapper = wrapperRef.current;
+                wrapper.style.height = `${
+                    (document.body.offsetWidth * 1080) / 1920
+                }px`;
+            }
+        );
+    }, []);
+
     const clearPageCache = useMemoizedFn(() => {
         signOut();
         clearGithubAuth();
-        setCodeUrl({ url: "", type: "github" });
+        setCodeUrl({ url: "", type: "forum_github" });
         setAuthId(0);
         setName("");
         setHeadImg("");
@@ -86,6 +102,7 @@ const Login: NextPage<LoginProps> = (props) => {
             user_id: info.user_id,
             name: info.name,
             head_img: info.head_img,
+            isRole: info.role === "admin",
         });
         setUserInfo(info);
         setTokenUser(info.token, `${info.user_id}`);
@@ -140,7 +157,10 @@ const Login: NextPage<LoginProps> = (props) => {
                 NetWorkApi<LoginCode, API.AuthResponse>({
                     method: "get",
                     url: "/api/auth",
-                    params: { code, type: source },
+                    params: {
+                        code,
+                        type: source === "forum_github" ? "wechat" : source,
+                    },
                 })
                     .then((res) => {
                         setPlatform("wechat");
@@ -213,7 +233,7 @@ const Login: NextPage<LoginProps> = (props) => {
     );
 
     return (
-        <div className="login-wrapper">
+        <div ref={wrapperRef} className="login-wrapper">
             <div className="login-body">
                 {page === 1 && (
                     <LoginFirst
@@ -302,7 +322,10 @@ const LoginFirst: React.FC<LoginFirstProps> = (props) => {
         <>
             <div className="login-title">登录</div>
 
-            <div className="login-first-btn" onClick={() => login("github")}>
+            <div
+                className="login-first-btn"
+                onClick={() => login("forum_github")}
+            >
                 <div className="login-first-btn-title">
                     <GithubOutlined className="icon-style github-style" />
                     使用 GitHub 账号登录
@@ -329,8 +352,13 @@ const LoginFirst: React.FC<LoginFirstProps> = (props) => {
                     onChange={(e) => setChecked(e.target.checked)}
                 />
                 已阅读并同意 Yakit 社区账号&nbsp;
-                <Link href="/useagreement">服务协议</Link> 和{" "}
-                <Link href="/personalprotection">隐私政策</Link>
+                <Link href="/agreement?type=user" target={"_blank"}>
+                    <a target={"_blank"}>服务协议</a>
+                </Link>{" "}
+                和{" "}
+                <Link href="/agreement?type=protection">
+                    <a target={"_blank"}>隐私政策</a>
+                </Link>
             </div>
         </>
     );
@@ -374,7 +402,7 @@ const LoginSecond: React.FC<LoginSecondProps> = (props) => {
             });
         }
 
-        if (type === "github") window.location.href = url;
+        if (type === "forum_github") window.location.href = url;
     }, []);
 
     if (type === "wechat")
@@ -556,7 +584,7 @@ interface LoginFourthProps {
 const LoginFourth: React.FC<LoginFourthProps> = (props) => {
     const { name, headImg, onFourth } = props;
 
-    const [userName, setUserName] = useState<string>(name);
+    const [userName, setUserName] = useState<string>(name.slice(0, 30));
     const [img, setImg] = useState<string>(headImg);
     const [imgLoading, setImgLoading] = useState<boolean>(false);
     const [showUpload, setShowUpload] = useState<boolean>(false);
@@ -591,7 +619,7 @@ const LoginFourth: React.FC<LoginFourthProps> = (props) => {
                     onMouseEnter={() => setShowUpload(true)}
                     onMouseLeave={() => setShowUpload(false)}
                 >
-                    <img src={img} className="img-style" />
+                    <ImgShow src={img} />
 
                     <SingleUpload
                         setValue={(res) => setImg(res)}
@@ -623,7 +651,7 @@ const LoginFourth: React.FC<LoginFourthProps> = (props) => {
                         </div>
                     }
                     placeholder="请输入昵称"
-                    maxLength={50}
+                    maxLength={30}
                     value={userName}
                     onChange={(e) => setUserName(e.target.value)}
                 />

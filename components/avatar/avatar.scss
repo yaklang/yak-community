@@ -16,10 +16,7 @@ $REM: 16;
         &-header {
             width: REM(96);
             height: REM(96);
-            .img-style {
-                @include width-height-100;
-                border-radius: 50%;
-            }
+            @include head-img-style;
         }
         &-data {
             margin-left: REM(32);
@@ -73,10 +70,7 @@ $REM: 16;
         .info-img {
             width: REM(96);
             height: REM(96);
-            .img-style {
-                @include width-height-100;
-                border-radius: 50%;
-            }
+            @include head-img-style;
         }
         .info-name {
             margin: REM(8) 0;

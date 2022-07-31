@@ -231,9 +231,6 @@ $REM: 16;
                             line-height: REM(20);
                         }
 
-                        .img-style {
-                            @include width-height-100;
-                        }
                         .mask-cover {
                             position: absolute;
                             bottom: 0;

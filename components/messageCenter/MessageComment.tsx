@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { NextPage } from "next";
 import { Button } from "antd";
-import { CaretRightOutlined } from "@ant-design/icons";
 import { useGetState, useMemoizedFn } from "ahooks";
 import { NetWorkApi } from "../../utils/fetch";
 import { API } from "../../types/api";
 import { SearchPageMeta, StarsComment } from "../../types/extraApi";
 import { timeFormat } from "../../utils/timeTool";
-import { LikeIcon, LikeThemeIcon, ReplyIcon } from "../../public/icons";
+import { LikeIcon, ReplyIcon } from "../../public/icons";
 import PostComment from "../modal/PostComment";
 import { useRouter } from "next/router";
+import MessageDynamicInfo from "./MessageDynamicInfo";
+import { ImgShow } from "../baseComponents/ImgShow";
 
 interface MessageCommentProps {}
 
@@ -93,10 +94,14 @@ interface CommentMessageProp {
 }
 const CommentMessage: React.FC<CommentMessageProp> = (props) => {
     const { info } = props;
-    const imgs: string[] =
-        !info.dynamic_content_img || info.dynamic_content_img === "null"
-            ? undefined
-            : JSON.parse(info.dynamic_content_img);
+    const commentImgs: string[] =
+        !info.message_img || info.message_img === "null"
+            ? []
+            : JSON.parse(info.message_img);
+    const byCommentImgs: string[] =
+        !info.by_message_img || info.by_message_img === "null"
+            ? []
+            : JSON.parse(info.by_message_img);
 
     const router = useRouter();
 
@@ -129,10 +134,9 @@ const CommentMessage: React.FC<CommentMessageProp> = (props) => {
         <div className="comment-message-wrapper">
             <div className="comment-message-reply">
                 <div className="reply-img">
-                    <img
+                    <ImgShow
                         src={info.head_img}
-                        className="img-style"
-                        onClick={() =>
+                        onclick={() =>
                             router.push(`/userpage?user=${info.user_id}`)
                         }
                     />
@@ -155,7 +159,18 @@ const CommentMessage: React.FC<CommentMessageProp> = (props) => {
                                 {": "}
                             </>
                         )}
-                        {info.message}
+                        {info.message}{" "}
+                        {commentImgs.map((item) => {
+                            return (
+                                <a
+                                    key={item}
+                                    rel="noopener noreferrer"
+                                    href={item}
+                                    target="_blank"
+                                    className="link-img-style"
+                                >{`[图片]`}</a>
+                            );
+                        })}
                     </div>
                     <div className="reply-time">
                         {timeFormat(info.created_at, "YYYY/MM/DD HH:mm")}
@@ -165,61 +180,7 @@ const CommentMessage: React.FC<CommentMessageProp> = (props) => {
 
             {!info.root_id && (
                 <div className="comment-message-dynamic">
-                    {imgs.length === 0 && !info.dynamic_cover && (
-                        <div className="dynamic-wrapper">
-                            <div className="dynamic-name text-ellipsis-style">
-                                {`@${info.dynamic_user_name}`}
-                            </div>
-
-                            <div className="dynamic-content">
-                                {info.dynamic_content}
-                            </div>
-                        </div>
-                    )}
-
-                    {imgs.length > 0 && (
-                        <div className="dynamic-img-wrapper">
-                            <div className="dynamic-img">
-                                <img src={imgs[0]} className="img-style" />
-                            </div>
-                            <div className="dynamic-content">
-                                <div className="dynamic-name text-ellipsis-style">
-                                    {`@${info.dynamic_user_name}`}
-                                </div>
-
-                                <div className="dynamic-text">
-                                    {info.dynamic_content}
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
-                    {!!info.dynamic_cover && (
-                        <div className="dynamic-video-wrapper">
-                            <div className="dynamic-video">
-                                <img
-                                    src={info.dynamic_cover}
-                                    className="img-style"
-                                />
-                                <div className="video-mask">
-                                    <CaretRightOutlined className="icon-style" />
-                                </div>
-                            </div>
-                            <div className="dynamic-content">
-                                <div className="dynamic-name text-ellipsis-style">
-                                    {`@${info.dynamic_user_name}`}
-                                </div>
-
-                                <div className="video-title text-ellipsis-style">
-                                    {info.dynamic_title}
-                                </div>
-
-                                <div className="dynamic-text text-ellipsis-style">
-                                    {info.dynamic_content}
-                                </div>
-                            </div>
-                        </div>
-                    )}
+                    <MessageDynamicInfo info={info} />
                 </div>
             )}
 
@@ -233,99 +194,61 @@ const CommentMessage: React.FC<CommentMessageProp> = (props) => {
                                     query: { tabs: "dynamic" },
                                 })
                             }
+                            className="reply-user-style"
                         >{`@${info.by_user_name}`}</span>
-                        {`: ${info.by_message}`}
+                        {`: ${info.by_message}`}{" "}
+                        {byCommentImgs.map((item) => {
+                            return (
+                                <a
+                                    key={item}
+                                    rel="noopener noreferrer"
+                                    href={item}
+                                    target="_blank"
+                                    className="link-img-style"
+                                >{`[图片]`}</a>
+                            );
+                        })}
                     </div>
 
-                    {imgs.length === 0 && !info.dynamic_cover && (
-                        <div className="dynamic-wrapper">
-                            <div className="dynamic-name text-ellipsis-style">
-                                {`@${info.dynamic_user_name}`}
-                            </div>
-
-                            <div className="dynamic-content">
-                                {info.dynamic_content}
-                            </div>
-                        </div>
-                    )}
-                    {imgs.length > 0 && (
-                        <div className="dynamic-img-wrapper">
-                            <div className="dynamic-img">
-                                <img src={imgs[0]} className="img-style" />
-                            </div>
-                            <div className="dynamic-content">
-                                <div className="dynamic-name text-ellipsis-style">
-                                    {`@${info.dynamic_user_name}`}
-                                </div>
-
-                                <div className="dynamic-text">
-                                    {info.dynamic_content}
-                                </div>
-                            </div>
-                        </div>
-                    )}
-                    {!!info.dynamic_cover && (
-                        <div className="dynamic-video-wrapper">
-                            <div className="dynamic-video">
-                                <img
-                                    src={info.dynamic_cover}
-                                    className="img-style"
-                                />
-                                <div className="video-mask">
-                                    <CaretRightOutlined className="icon-style" />
-                                </div>
-                            </div>
-                            <div className="dynamic-content">
-                                <div className="dynamic-name text-ellipsis-style">
-                                    {`@${info.dynamic_user_name}`}
-                                </div>
-
-                                <div className="video-title text-ellipsis-style">
-                                    {info.dynamic_title}
-                                </div>
-
-                                <div className="dynamic-text text-ellipsis-style">
-                                    {info.dynamic_content}
-                                </div>
-                            </div>
-                        </div>
-                    )}
+                    <MessageDynamicInfo isReply={true} info={info} />
                 </div>
             )}
 
-            <div className="comment-message-operate">
-                <div className="operate-btn">
-                    <Button
-                        type="link"
-                        className="btn-style"
-                        onClick={() => setReplyShow(true)}
-                    >
-                        <ReplyIcon className="icon-style" />
-                        回复
-                    </Button>
+            {info.dynamic_status !== 2 && (
+                <div className="comment-message-operate">
+                    <div className="operate-btn">
+                        <Button
+                            type="link"
+                            className="btn-style"
+                            onClick={() => setReplyShow(true)}
+                        >
+                            <ReplyIcon className="icon-style" />
+                            回复
+                        </Button>
+                    </div>
+                    <div className="operate-btn">
+                        <Button
+                            disabled={starsLoading}
+                            type="link"
+                            className={`btn-style ${
+                                starShow ? "btn-theme-style" : ""
+                            }`}
+                            onClick={onStar}
+                        >
+                            <LikeIcon
+                                className={`icon-style ${
+                                    starShow ? "btn-theme-style" : ""
+                                }`}
+                            />
+                            点赞
+                        </Button>
+                    </div>
                 </div>
-                <div className="operate-btn">
-                    <Button
-                        disabled={starsLoading}
-                        type="link"
-                        className={`btn-style ${
-                            starShow ? "btn-theme-style" : ""
-                        }`}
-                        onClick={onStar}
-                    >
-                        {starShow ? (
-                            <LikeThemeIcon className="icon-style" />
-                        ) : (
-                            <LikeIcon className="icon-style" />
-                        )}
-                        点赞
-                    </Button>
-                </div>
-            </div>
+            )}
 
             <PostComment
                 dynamicId={info.dynamic_id}
-                mainCommentId={info.root_id}
+                mainCommentId={info.root_id === 0 ? info.id : info.root_id}
                 commentId={info.id}
                 commentUserId={info.user_id}
                 name={info.user_name}

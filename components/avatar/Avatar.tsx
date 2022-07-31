@@ -9,6 +9,7 @@ import { FollowUserProps } from "../../types/extraApi";
 import { useRouter } from "next/router";
 import { useStore } from "../../store";
 import { failed } from "../../utils/notification";
+import { ImgShow } from "../baseComponents/ImgShow";
 
 interface AvatarProps {
     id: number;
@@ -81,11 +82,7 @@ const Avatar: NextPage<AvatarProps> = (props) => {
             <div className="avatar-body">
                 <div className="avatar-author-info">
                     <div className="avatar-author-info-header">
-                        <img
-                            className="img-style"
-                            src={img}
-                            onClick={visitUserInfo}
-                        />
+                        <ImgShow src={img} onclick={visitUserInfo} />
                     </div>
                     <div className="avatar-author-info-data">
                         <div

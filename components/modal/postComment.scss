@@ -80,12 +80,8 @@ $REM: 16;
 
             .img-opt {
                 width: 100%;
+                padding-top: 100%;
                 position: relative;
-                .img-style {
-                    width: 100%;
-                    height: 100%;
-                    border-radius: 4px;
-                }
                 .img-opt-del {
                     position: absolute;
                     right: 2px;

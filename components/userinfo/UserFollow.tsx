@@ -10,6 +10,7 @@ import { FetchFollowList, FollowUserProps } from "../../types/extraApi";
 import { useStore } from "../../store";
 import { failed } from "../../utils/notification";
 import { getToken } from "../../utils/auth";
+import { ImgShow } from "../baseComponents/ImgShow";
 
 interface UserFollowProps {
     userId: number;
@@ -190,10 +191,9 @@ const UserFollow: NextPage<UserFollowProps> = (props) => {
                         <div className="user-follow-opt-body">
                             <div className="follow-user">
                                 <div className="follow-user-img">
-                                    <img
+                                    <ImgShow
                                         src={item.follow_head_img}
-                                        className="img-style"
-                                        onClick={() =>
+                                        onclick={() =>
                                             router.push(
                                                 `/userpage?user=${item.follow_user_id}`
                                             )

@@ -30,10 +30,14 @@ const TopicList: NextPage<TopicListProps> = (props) => {
             setShowList(lists);
             setPage(0);
         } else {
-            const lists = list.slice((page + 1) * 10, (page + 2) * 10);
+            const listPage =
+                list.length > 10 && list.length <= 20 && page === 1
+                    ? page - 1
+                    : page + 1;
+            const lists = list.slice(listPage * 10, (listPage + 1) * 10);
             setShowList(lists);
             // @ts-ignore
-            setPage(page + 1);
+            setPage(listPage);
         }
     });
 
@@ -127,6 +131,7 @@ interface TopicItemProps {
 }
 const TopicItem = (props: TopicItemProps) => {
     const { info, index, page } = props;
+    const { setHotTopicContent } = useStore();
     return (
         <div className="topic-item-main">
             <div className="topic-item-main-rank">
@@ -140,7 +145,11 @@ const TopicItem = (props: TopicItemProps) => {
                     <span className="rank-style">{page * 10 + index + 1}</span>
                 )}
             </div>
-            <div className="topic-item-main-title" title={info.topics}>
+            <div
+                className="topic-item-main-title"
+                title={info.topics}
+                onClick={() => setHotTopicContent(info.topics)}
+            >
                 {info.topics}
             </div>
         </div>

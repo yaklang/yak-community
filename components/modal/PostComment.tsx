@@ -10,6 +10,7 @@ import { useGetState, useMemoizedFn } from "ahooks";
 import { failed } from "../../utils/notification";
 import { SingleUpload } from "../baseComponents/SingleUpload";
 import { ButtonTheme } from "../baseComponents/ButtonTheme";
+import { ImgShow } from "../baseComponents/ImgShow";
 
 const { TextArea } = Input;
 
@@ -183,7 +184,7 @@ const PostComment: NextPage<PostCommentProps> = (props) => {
                         {comment.message_img.map((item, index) => {
                             return (
                                 <div className="img-opt" key={index}>
-                                    <img src={item} className="img-style" />
+                                    <ImgShow src={item} />
                                     <div
                                         className="img-opt-del"
                                         onClick={() => {

@@ -68,6 +68,7 @@ const Middle: NextPage<MiddleProps> = (props) => {
                             user_id: res.user_id,
                             name: res.name,
                             head_img: res.head_img,
+                            isRole: res.role === "admin",
                         });
                         setTokenUser(res.token, `${res.user_id}`);
                         setTimeout(() => router.push("/"), 50);
@@ -86,6 +87,7 @@ const Middle: NextPage<MiddleProps> = (props) => {
                 userToken: true,
             })
                 .then((res) => {
+                    clearInterval(time);
                     clearGithubAuth();
                 })
                 .catch((err) => {})

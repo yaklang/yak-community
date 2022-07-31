@@ -64,6 +64,7 @@ export declare namespace API {
         name: string;
         head_img: string;
         child?: UserAurh[];
+        role: string;
     }
     export interface UserAurh {
         from_platform: string;
@@ -193,8 +194,11 @@ export declare namespace API {
          * 动态视频-封面图
          */
         dynamic_cover: string;
-        /** 视频标题 */
+        /**
+         * 视频标题
+         */
         dynamic_title: string;
+        dynamic_status: number;
     }
     export interface MessageCenterFansResponse extends Paging {
         data: MessageCenterFans[];
@@ -273,6 +277,7 @@ export declare namespace API {
          */
         dynamic_cover: string;
         dynamic_title: string;
+        dynamic_status: number;
     }
     export interface MessageCenter {
         /**
@@ -287,6 +292,10 @@ export declare namespace API {
          * 点赞条数
          */
         stars_num: number;
+        /**
+         * 违规消息删除
+         */
+        delete_message: number;
     }
     export interface GormBaseModel {
         id: number;
@@ -339,6 +348,7 @@ export declare namespace API {
          * 总评论数
          */
         comment_num: number;
+        status: number;
     }
     export interface DynamicCommentList {
         id: number;
@@ -375,6 +385,7 @@ export declare namespace API {
         auth_id: number;
         head_img: string;
         name: string;
+        role: string;
     }
     export interface ActionSucceeded {
         /**

@@ -14,7 +14,7 @@ $REM: 16;
         margin-bottom: REM(8);
     }
 
-    .like-message-wrapper + .like-message-wrapper {
+    .hint-message-wrapper + .hint-message-wrapper {
         margin-top: REM(16);
     }
 
@@ -28,23 +28,20 @@ $REM: 16;
     }
 }
 
-.like-message-wrapper {
+.hint-message-wrapper {
     padding: REM(24);
     width: 100%;
     background: #ffffff;
     border-radius: 4px;
 }
-.like-message-body {
+.hint-message-body {
     display: flex;
 
     .body-img {
         width: REM(40);
-        padding-top: 1px;
-        .img-style {
-            width: REM(40);
-            height: REM(40);
-            border-radius: 50%;
-        }
+        height: REM(40);
+        margin-top: 1px;
+        @include head-img-style;
     }
 
     .body-content {
@@ -61,7 +58,6 @@ $REM: 16;
         }
         .content-text {
             margin-top: 4px;
-            height: REM(17);
             font-size: 12px;
             color: #686c78;
             line-height: REM(17);
@@ -108,10 +104,8 @@ $REM: 16;
             overflow: hidden;
             .dynamic-img {
                 width: REM(96);
-                .img-style {
-                    width: REM(96);
-                    height: REM(96);
-                }
+                height: REM(96);
+                position: relative;
             }
             .dynamic-content {
                 flex: 1;
@@ -147,11 +141,8 @@ $REM: 16;
             overflow: hidden;
             .dynamic-video {
                 width: REM(96);
+                height: REM(96);
                 position: relative;
-                .img-style {
-                    width: REM(96);
-                    height: REM(96);
-                }
                 .video-mask {
                     position: absolute;
                     top: 0;

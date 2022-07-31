@@ -16,7 +16,7 @@ interface DynamicProps {}
 
 const Dynamic: NextPage<DynamicProps> = (props) => {
     const router = useRouter();
-    const { userInfo } = useStore();
+    const { userInfo, hotTopicContent } = useStore();
 
     const [dynamic, setDynamic] = useState<API.DynamicLists>();
     const [fans, setFans] = useState<API.UserHead>({
@@ -110,6 +110,10 @@ const Dynamic: NextPage<DynamicProps> = (props) => {
             }
         }
     );
+
+    useEffect(() => {
+        if (hotTopicContent) router.push("/");
+    }, [hotTopicContent]);
 
     return (
         <NoLayout>

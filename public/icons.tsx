@@ -12,7 +12,7 @@ const CommunitySvg = () => (
         xmlns="http://www.w3.org/2000/svg"
         xmlnsXlink="http://www.w3.org/1999/xlink"
     >
-        <title>切片</title>
+        <title>社区</title>
         <defs>
             <polygon id="path-1" points="0 0 24 0 24 24 0 24"></polygon>
         </defs>
@@ -58,7 +58,7 @@ const CommunityThemeSvg = () => (
         xmlns="http://www.w3.org/2000/svg"
         xmlnsXlink="http://www.w3.org/1999/xlink"
     >
-        <title>切片</title>
+        <title>社区</title>
         <defs>
             <polygon id="path-1" points="0 0 24 0 24 24 0 24"></polygon>
         </defs>
@@ -106,7 +106,7 @@ const FormOutSvg = () => (
         xmlns="http://www.w3.org/2000/svg"
         xmlnsXlink="http://www.w3.org/1999/xlink"
     >
-        <title>编组 3备份</title>
+        <title>编辑</title>
         <g
             id="Yak-官网"
             stroke="none"
@@ -154,7 +154,7 @@ const BellOutSvg = () => (
         xmlns="http://www.w3.org/2000/svg"
         xmlnsXlink="http://www.w3.org/1999/xlink"
     >
-        <title>编组 3</title>
+        <title>未读</title>
         <g
             id="Yak-官网"
             stroke="none"
@@ -199,7 +199,7 @@ const MutualAttentionSvg = () => (
         xmlns="http://www.w3.org/2000/svg"
         xmlnsXlink="http://www.w3.org/1999/xlink"
     >
-        <title>icon/互相关注</title>
+        <title>互相关注</title>
         <g
             id="Yak-官网"
             stroke="none"
@@ -261,7 +261,6 @@ const LeftOutSvg = () => (
         xmlns="http://www.w3.org/2000/svg"
         xmlnsXlink="http://www.w3.org/1999/xlink"
     >
-        <title>切片</title>
         <g
             id="Yak-官网"
             stroke="none"
@@ -309,7 +308,6 @@ const LeftOutThemeSvg = () => (
         xmlns="http://www.w3.org/2000/svg"
         xmlnsXlink="http://www.w3.org/1999/xlink"
     >
-        <title>切片</title>
         <g
             id="Yak-官网"
             stroke="none"
@@ -355,7 +353,7 @@ const CollectionSvg = () => (
         xmlns="http://www.w3.org/2000/svg"
         xmlnsXlink="http://www.w3.org/1999/xlink"
     >
-        <title>切片</title>
+        <title>收藏</title>
         <g
             id="Yak-官网"
             stroke="none"
@@ -414,61 +412,6 @@ const CollectionSvg = () => (
 export const CollectionIcon = (props: Partial<CustomIconComponentProps>) => {
     return <Icon component={CollectionSvg} {...props} />;
 };
-// 收藏主题色图标
-const CollectionThemeSvg = () => (
-    <svg
-        width="1em"
-        height="1em"
-        viewBox="0 0 24 24"
-        version="1.1"
-        xmlns="http://www.w3.org/2000/svg"
-        xmlnsXlink="http://www.w3.org/1999/xlink"
-    >
-        <title>切片</title>
-        <g
-            id="Yak-官网"
-            stroke="none"
-            strokeWidth="1"
-            fill="none"
-            fillRule="evenodd"
-        >
-            <g
-                id="社区/首页/评论交互"
-                transform="translate(-488.000000, -996.000000)"
-            >
-                <g
-                    id="社区内容/图文-9宫格"
-                    transform="translate(384.000000, 376.000000)"
-                >
-                    <g id="编组-6" transform="translate(24.000000, 24.000000)">
-                        <g
-                            id="icon/操作编辑类/文件夹打开"
-                            transform="translate(80.000000, 596.000000)"
-                        >
-                            <path
-                                d="M3,6 C3,5.20922865 3.6013339,4.56137616 4.36406618,4.5041143 L11.0345042,4.5 C11.4867969,4.5 11.9115948,4.71108204 12.1897366,5.06826972 L13.2957004,6.75 L19.5259216,6.75 C20.3400326,6.75 21,7.42157288 21,8.25 C21,8.32711604 20.2354473,11.6916357 18.706342,18.343559 C18.5496681,19.0211325 17.9554971,19.5 17.2714488,19.5 L4.47407837,19.5 C3.65996737,19.5 3,18.8284271 3,18 L3,6 Z M12.1875,10.5 C12.4981602,10.5 12.75,10.7518398 12.75,11.0625 L12.75,12.75 L14.4375,12.75 C14.7481602,12.75 15,13.0018398 15,13.3125 L15,13.6875 C15,13.9981602 14.7481602,14.25 14.4375,14.25 L12.75,14.25 L12.75,15.9375 C12.75,16.2481602 12.4981602,16.5 12.1875,16.5 L11.8125,16.5 C11.5018398,16.5 11.25,16.2481602 11.25,15.9375 L11.25,14.25 L9.5625,14.25 C9.25183983,14.25 9,13.9981602 9,13.6875 L9,13.3125 C9,13.0018398 9.25183983,12.75 9.5625,12.75 L11.25,12.75 L11.25,11.0625 C11.25,10.7518398 11.5018398,10.5 11.8125,10.5 L12.1875,10.5 Z M11.0345042,6 L11.5245952,6.75 L7.11564843,6.75 C6.43160017,6.75 5.83742919,7.22886747 5.68075523,7.906441 L5.68075523,7.906441 L4.47407837,13.1235 L4.47407837,6 L11.0345042,6 Z"
-                                id="形状"
-                                fill="#FF7D23"
-                            ></path>
-                            <rect
-                                id="矩形-copy-48"
-                                x="0"
-                                y="0"
-                                width="24"
-                                height="24"
-                            ></rect>
-                        </g>
-                    </g>
-                </g>
-            </g>
-        </g>
-    </svg>
-);
-export const CollectionThemeIcon = (
-    props: Partial<CustomIconComponentProps>
-) => {
-    return <Icon component={CollectionThemeSvg} {...props} />;
-};
 // 回复图标
 const ReplySvg = () => (
     <svg
@@ -479,7 +422,7 @@ const ReplySvg = () => (
         xmlns="http://www.w3.org/2000/svg"
         xmlnsXlink="http://www.w3.org/1999/xlink"
     >
-        <title>切片</title>
+        <title>回复</title>
         <defs>
             <polygon
                 id="path-1"
@@ -528,68 +471,6 @@ const ReplySvg = () => (
 export const ReplyIcon = (props: Partial<CustomIconComponentProps>) => {
     return <Icon component={ReplySvg} {...props} />;
 };
-// 回复主题色图标
-const ReplyThemeSvg = () => (
-    <svg
-        width="1em"
-        height="1em"
-        viewBox="0 0 24 24"
-        version="1.1"
-        xmlns="http://www.w3.org/2000/svg"
-        xmlnsXlink="http://www.w3.org/1999/xlink"
-    >
-        <title>切片</title>
-        <defs>
-            <polygon
-                id="path-1"
-                points="3.58113063e-16 0 16.8 0 16.8 16.8 3.58113063e-16 16.8"
-            ></polygon>
-        </defs>
-        <g
-            id="Yak-官网"
-            stroke="none"
-            strokeWidth="1"
-            fill="none"
-            fillRule="evenodd"
-        >
-            <g
-                id="社区/首页/评论交互"
-                transform="translate(-732.000000, -996.000000)"
-            >
-                <g
-                    id="社区内容/图文-9宫格"
-                    transform="translate(384.000000, 376.000000)"
-                >
-                    <g id="编组-6" transform="translate(24.000000, 24.000000)">
-                        <g
-                            id="编组-7"
-                            transform="translate(324.000000, 596.000000)"
-                        >
-                            <g
-                                id="编组"
-                                transform="translate(3.600000, 3.600000)"
-                            >
-                                <mask id="mask-2" fill="white">
-                                    <use xlinkHref="#path-1"></use>
-                                </mask>
-                                <g id="Clip-2"></g>
-                                <path
-                                    d="M8.39996412,-2.01599722e-05 C13.0390764,-2.01599722e-05 16.8000202,3.76092345 16.8000202,8.40003545 C16.8000202,13.0391475 13.0390764,16.8000287 8.39996412,16.8000287 C6.88050694,16.8023087 5.38907212,16.3904404 4.08593145,15.6088383 L3.69119918,15.377301 L1.63568831,15.9379499 C1.16525533,16.0660665 0.733932707,15.6345423 0.862250936,15.1643109 L1.42209339,13.1111186 L0.992887563,12.3647964 C0.339200431,11.1456221 -0.0020071155,9.78341274 -2.61823464e-05,8.40003545 C-2.61823464e-05,3.76092345 3.76085188,-2.01599722e-05 8.39996412,-2.01599722e-05 Z M5.44297459,10.8684215 C5.20294128,11.1644331 5.24824813,11.5989624 5.54421268,11.8389575 C6.34547322,12.506375 7.35640418,12.8714597 8.40004612,12.8700417 C9.44328592,12.8713577 10.4539952,12.5064361 11.2557135,11.8388654 C11.5487785,11.5952517 11.5888627,11.1601644 11.3452022,10.8671536 C11.1015407,10.5741416 10.6664564,10.5340919 10.3734655,10.7777358 C9.81888397,11.2389078 9.12669582,11.4900311 8.39996412,11.4900311 C7.75884704,11.4912616 7.1355369,11.2921236 6.61585947,10.9236345 L6.41359239,10.7671854 C6.11759494,10.5271636 5.68307265,10.5724662 5.44297459,10.8684215 Z"
-                                    id="形状结合"
-                                    fill="#FF7D23"
-                                    mask="url(#mask-2)"
-                                ></path>
-                            </g>
-                        </g>
-                    </g>
-                </g>
-            </g>
-        </g>
-    </svg>
-);
-export const ReplyThemeIcon = (props: Partial<CustomIconComponentProps>) => {
-    return <Icon component={ReplyThemeSvg} {...props} />;
-};
 // 点赞图标
 const LikeSvg = () => (
     <svg
@@ -600,7 +481,7 @@ const LikeSvg = () => (
         xmlns="http://www.w3.org/2000/svg"
         xmlnsXlink="http://www.w3.org/1999/xlink"
     >
-        <title>切片</title>
+        <title>点赞</title>
         <g
             id="Yak-官网"
             stroke="none"
@@ -640,59 +521,6 @@ const LikeSvg = () => (
 export const LikeIcon = (props: Partial<CustomIconComponentProps>) => {
     return <Icon component={LikeSvg} {...props} />;
 };
-// 点赞主题色图标
-const LikeThemeSvg = () => (
-    <svg
-        width="1em"
-        height="1em"
-        viewBox="0 0 24 24"
-        version="1.1"
-        xmlns="http://www.w3.org/2000/svg"
-        xmlnsXlink="http://www.w3.org/1999/xlink"
-    >
-        <title>切片</title>
-        <g
-            id="Yak-官网"
-            stroke="none"
-            strokeWidth="1"
-            fill="none"
-            fillRule="evenodd"
-        >
-            <g
-                id="社区/首页/评论交互"
-                transform="translate(-976.000000, -996.000000)"
-            >
-                <g
-                    id="社区内容/图文-9宫格"
-                    transform="translate(384.000000, 376.000000)"
-                >
-                    <g id="编组-6" transform="translate(24.000000, 24.000000)">
-                        <g
-                            id="icon/操作编辑类/文件夹打开备份-2"
-                            transform="translate(568.000000, 596.000000)"
-                        >
-                            <path
-                                d="M12.9565746,3.825 C11.4543589,3.825 10.3179828,4.98519155 10.3187578,6.51572659 C10.2766831,8.11166262 9.11230127,9.42350007 7.61041261,9.60839699 L7.45912779,9.623099 L5.22709156,9.63465 C4.49424279,9.63465 3.89151589,10.202563 3.83577509,10.9210191 L3.83156847,11.0298644 L3.825,18.681675 C3.825,19.425478 4.47647616,20.109947 5.2139885,20.1706347 L5.31987163,20.175 L16.9395491,20.175 C17.4456531,20.175 17.9382373,20.0327029 18.3634821,19.7633457 C18.7686811,19.5076797 19.0978245,19.1443805 19.3151296,18.7133064 L19.3436953,18.6444432 L19.4008075,18.4698658 L19.4740013,18.2142315 L19.5945974,17.7560127 L19.8191823,16.8414493 L20.0879192,15.6900612 L20.3812787,14.3867453 L20.8020861,12.4284795 L20.8851665,12.0081915 C21.0065172,11.3534647 20.8467204,10.6355132 20.4604665,10.1071469 C19.9737801,9.44105445 19.2744663,9.05608045 18.475844,9.01056062 L18.3148289,9.006 L15.6570494,9.006 L15.5831586,8.91814868 C15.6738852,8.39650178 15.7167037,7.77128715 15.7167037,6.913875 C15.7167037,5.14298227 14.4188684,3.825 12.9565746,3.825 Z M7.03379632,11.1239264 L7.10925028,11.198925 L7.10925028,18.592575 L7.03417492,18.667575 L5.39204978,18.665925 L5.31712517,18.5908583 L5.32369367,11.2087583 L5.39823968,11.1338264 L7.03379632,11.1239264 Z"
-                                id="形状"
-                                fill="#FF7D23"
-                            ></path>
-                            <rect
-                                id="矩形-copy-66"
-                                x="0"
-                                y="0"
-                                width="24"
-                                height="24"
-                            ></rect>
-                        </g>
-                    </g>
-                </g>
-            </g>
-        </g>
-    </svg>
-);
-export const LikeThemeIcon = (props: Partial<CustomIconComponentProps>) => {
-    return <Icon component={LikeThemeSvg} {...props} />;
-};
 // 上传图片图标
 const UploadImgSvg = () => (
     <svg
@@ -703,7 +531,7 @@ const UploadImgSvg = () => (
         xmlns="http://www.w3.org/2000/svg"
         xmlnsXlink="http://www.w3.org/1999/xlink"
     >
-        <title>切片</title>
+        <title>上传图片</title>
         <g
             id="Yak-官网"
             stroke="none"
@@ -751,7 +579,7 @@ const UploadVideoSvg = () => (
         xmlns="http://www.w3.org/2000/svg"
         xmlnsXlink="http://www.w3.org/1999/xlink"
     >
-        <title>切片</title>
+        <title>上传视频</title>
         <g
             id="Yak-官网"
             stroke="none"
@@ -807,7 +635,7 @@ const TopicSvg = () => (
         xmlns="http://www.w3.org/2000/svg"
         xmlnsXlink="http://www.w3.org/1999/xlink"
     >
-        <title>切片</title>
+        <title>话题</title>
         <g
             id="Yak-官网"
             stroke="none"
@@ -863,7 +691,7 @@ const FollowSvg = () => (
         xmlns="http://www.w3.org/2000/svg"
         xmlnsXlink="http://www.w3.org/1999/xlink"
     >
-        <title>切片</title>
+        <title>关注</title>
         <g
             id="Yak-官网"
             stroke="none"
@@ -909,7 +737,7 @@ const FollowThemeSvg = () => (
         xmlns="http://www.w3.org/2000/svg"
         xmlnsXlink="http://www.w3.org/1999/xlink"
     >
-        <title>切片</title>
+        <title>关注</title>
         <g
             id="Yak-官网"
             stroke="none"
@@ -955,7 +783,7 @@ const SettinSvg = () => (
         xmlns="http://www.w3.org/2000/svg"
         xmlnsXlink="http://www.w3.org/1999/xlink"
     >
-        <title>切片</title>
+        <title>设置</title>
         <g
             id="Yak-官网"
             stroke="none"
@@ -1003,7 +831,7 @@ const SignOutSvg = () => (
         xmlns="http://www.w3.org/2000/svg"
         xmlnsXlink="http://www.w3.org/1999/xlink"
     >
-        <title>切片</title>
+        <title>退出</title>
         <g
             id="Yak-官网"
             stroke="none"
@@ -1049,7 +877,7 @@ const FansSvg = () => (
         xmlns="http://www.w3.org/2000/svg"
         xmlnsXlink="http://www.w3.org/1999/xlink"
     >
-        <title>切片</title>
+        <title>粉丝</title>
         <g
             id="Yak-官网"
             stroke="none"
@@ -1095,7 +923,7 @@ const HintSvg = () => (
         xmlns="http://www.w3.org/2000/svg"
         xmlnsXlink="http://www.w3.org/1999/xlink"
     >
-        <title>切片</title>
+        <title>消息</title>
         <g
             id="Yak-官网"
             stroke="none"

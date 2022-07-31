@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { NextPage } from "next";
-import { CaretRightOutlined } from "@ant-design/icons";
 import { useGetState, useMemoizedFn } from "ahooks";
 import { NetWorkApi } from "../../utils/fetch";
 import { API } from "../../types/api";
 import { SearchPageMeta } from "../../types/extraApi";
 import { timeFormat } from "../../utils/timeTool";
 import { useRouter } from "next/router";
+import MessageDynamicInfo from "./MessageDynamicInfo";
 import { ImgShow } from "../baseComponents/ImgShow";
 
 interface MessageLikeProps {}
@@ -99,21 +99,15 @@ interface LikeMessageProp {
 }
 const LikeMessage: React.FC<LikeMessageProp> = (props) => {
     const { info } = props;
-    const imgs: string[] =
-        !info.dynamic_content_img || info.dynamic_content_img === "null"
-            ? []
-            : JSON.parse(info.dynamic_content_img);
-
     const router = useRouter();
 
     return (
         <div className="like-message-wrapper">
             <div className="like-message-body">
                 <div className="body-img">
-                    <img
+                    <ImgShow
                         src={info.action_head_img}
-                        className="img-style"
-                        onClick={() =>
+                        onclick={() =>
                             router.push(`/userpage?user=${info.action_user_id}`)
                         }
                     />
@@ -133,76 +127,7 @@ const LikeMessage: React.FC<LikeMessageProp> = (props) => {
                         {timeFormat(info.created_at, "YYYY/MM/DD HH:mm")}
                     </div>
 
-                    {imgs.length === 0 && !info.dynamic_cover && (
-                        <div
-                            className="dynamic-wrapper"
-                            onClick={() =>
-                                router.push(`/dynamic?id=${info.dynamic_id}`)
-                            }
-                        >
-                            <div className="dynamic-name text-ellipsis-style">
-                                {`@${info.dynamic_user_name}`}
-                            </div>
-
-                            <div className="dynamic-content">
-                                {info.dynamic_content}
-                            </div>
-                        </div>
-                    )}
-
-                    {imgs.length > 0 && (
-                        <div
-                            className="dynamic-img-wrapper"
-                            onClick={() =>
-                                router.push(`/dynamic?id=${info.dynamic_id}`)
-                            }
-                        >
-                            <div className="dynamic-img">
-                                <ImgShow src={imgs[0]} />
-                            </div>
-                            <div className="dynamic-content">
-                                <div className="dynamic-name text-ellipsis-style">
-                                    {`@${info.dynamic_user_name}`}
-                                </div>
-
-                                <div className="dynamic-text">
-                                    {info.dynamic_content}
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
-                    {info.dynamic_cover && (
-                        <div
-                            className="dynamic-video-wrapper"
-                            onClick={() =>
-                                router.push(`/dynamic?id=${info.dynamic_id}`)
-                            }
-                        >
-                            <div className="dynamic-video">
-                                <ImgShow
-                                    isCover={true}
-                                    src={info.dynamic_cover}
-                                />
-                                <div className="video-mask">
-                                    <CaretRightOutlined className="icon-style" />
-                                </div>
-                            </div>
-                            <div className="dynamic-content">
-                                <div className="dynamic-name text-ellipsis-style">
-                                    {`@${info.dynamic_user_name}`}
-                                </div>
-
-                                <div className="video-title text-ellipsis-style">
-                                    {info.dynamic_title}
-                                </div>
-
-                                <div className="dynamic-text text-ellipsis-style">
-                                    {info.dynamic_content}
-                                </div>
-                            </div>
-                        </div>
-                    )}
+                    <MessageDynamicInfo info={info} />
                 </div>
             </div>
         </div>

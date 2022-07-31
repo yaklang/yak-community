@@ -21,10 +21,7 @@ $REM: 16;
             &-img {
                 width: REM(40);
                 height: REM(40);
-                .img-style {
-                    @include width-height-100;
-                    border-radius: 50%;
-                }
+                @include head-img-style;
             }
             &-content {
                 margin-left: REM(16);
@@ -101,10 +98,6 @@ $REM: 16;
             border-radius: 50%;
             overflow: hidden;
             position: relative;
-            .img-style {
-                width: 100%;
-                height: 100%;
-            }
             .login-fourth-img-upload {
                 position: absolute;
                 left: 0;

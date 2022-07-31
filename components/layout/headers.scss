@@ -42,7 +42,7 @@ $REM: 16;
                 align-items: center;
                 cursor: pointer;
                 .community-icon-style {
-                    font-size: REM(18);
+                    font-size: REM(24);
                 }
                 .community-title-style {
                     margin-left: REM(8);
@@ -70,18 +70,18 @@ $REM: 16;
             }
             .community-input:hover {
                 border-color: #ff7d23;
-                box-shadow: 0 0 0 2px rgba(#ff7d23, 0.2);
-                background-color: rgba(#ffffff, 1);
+                box-shadow: 0 0 0 2px rgba(#ff7d23, 0);
+                background-color: rgba(#ffffff, 0);
                 .ant-input {
-                    background-color: rgba(#ffffff, 1);
+                    background-color: rgba(#ffffff, 0);
                 }
             }
             .community-input.ant-input-affix-wrapper-focused {
                 border-color: #ff7d23;
-                box-shadow: 0 0 0 2px rgba(#ff7d23, 0.2);
-                background-color: rgba(#ffffff, 1);
+                box-shadow: 0 0 0 2px rgba(#ff7d23, 0);
+                background-color: rgba(#ffffff, 0);
                 .ant-input {
-                    background-color: rgba(#ffffff, 1);
+                    background-color: rgba(#ffffff, 0);
                 }
             }
         }
@@ -112,7 +112,7 @@ $REM: 16;
         &-user-img {
             width: REM(32);
             height: REM(32);
-            border-radius: 50%;
+            @include head-img-style;
             cursor: pointer;
         }
         .ant-badge + .header-right-user-img {

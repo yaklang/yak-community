@@ -45,6 +45,11 @@ $REM: 16;
     white-space: nowrap;
     text-overflow: ellipsis;
 }
+@mixin head-img-style {
+    border-radius: 50%;
+    overflow: hidden;
+    position: relative;
+}
 
 .text-ellipsis-style {
     overflow: hidden;
@@ -110,3 +115,5 @@ $REM: 16;
 @import "../components/messageCenter/fans.scss";
 @import "../components/messageCenter/messageLike.scss";
 @import "../components/messageCenter/messageComment.scss";
+@import "../components/messageCenter/messageHint.scss";
+@import "../components/messageCenter/messageDynamicInfo.scss";

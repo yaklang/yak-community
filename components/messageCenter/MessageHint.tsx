@@ -7,6 +7,7 @@ import { API } from "../../types/api";
 import { SearchPageMeta } from "../../types/extraApi";
 import { timeFormat } from "../../utils/timeTool";
 import { useRouter } from "next/router";
+import { ImgShow } from "../baseComponents/ImgShow";
 
 interface MessageHintProps {}
 
@@ -24,7 +25,7 @@ const MessageHint: NextPage<MessageHintProps> = (props) => {
         setLoading(true);
         NetWorkApi<SearchPageMeta, API.MessageCenterStarsResponse>({
             method: "get",
-            url: "/api/message/center/stars",
+            url: "/api/message/center/message",
             params: {
                 page: page || listPage,
                 limit: 10,
@@ -103,13 +104,12 @@ const LikeMessage: React.FC<LikeMessageProp> = (props) => {
     const router = useRouter();
 
     return (
-        <div className="like-message-wrapper">
-            <div className="like-message-body">
+        <div className="hint-message-wrapper">
+            <div className="hint-message-body">
                 <div className="body-img">
-                    <img
+                    <ImgShow
                         src={info.action_head_img}
-                        className="img-style"
-                        onClick={() =>
+                        onclick={() =>
                             router.push(`/userpage?user=${info.action_user_id}`)
                         }
                     />
@@ -146,7 +146,7 @@ const LikeMessage: React.FC<LikeMessageProp> = (props) => {
                     {imgs.length > 0 && (
                         <div className="dynamic-img-wrapper">
                             <div className="dynamic-img">
-                                <img src={imgs[0]} className="img-style" />
+                                <ImgShow src={imgs[0]} />
                             </div>
                             <div className="dynamic-content">
                                 <div className="dynamic-name text-ellipsis-style">
@@ -163,9 +163,9 @@ const LikeMessage: React.FC<LikeMessageProp> = (props) => {
                     {info.dynamic_cover && (
                         <div className="dynamic-video-wrapper">
                             <div className="dynamic-video">
-                                <img
+                                <ImgShow
+                                    isCover={true}
                                     src={info.dynamic_cover}
-                                    className="img-style"
                                 />
                                 <div className="video-mask">
                                     <CaretRightOutlined className="icon-style" />

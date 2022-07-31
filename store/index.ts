@@ -31,6 +31,10 @@ interface StoreProps {
     /**发动态时触发首页新增动态项 */
     homePageDynamicId: number;
     setHomePageDynamicId: (id: number) => void;
+
+    /** 点击话题榜话题触发搜索 */
+    hotTopicContent: string;
+    setHotTopicContent: (id: string) => void;
 }
 export const useStore = create<StoreProps>((set, get) => ({
     userInfo: {
@@ -48,4 +52,7 @@ export const useStore = create<StoreProps>((set, get) => ({
 
     homePageDynamicId: 0,
     setHomePageDynamicId: (id) => set({ homePageDynamicId: id }),
+
+    hotTopicContent: "",
+    setHotTopicContent: (str) => set({ hotTopicContent: str }),
 }));

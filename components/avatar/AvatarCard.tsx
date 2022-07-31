@@ -9,6 +9,7 @@ import { ButtonTheme } from "../baseComponents/ButtonTheme";
 import { useGetState, useMemoizedFn } from "ahooks";
 import { useStore } from "../../store";
 import { failed } from "../../utils/notification";
+import { ImgShow } from "../baseComponents/ImgShow";
 
 interface AvatarCardProps {
     info: API.UserHead;
@@ -66,11 +67,7 @@ const AvatarCard: NextPage<AvatarCardProps> = (props) => {
             <div className="avatar-card-body">
                 <div className="avatar-card-info">
                     <div className="info-img">
-                        <img
-                            className="img-style"
-                            src={info.head_img}
-                            onClick={visitUserInfo}
-                        />
+                        <ImgShow src={info.head_img} onclick={visitUserInfo} />
                     </div>
                     <div className="info-name" onClick={visitUserInfo}>
                         {info.user_name}

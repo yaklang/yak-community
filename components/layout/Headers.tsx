@@ -24,6 +24,7 @@ import { getToken, userSignOut } from "../../utils/auth";
 import { NetWorkApi } from "../../utils/fetch";
 import { API } from "../../types/api";
 import PostDynamic from "../modal/PostDynamic";
+import { ImgShow } from "../baseComponents/ImgShow";
 
 interface HeadersProps {}
 
@@ -44,6 +45,7 @@ const Headers: NextPage<HeadersProps> = React.memo((props) => {
         comment_num: 0,
         fans: 0,
         stars_num: 0,
+        delete_message: 0,
     });
 
     const fetchUnreadMessage = useMemoizedFn(() => {
@@ -78,6 +80,7 @@ const Headers: NextPage<HeadersProps> = React.memo((props) => {
             comment_num: 0,
             fans: 0,
             stars_num: 0,
+            delete_message: 0,
         });
         router.push({
             pathname: "/messagecenter",
@@ -149,6 +152,7 @@ const Headers: NextPage<HeadersProps> = React.memo((props) => {
                     user_id: res.data.id,
                     name: res.data.name,
                     head_img: res.data.head_img,
+                    isRole: res.data.role === "admin",
                 });
             })
             .catch((err) => {});
@@ -225,7 +229,8 @@ const Headers: NextPage<HeadersProps> = React.memo((props) => {
                                     !!(
                                         messageNum.comment_num ||
                                         messageNum.fans ||
-                                        messageNum.stars_num
+                                        messageNum.stars_num ||
+                                        messageNum.delete_message
                                     )
                                 }
                                 offset={[-10, 5]}
@@ -296,9 +301,11 @@ const Headers: NextPage<HeadersProps> = React.memo((props) => {
                                                         <HintIcon className="icon-style" />
                                                         消息
                                                     </div>
-                                                    {!!messageNum.fans && (
+                                                    {!!messageNum.delete_message && (
                                                         <div className="message-hint">
-                                                            {messageNum.fans}
+                                                            {
+                                                                messageNum.delete_message
+                                                            }
                                                         </div>
                                                     )}
                                                 </li>
@@ -366,10 +373,9 @@ const Headers: NextPage<HeadersProps> = React.memo((props) => {
                                     </div>
                                 }
                             >
-                                <img
-                                    src={userInfo.head_img}
-                                    className="header-right-user-img"
-                                />
+                                <div className="header-right-user-img">
+                                    <ImgShow src={userInfo.head_img || ""} />
+                                </div>
                             </Popover>
                         </>
                     ) : (
