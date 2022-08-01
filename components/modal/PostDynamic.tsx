@@ -230,6 +230,10 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
             userToken: true,
         })
             .then((res) => {
+                for (const el of dynamic.content_img) {
+                    if (el.src.indexOf("yakit-online.oss") === -1)
+                        URL.revokeObjectURL(el.src);
+                }
                 setTimeout(() => onCancel(true), 50);
                 setHomePageDynamicId(res);
                 resetDynamic();
@@ -246,11 +250,11 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
     const imgList = useRef<{ src: string; name: string }[]>([]);
 
     const uploadImg = useMemoizedFn(() => {
-        // if (!dynamic.csrf_token) {
-        //     failed("获取关键信息失败，请关闭弹窗重新打开");
-        //     setImgLoading(false);
-        //     return;
-        // }
+        if (!dynamic.csrf_token) {
+            failed("获取关键信息失败，请关闭弹窗重新打开");
+            setImgLoading(false);
+            return;
+        }
         if (imgList.current.length + dynamic.content_img.length >= 18) {
             setDynamic({
                 ...dynamic,
@@ -299,22 +303,24 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
                 uploadImg();
             });
     });
-    const delImg = useMemoizedFn((name: string) => {
+    const delImg = useMemoizedFn((info: { src: string; name: string }) => {
         NetWorkApi<API.DeleteResource, API.ActionSucceeded>({
             method: "post",
             url: "/api/delete/resource",
             data: {
                 csrf_token: dynamic.csrf_token,
-                file_name: [name],
+                file_name: [info.name],
                 file_type: "img",
             },
             userToken: true,
         })
             .then((res) => {
+                if (info.src.indexOf("yakit-online.oss") === -1)
+                    URL.revokeObjectURL(info.src);
                 setDynamic({
                     ...dynamic,
                     content_img: dynamic.content_img.filter(
-                        (item) => item.name !== name
+                        (item) => item.name !== info.name
                     ),
                 });
             })
@@ -632,7 +638,7 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
                                     <ImgShow src={item.src} />
                                     <div
                                         className="img-opt-del"
-                                        onClick={() => delImg(item.name)}
+                                        onClick={() => delImg(item)}
                                     >
                                         x
                                     </div>
