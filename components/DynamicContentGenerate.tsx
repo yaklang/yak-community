@@ -30,6 +30,7 @@ export const DynamicContentGenerate: React.FC<DynamicContentGenerateProps> = (
                 } else {
                     return (
                         <span
+                            key={item}
                             className="dynamic-content-body-topic"
                             onClick={() => setHotTopicContent(item)}
                         >{` #${item}# `}</span>
