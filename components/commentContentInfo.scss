@@ -38,8 +38,8 @@ $REM: 16;
         }
 
         .body-data-text {
-            margin-top: REM(4);
-            margin-bottom: REM(8);
+            margin-top: 6px;
+            margin-bottom: 8px;
             font-size: REM(12);
             color: #686c78;
             line-height: REM(17);
@@ -75,7 +75,7 @@ $REM: 16;
                     align-items: center;
                     cursor: pointer;
                     .icon-style {
-                        font-size: REM(16);
+                        font-size: REM(20);
                         margin-right: 2px;
                     }
                     .icon-theme-style {

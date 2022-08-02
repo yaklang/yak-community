@@ -55,7 +55,6 @@ $REM: 16;
 
 .avatar-card-wrapper {
     width: REM(376);
-    height: REM(291);
     background: #ffffff;
     border-radius: 4px;
     padding-top: REM(24);
@@ -73,7 +72,7 @@ $REM: 16;
             @include head-img-style;
         }
         .info-name {
-            margin: REM(8) 0;
+            margin: 8px 0;
             height: REM(22);
             font-size: REM(16);
             font-weight: 600;
@@ -82,6 +81,7 @@ $REM: 16;
         }
         .info-popularity {
             display: flex;
+            margin-bottom: 16px;
             &-block {
                 height: REM(20);
                 font-size: REM(12);
@@ -98,7 +98,7 @@ $REM: 16;
             }
         }
         .info-follow {
-            margin: REM(16) 0 REM(24) 0;
+            margin-bottom: 24px;
             .info-follow-btn {
                 height: REM(28);
                 font-size: REM(14);

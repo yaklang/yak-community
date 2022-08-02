@@ -83,7 +83,7 @@ const AvatarCard: NextPage<AvatarCardProps> = (props) => {
                             </span>
                         </div>
                     </div>
-                    {userInfo.user_id === info.user_id && (
+                    {userInfo.user_id !== info.user_id && (
                         <div className="info-follow">
                             {info.is_follow ? (
                                 <ButtonTheme

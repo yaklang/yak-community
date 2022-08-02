@@ -32,6 +32,7 @@ $REM: 16;
 
         .fans-user {
             display: flex;
+            width: REM(550);
             &-img {
                 margin-top: 1px;
                 width: REM(40);
@@ -41,6 +42,7 @@ $REM: 16;
 
             &-info {
                 margin-left: REM(16);
+
                 .info-name {
                     height: REM(20);
                     font-size: REM(14);
@@ -49,14 +51,13 @@ $REM: 16;
                     line-height: REM(20);
                 }
                 .info-text {
-                    margin: REM(4) 0 REM(8) 0;
+                    margin: 6px 0 8px 0;
                     height: REM(17);
                     font-size: REM(12);
                     color: #686c78;
                     line-height: REM(17);
                 }
                 .info-time {
-                    width: 108px;
                     height: REM(20);
                     font-size: REM(12);
                     color: #999ea8;

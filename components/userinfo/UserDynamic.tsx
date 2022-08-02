@@ -188,7 +188,6 @@ const UserDynamic: NextPage<UserDynamicProps> = (props) => {
         setPostDynamic(true);
     });
     const updateDynamicOptInfo = useMemoizedFn((id: number) => {
-        console.log(123, id);
         NetWorkApi<FetchDynamicInfo, API.DynamicListDetailResponse>({
             method: "get",
             url: "/api/dynamic/detail",

@@ -390,6 +390,7 @@ const CommentItem: NextPage<CommentItemProps> = (props) => {
                         <div className="avatar-follow">
                             {isRole && (
                                 <Popconfirm
+                                    overlayClassName="role-del-body"
                                     placement="bottomLeft"
                                     title="确定是否删除该动态吗?"
                                     onConfirm={() => {

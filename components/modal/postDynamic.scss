@@ -34,6 +34,7 @@ $REM: 16;
             background: #f7f8fa;
             border-radius: 4px;
             border-color: #00000000;
+            font-size: REM(14);
         }
         .post-dynamic-input:hover,
         .post-dynamic-input:focus-visible {
@@ -160,16 +161,19 @@ $REM: 16;
 
                 .video-operate {
                     display: flex;
+                    align-items: center;
                     margin-left: REM(16);
                     .ant-upload.ant-upload-select.ant-upload-select-text {
                         width: REM(32);
                     }
                     .text-style {
                         width: REM(32);
+                        font-size: REM(16);
                         color: var(--base-font-color);
                         cursor: pointer;
                     }
                     .video-del {
+                        line-height: REM(29.3);
                         margin-left: REM(16);
                         color: #f73c1b;
                     }
@@ -194,6 +198,9 @@ $REM: 16;
 
                 .ant-form-item {
                     margin: 0;
+                    .ant-form-item-no-colon{
+                        font-size: REM(14);
+                    }
                     .ant-form-item-label label {
                         color: var(--base-font-color);
                     }
