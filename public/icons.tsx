@@ -961,3 +961,144 @@ const HintSvg = () => (
 export const HintIcon = (props: Partial<CustomIconComponentProps>) => {
     return <Icon component={HintSvg} {...props} />;
 };
+// 视频播放图标
+const PlaySvg = () => (
+    <svg
+        width="1em"
+        height="1.16em"
+        viewBox="0 0 38 44"
+        version="1.1"
+        xmlns="http://www.w3.org/2000/svg"
+        xmlnsXlink="http://www.w3.org/1999/xlink"
+    >
+        <title>播放</title>
+        <defs>
+            <path
+                d="M397.664101,288.496151 L409.927066,306.8906 C410.539771,307.809657 410.291424,309.051396 409.372366,309.664101 C409.043831,309.883124 408.657816,310 408.262966,310 L383.737034,310 C382.632465,310 381.737034,309.104569 381.737034,308 C381.737034,307.60515 381.85391,307.219135 382.072934,306.8906 L394.335899,288.496151 C394.948604,287.577094 396.190343,287.328746 397.1094,287.941451 C397.329105,288.08792 397.517631,288.276446 397.664101,288.496151 Z"
+                id="path-1"
+            ></path>
+            <filter
+                x="-28.9%"
+                y="-55.8%"
+                width="170.4%"
+                height="201.6%"
+                filterUnits="objectBoundingBox"
+                id="filter-2"
+            >
+                <feOffset
+                    dx="2"
+                    dy="-2"
+                    in="SourceAlpha"
+                    result="shadowOffsetOuter1"
+                ></feOffset>
+                <feGaussianBlur
+                    stdDeviation="4"
+                    in="shadowOffsetOuter1"
+                    result="shadowBlurOuter1"
+                ></feGaussianBlur>
+                <feComposite
+                    in="shadowBlurOuter1"
+                    in2="SourceAlpha"
+                    operator="out"
+                    result="shadowBlurOuter1"
+                ></feComposite>
+                <feColorMatrix
+                    values="0 0 0 0 0.6   0 0 0 0 0.619607843   0 0 0 0 0.658823529  0 0 0 0.2 0"
+                    type="matrix"
+                    in="shadowBlurOuter1"
+                ></feColorMatrix>
+            </filter>
+        </defs>
+        <g
+            id="Yak-官网"
+            stroke="none"
+            strokeWidth="1"
+            fill="none"
+            fillRule="evenodd"
+        >
+            <g id="社区/首页" transform="translate(-786.000000, -2188.000000)">
+                <g
+                    id="社区内容/视频"
+                    transform="translate(384.000000, 1886.000000)"
+                >
+                    <g id="编组-6" transform="translate(24.000000, 24.000000)">
+                        <g
+                            id="三角形"
+                            transform="translate(396.000000, 298.000000) rotate(-270.000000) translate(-396.000000, -298.000000) "
+                        >
+                            <use
+                                fill="black"
+                                fillOpacity="1"
+                                filter="url(#filter-2)"
+                                xlinkHref="#path-1"
+                            ></use>
+                            <path
+                                strokeOpacity="0.5"
+                                stroke="#E6EAEF"
+                                strokeWidth="1"
+                                d="M395.705826,288.13468 C396.082255,288.059395 396.487404,288.127711 396.83205,288.357476 C396.996829,288.467328 397.138223,288.608723 397.248075,288.773501 L397.248075,288.773501 L409.511041,307.16795 C409.740806,307.512596 409.809123,307.917745 409.733837,308.294174 C409.658551,308.670603 409.439663,309.018311 409.095016,309.248075 C408.848615,309.412343 408.559103,309.5 408.262966,309.5 L408.262966,309.5 L383.737034,309.5 C383.322821,309.5 382.947821,309.332107 382.676374,309.06066 C382.404927,308.789214 382.237034,308.414214 382.237034,308 C382.237034,307.703863 382.324691,307.414351 382.488959,307.16795 L382.488959,307.16795 L394.751925,288.773501 C394.981689,288.428854 395.329397,288.209966 395.705826,288.13468 Z"
+                                // @ts-ignore
+                                strokeLinejoin="square"
+                                fill="currentColor"
+                                fillRule="evenodd"
+                            ></path>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </svg>
+);
+export const PlayIcon = (props: Partial<CustomIconComponentProps>) => {
+    return <Icon component={PlaySvg} {...props} />;
+};
+// 视频播放图标
+const RightOutSvg = () => (
+    <svg
+        width="1em"
+        height="1em"
+        viewBox="0 0 16 16"
+        version="1.1"
+        xmlns="http://www.w3.org/2000/svg"
+        xmlnsXlink="http://www.w3.org/1999/xlink"
+    >
+        <title>进入</title>
+        <g
+            id="Yak-官网"
+            stroke="none"
+            strokeWidth="1"
+            fill="none"
+            fillRule="evenodd"
+        >
+            <g
+                id="登录/第一步-选择登录方式备份-4"
+                transform="translate(-1371.000000, -436.000000)"
+            >
+                <g id="编组" transform="translate(1063.000000, 328.000000)">
+                    <g id="编组-4" transform="translate(8.000000, 88.000000)">
+                        <g
+                            id="3.Icon/1.线性/4.操作编辑类/向左备份"
+                            transform="translate(300.000000, 20.000000)"
+                        >
+                            <polygon
+                                id="路径"
+                                fill="currentColor"
+                                points="5.75 3 5 3.71428571 9.500375 8.00035714 5 12.2857143 5.75 13 11 8"
+                            ></polygon>
+                            <rect
+                                id="矩形-copy-67"
+                                x="0"
+                                y="0"
+                                width="16"
+                                height="16"
+                            ></rect>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </svg>
+);
+export const RightOutIcon = (props: Partial<CustomIconComponentProps>) => {
+    return <Icon component={RightOutSvg} {...props} />;
+};

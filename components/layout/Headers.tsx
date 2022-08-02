@@ -163,6 +163,19 @@ const Headers: NextPage<HeadersProps> = React.memo((props) => {
         if (tokenFlag) fetchUserInfo();
     }, []);
 
+    useEffect(() => {
+        const tokenFlag = !!getToken();
+        if (tokenFlag) {
+            NetWorkApi<undefined, API.UserResponse>({
+                method: "get",
+                url: "/api/refresh/token",
+                userToken: true,
+            })
+                .then((res) => {})
+                .catch((err) => {});
+        }
+    }, []);
+
     return (
         <div
             ref={headerRef}

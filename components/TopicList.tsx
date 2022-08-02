@@ -72,7 +72,8 @@ const TopicList: NextPage<TopicListProps> = (props) => {
     }, []);
 
     useEffect(() => {
-        if (homePageDynamicId) fetchTopicList();
+        if (!homePageDynamicId.trigger && !!homePageDynamicId.value)
+            fetchTopicList();
     }, [homePageDynamicId]);
 
     return (

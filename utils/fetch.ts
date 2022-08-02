@@ -55,10 +55,14 @@ export const handleAxiosError = (err: any) => {
             failed(response?.data.reason || "");
             return;
         case 500:
-            failed("Token已过期，请重新登录");
+            if ((response as any)?.data?.message === "token无效")
+                failed("Token已过期，请重新登录");
             return;
 
         default:
+            if (typeof response.data === "string") failed(response?.data || "");
+            else failed((response as any)?.data?.message || "");
+
             break;
     }
 };

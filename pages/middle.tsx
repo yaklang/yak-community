@@ -121,7 +121,7 @@ const Middle: NextPage<MiddleProps> = (props) => {
                     </div>
                 </div>
                 <div className="loading-body-title">
-                    正在登录验证中，请稍等片刻。。。。。。
+                    正在登录验证中，请稍等片刻......
                 </div>
             </div>
         </div>

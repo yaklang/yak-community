@@ -235,7 +235,7 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
                         URL.revokeObjectURL(el.src);
                 }
                 setTimeout(() => onCancel(true), 50);
-                setHomePageDynamicId(res);
+                setHomePageDynamicId({ value: res, trigger: !!existId });
                 resetDynamic();
             })
             .catch((err) => {})
@@ -838,7 +838,7 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
                                 )}
                             </Item>
 
-                            <Item label="允许下载">
+                            {/* <Item label="允许下载">
                                 <Switch
                                     checked={dynamic.download}
                                     onChange={(checked) =>
@@ -848,7 +848,7 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
                                         })
                                     }
                                 />
-                            </Item>
+                            </Item> */}
                         </Form>
                     </div>
                 )}

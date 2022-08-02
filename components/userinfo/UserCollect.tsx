@@ -140,7 +140,7 @@ const UserCollect: NextPage<UserCollectProps> = (props) => {
                     );
                 })}
                 {loading && (
-                    <div className="list-loading">正在加载中。。。</div>
+                    <div className="list-loading">正在加载中...</div>
                 )}
             </div>
         </div>

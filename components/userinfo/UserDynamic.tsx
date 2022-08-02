@@ -11,12 +11,13 @@ import { getToken } from "../../utils/auth";
 
 interface UserDynamicProps {
     userId: number;
+    isFollow?: boolean;
     onUpdateUserInfo: () => any;
     onlyShow?: boolean;
 }
 
 const UserDynamic: NextPage<UserDynamicProps> = (props) => {
-    const { userId, onlyShow = false, onUpdateUserInfo } = props;
+    const { userId, isFollow, onlyShow = false, onUpdateUserInfo } = props;
     const { userInfo, homePageDynamicId, setHomePageDynamicId } = useStore();
 
     const [listLoading, setListLoading, getListLoading] =
@@ -28,11 +29,23 @@ const UserDynamic: NextPage<UserDynamicProps> = (props) => {
     });
 
     useEffect(() => {
-        if (homePageDynamicId) {
+        if (userId) {
+            setList({
+                data: list.data.map((item) => {
+                    item.is_follow = !!isFollow;
+                    return item;
+                }),
+                pagemeta: list.pagemeta,
+            });
+        }
+    }, [isFollow]);
+
+    useEffect(() => {
+        if (!homePageDynamicId.trigger && !!homePageDynamicId.value) {
             NetWorkApi<FetchDynamicInfo, API.DynamicListDetailResponse>({
                 method: "get",
                 url: "/api/dynamic/detail",
-                params: { id: homePageDynamicId },
+                params: { id: homePageDynamicId.value },
                 userToken: true,
             })
                 .then((res) => {
@@ -40,7 +53,7 @@ const UserDynamic: NextPage<UserDynamicProps> = (props) => {
                         data: [res.data].concat(list.data),
                         pagemeta: list.pagemeta,
                     });
-                    setHomePageDynamicId(0);
+                    setHomePageDynamicId({ value: 0, trigger: false });
                 })
                 .catch((err) => {});
         }
@@ -175,6 +188,7 @@ const UserDynamic: NextPage<UserDynamicProps> = (props) => {
         setPostDynamic(true);
     });
     const updateDynamicOptInfo = useMemoizedFn((id: number) => {
+        console.log(123, id);
         NetWorkApi<FetchDynamicInfo, API.DynamicListDetailResponse>({
             method: "get",
             url: "/api/dynamic/detail",
@@ -233,7 +247,7 @@ const UserDynamic: NextPage<UserDynamicProps> = (props) => {
                     );
                 })}
                 {listLoading && (
-                    <div className="list-loading">正在加载中。。。</div>
+                    <div className="list-loading">正在加载中...</div>
                 )}
             </div>
 

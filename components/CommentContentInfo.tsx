@@ -84,6 +84,20 @@ export const CommentContentInfo: React.FC<CommentContentInfoProps> = (
         return true;
     });
 
+    const visitUserInfo = useMemoizedFn((id: number) => {
+        if (userInfo.user_id === id) {
+            router.push({
+                pathname: "/userinfo",
+                query: { tabs: "dynamic" },
+            });
+        } else {
+            router.push({
+                pathname: "/userpage",
+                query: { user: id },
+            });
+        }
+    });
+
     return (
         <div
             className={`${
@@ -98,24 +112,14 @@ export const CommentContentInfo: React.FC<CommentContentInfoProps> = (
                 <div className="body-img">
                     <ImgShow
                         src={info.head_img}
-                        onclick={() =>
-                            router.push({
-                                pathname: "/userpage",
-                                query: { user: info.user_id },
-                            })
-                        }
+                        onclick={() => visitUserInfo(info.user_id)}
                     />
                 </div>
 
                 <div className="body-data">
                     <div
                         className="body-data-name text-ellipsis-style"
-                        onClick={() =>
-                            router.push({
-                                pathname: "/userpage",
-                                query: { user: info.user_id },
-                            })
-                        }
+                        onClick={() => visitUserInfo(info.user_id)}
                     >
                         {info.user_name}
                     </div>
@@ -129,8 +133,8 @@ export const CommentContentInfo: React.FC<CommentContentInfoProps> = (
                                             <span
                                                 className="sub-comment-by-name"
                                                 onClick={() =>
-                                                    router.push(
-                                                        `/userpage?user=${info.by_user_id}`
+                                                    visitUserInfo(
+                                                        info.by_user_id
                                                     )
                                                 }
                                             >{`@${info.by_user_name}`}</span>

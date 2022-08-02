@@ -8,6 +8,7 @@ import { timeFormat } from "../../utils/timeTool";
 import { useRouter } from "next/router";
 import MessageDynamicInfo from "./MessageDynamicInfo";
 import { ImgShow } from "../baseComponents/ImgShow";
+import { useStore } from "../../store";
 
 interface MessageLikeProps {}
 
@@ -86,7 +87,7 @@ const MessageLike: NextPage<MessageLikeProps> = (props) => {
                     />
                 );
             })}
-            {loading && <div className="list-loading">正在加载中。。。</div>}
+            {loading && <div className="list-loading">正在加载中...</div>}
         </div>
     );
 };
@@ -100,6 +101,21 @@ interface LikeMessageProp {
 const LikeMessage: React.FC<LikeMessageProp> = (props) => {
     const { info } = props;
     const router = useRouter();
+    const { userInfo } = useStore();
+
+    const visitUserInfo = useMemoizedFn((id: number) => {
+        if (userInfo.user_id === id) {
+            router.push({
+                pathname: "/userinfo",
+                query: { tabs: "dynamic" },
+            });
+        } else {
+            router.push({
+                pathname: "/userpage",
+                query: { user: id },
+            });
+        }
+    });
 
     return (
         <div className="like-message-wrapper">
@@ -107,18 +123,14 @@ const LikeMessage: React.FC<LikeMessageProp> = (props) => {
                 <div className="body-img">
                     <ImgShow
                         src={info.action_head_img}
-                        onclick={() =>
-                            router.push(`/userpage?user=${info.action_user_id}`)
-                        }
+                        onclick={() => visitUserInfo(info.action_user_id)}
                     />
                 </div>
 
                 <div className="body-content">
                     <div
                         className="content-name text-ellipsis-style"
-                        onClick={() =>
-                            router.push(`/userpage?user=${info.action_user_id}`)
-                        }
+                        onClick={() => visitUserInfo(info.action_user_id)}
                     >
                         {info.action_user_name}
                     </div>

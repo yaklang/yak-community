@@ -29,8 +29,8 @@ interface StoreProps {
     }) => void;
 
     /**发动态时触发首页新增动态项 */
-    homePageDynamicId: number;
-    setHomePageDynamicId: (id: number) => void;
+    homePageDynamicId: { value: number; trigger: boolean };
+    setHomePageDynamicId: (id: { value: number; trigger: boolean }) => void;
 
     /** 点击话题榜话题触发搜索 */
     hotTopicContent: string;
@@ -50,7 +50,7 @@ export const useStore = create<StoreProps>((set, get) => ({
     homePageKeywords: { value: "", trigger: false },
     setHomePageKeywords: (info) => set({ homePageKeywords: { ...info } }),
 
-    homePageDynamicId: 0,
+    homePageDynamicId: { value: 0, trigger: false },
     setHomePageDynamicId: (id) => set({ homePageDynamicId: id }),
 
     hotTopicContent: "",

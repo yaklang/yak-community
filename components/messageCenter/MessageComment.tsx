@@ -11,6 +11,7 @@ import PostComment from "../modal/PostComment";
 import { useRouter } from "next/router";
 import MessageDynamicInfo from "./MessageDynamicInfo";
 import { ImgShow } from "../baseComponents/ImgShow";
+import { useStore } from "../../store";
 
 interface MessageCommentProps {}
 
@@ -81,7 +82,7 @@ const MessageComment: NextPage<MessageCommentProps> = (props) => {
             {lists.data.map((item, index) => {
                 return <CommentMessage key={item.id} info={item} />;
             })}
-            {loading && <div className="list-loading">正在加载中。。。</div>}
+            {loading && <div className="list-loading">正在加载中...</div>}
         </div>
     );
 };
@@ -104,6 +105,7 @@ const CommentMessage: React.FC<CommentMessageProp> = (props) => {
             : JSON.parse(info.by_message_img);
 
     const router = useRouter();
+    const { userInfo } = useStore();
 
     const [replyShow, setReplyShow] = useState<boolean>(false);
 
@@ -130,24 +132,34 @@ const CommentMessage: React.FC<CommentMessageProp> = (props) => {
             .finally(() => setTimeout(() => setStarLoading(false), 100));
     });
 
+    const visitUserInfo = useMemoizedFn((id: number) => {
+        if (userInfo.user_id === id) {
+            router.push({
+                pathname: "/userinfo",
+                query: { tabs: "dynamic" },
+            });
+        } else {
+            router.push({
+                pathname: "/userpage",
+                query: { user: id },
+            });
+        }
+    });
+
     return (
         <div className="comment-message-wrapper">
             <div className="comment-message-reply">
                 <div className="reply-img">
                     <ImgShow
                         src={info.head_img}
-                        onclick={() =>
-                            router.push(`/userpage?user=${info.user_id}`)
-                        }
+                        onclick={() => visitUserInfo(info.user_id)}
                     />
                 </div>
 
                 <div className="reply-content">
                     <div
                         className="reply-name text-ellipsis-style"
-                        onClick={() =>
-                            router.push(`/userpage?user=${info.user_id}`)
-                        }
+                        onClick={() => visitUserInfo(info.user_id)}
                     >
                         {info.user_name}
                     </div>

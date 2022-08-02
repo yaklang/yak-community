@@ -32,7 +32,6 @@ export const ImgShow: React.FC<ImgShowProps> = (props) => {
         } else {
             setIsWidth(offsetWidth >= offsetHeight);
         }
-        
     };
 
     useEffect(() => {
@@ -51,7 +50,9 @@ export const ImgShow: React.FC<ImgShowProps> = (props) => {
 
     return (
         <div
-            className="img-show-wrapper"
+            className={`img-show-wrapper ${
+                isCover ? "img-show-video-wrapper" : "img-show-img-wrapper"
+            }`}
             onClick={() => {
                 if (onclick) onclick();
             }}

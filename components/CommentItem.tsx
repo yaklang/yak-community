@@ -11,6 +11,7 @@ import {
 import {
     CollectionIcon,
     LikeIcon,
+    PlayIcon,
     ReplyIcon,
     UploadImgIcon,
 } from "../public/icons";
@@ -34,6 +35,7 @@ import { CommentContentInfo } from "./CommentContentInfo";
 import MediaShow from "./modal/MediaShow";
 import { ImgShow } from "./baseComponents/ImgShow";
 import { CollapseText } from "./baseComponents/CollapseText";
+import { DynamicContentGenerate } from "./DynamicContentGenerate";
 
 const { TextArea } = Input;
 
@@ -346,6 +348,20 @@ const CommentItem: NextPage<CommentItemProps> = (props) => {
         setTimeout(() => setReplyShow(true), 50);
     });
 
+    const visitUserInfo = useMemoizedFn((id: number) => {
+        if (userInfo.user_id === id) {
+            router.push({
+                pathname: "/userinfo",
+                query: { tabs: "dynamic" },
+            });
+        } else {
+            router.push({
+                pathname: "/userpage",
+                query: { user: id },
+            });
+        }
+    });
+
     return (
         <div className="comment-item-wrapper">
             <div className="comment-item-body">
@@ -353,12 +369,7 @@ const CommentItem: NextPage<CommentItemProps> = (props) => {
                     <div className="body-img">
                         <ImgShow
                             src={info.head_img}
-                            onclick={() =>
-                                router.push({
-                                    pathname: "/userpage",
-                                    query: { user: info.user_id },
-                                })
-                            }
+                            onclick={() => visitUserInfo(info.user_id)}
                         />
                     </div>
                 </div>
@@ -368,12 +379,7 @@ const CommentItem: NextPage<CommentItemProps> = (props) => {
                         <div className="avatar-info">
                             <div
                                 className="avatar-info-name"
-                                onClick={() =>
-                                    router.push({
-                                        pathname: "/userpage",
-                                        query: { user: info.user_id },
-                                    })
-                                }
+                                onClick={() => visitUserInfo(info.user_id)}
                             >
                                 {info.user_name}
                             </div>
@@ -704,7 +710,7 @@ const CommentItem: NextPage<CommentItemProps> = (props) => {
                             })}
                             {listLoading && (
                                 <div className="list-loading">
-                                    正在加载中。。。
+                                    正在加载中...
                                 </div>
                             )}
                         </div>
@@ -768,7 +774,9 @@ const CommentWord: React.FC<CommentWordProp> = (props) => {
     const { info } = props;
     return (
         <div className="comment-word-wrapper">
-            <CollapseText value={info.content} />
+            <CollapseText
+                value={<DynamicContentGenerate content={info.content} />}
+            />
         </div>
     );
 };
@@ -789,7 +797,9 @@ const CommentImg: React.FC<CommentImgProp> = (props) => {
 
     return (
         <div className="comment-img-wrapper">
-            <CollapseText value={info.content} />
+            <CollapseText
+                value={<DynamicContentGenerate content={info.content} />}
+            />
             <div className="comment-img-body">
                 <div
                     className={
@@ -848,14 +858,16 @@ const CommentVideo: React.FC<CommentVideoProp> = (props) => {
 
     return (
         <div className="comment-video-wrapper">
-            <CollapseText value={info.content} />
+            <CollapseText
+                value={<DynamicContentGenerate content={info.content} />}
+            />
             <div className="comment-video-body">
                 <ImgShow isCover={true} src={info.cover} />
                 <div
                     className="comment-video-mask"
                     onClick={() => setIsShow(true)}
                 >
-                    <CaretRightOutlined className="icon-style" />
+                    <PlayIcon className="icon-style" />
                 </div>
             </div>
             {isShow && (

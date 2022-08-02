@@ -22,6 +22,9 @@ $REM: 16;
                 width: REM(40);
                 height: REM(40);
                 @include head-img-style;
+                .img-style {
+                    @include width-height-100;
+                }
             }
             &-content {
                 margin-left: REM(16);

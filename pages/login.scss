@@ -1,8 +1,3 @@
-$REM: 16;
-@function REM($n) {
-    @return calc($n / $REM) * 1rem;
-}
-
 .login-wrapper {
     width: 100%;
     height: 100vh;
@@ -14,10 +9,10 @@ $REM: 16;
 
     .yak-logo-style {
         position: absolute;
-        width: REM(133);
-        height: REM(32);
-        top: REM(24);
-        left: REM(32);
+        width: 133px;
+        height: 32px;
+        top: 24px;
+        left: 32px;
     }
 
     .login-left-style {
@@ -55,38 +50,44 @@ $REM: 16;
     align-items: center;
 
     .login-title {
-        margin-top: REM(56);
-        height: REM(40);
-        font-size: REM(36);
-        font-weight: 600;
+        margin-top: 56px;
+        height: 40px;
+        font-size: 32px;
         color: var(--base-font-color);
-        line-height: REM(40);
+        line-height: 40px;
         display: flex;
         align-items: center;
         a {
             display: inherit;
         }
         .icon-style {
-            font-size: REM(24);
-            margin-right: REM(8);
+            font-size: 24px;
+            margin-right: 8px;
             color: var(--base-font-color);
         }
     }
 
     .login-title + .login-first-btn {
-        margin-top: REM(48);
+        margin-top: 48px;
+    }
+
+    .login-title-third {
+        margin-right: 20px;
+    }
+    .login-title-fourth {
+        margin-right: 26px;
     }
 
     .login-first-btn {
-        width: REM(328);
-        height: REM(56);
-        padding: REM(12);
+        width: 328px;
+        height: 56px;
+        padding: 12px;
         background: #f6e8ea;
         border-radius: 4px;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        font-size: REM(14);
+        font-size: 14px;
         color: var(--base-font-color);
         font-weight: 500;
         cursor: pointer;
@@ -97,8 +98,8 @@ $REM: 16;
         }
 
         .icon-style {
-            font-size: REM(32);
-            margin-right: REM(8);
+            font-size: 32px;
+            margin-right: 8px;
         }
         .github-style {
             color: #2a2b31;
@@ -107,29 +108,37 @@ $REM: 16;
             color: #50cb70;
         }
         .right-style {
-            font-size: REM(16);
+            font-size: 16px;
+            color: var(--base-icon-color);
         }
     }
     .login-first-btn + .login-first-btn {
-        margin-top: REM(16);
+        margin-top: 16px;
     }
     .login-first-btn:hover {
         background: #ffffff;
         box-shadow: 0px 2px 4px 0px rgba(191, 152, 157, 0.3);
         border: 1px solid rgba(234, 217, 219, 0.5);
+        .right-style {
+            font-size: 16px;
+            color: var(--base-theme-color);
+        }
     }
 
     .login-agreement {
-        margin-top: REM(48);
-        margin-bottom: REM(120);
-        height: REM(20);
-        font-size: REM(14);
+        margin-top: 48px;
+        margin-bottom: 120px;
+        height: 20px;
+        font-size: 14px;
         color: #686c78;
-        line-height: REM(20);
+        line-height: 20px;
         .login-agreement-checkbox {
-            margin-right: REM(8);
+            margin-right: 8px;
             .ant-checkbox-input {
                 border-radius: 2px;
+            }
+            .ant-checkbox-inner {
+                background-color: #ffffff00;
             }
             .ant-checkbox-checked .ant-checkbox-inner {
                 background-color: var(--base-theme-color);
@@ -151,15 +160,29 @@ $REM: 16;
             color: var(--base-theme-color);
         }
     }
+    .login-extra-agreement {
+        height: 20px;
+        font-size: 14px;
+        color: #686c78;
+        line-height: 20px;
+        padding-left: 28px;
+        a {
+            color: var(--base-theme-color);
+        }
+    }
 
     .login-third-input {
         width: 100%;
-        padding: REM(48) REM(40) 0 REM(40);
+        padding: 48px 40px 0 40px;
         .input-style {
-            height: REM(48);
+            height: 48px;
+            background-color: #ffffff00;
+            .ant-input {
+                background-color: #ffffff00;
+            }
         }
         .divider-style {
-            margin: 0 REM(16);
+            margin: 0 16px;
         }
         .info-style {
             color: red;
@@ -168,15 +191,19 @@ $REM: 16;
 
     .login-third-code {
         width: 100%;
-        padding: REM(16) REM(40) 0 REM(40);
+        padding: 16px 40px 0 40px;
         display: flex;
         .input-style {
-            height: REM(48);
+            height: 48px;
+            background-color: #ffffff00;
+            .ant-input {
+                background-color: #ffffff00;
+            }
         }
 
         .btn-style {
-            margin-left: REM(8);
-            height: REM(48);
+            margin-left: 8px;
+            height: 48px;
             font-weight: 500;
         }
         .btn-disabled-style {
@@ -186,7 +213,7 @@ $REM: 16;
 
     .login-third-btn {
         width: 100%;
-        padding: REM(48) REM(40) REM(108) REM(40);
+        padding: 48px 40px 108px 40px;
         .btn-style {
             width: 100%;
             height: 48px;
@@ -198,9 +225,9 @@ $REM: 16;
     }
 
     .login-fourth-img {
-        margin-top: REM(24);
-        width: REM(120);
-        height: REM(120);
+        margin-top: 24px;
+        width: 120px;
+        height: 120px;
         border-radius: 50%;
         overflow: hidden;
         position: relative;
@@ -209,35 +236,39 @@ $REM: 16;
             left: 0;
             bottom: 0;
             width: 100%;
-            height: REM(32);
+            height: 32px;
             background: #2a2b3150;
             color: #ffffff;
-            font-size: REM(12);
+            font-size: 12px;
             display: flex;
             justify-content: center;
             align-items: center;
             cursor: pointer;
             .icon-style {
-                font-size: REM(12);
-                margin-right: REM(4);
+                font-size: 12px;
+                margin-right: 4px;
             }
         }
     }
 
     .login-fourth-name {
         width: 100%;
-        padding: REM(16) REM(40) 0 REM(40);
+        padding: 16px 40px 0 40px;
         .input-style {
-            height: REM(48);
+            height: 48px;
+            background-color: #ffffff00;
+            .ant-input {
+                background-color: #ffffff00;
+            }
         }
         .divider-style {
-            margin: 0 REM(16);
+            margin: 0 16px;
         }
     }
 
     .login-fourth-btn {
         width: 100%;
-        padding: REM(48) REM(40) REM(60) REM(40);
+        padding: 48px 40px 60px 40px;
         .btn-style {
             width: 100%;
             height: 48px;
@@ -263,11 +294,16 @@ $REM: 16;
         display: flex;
         justify-content: center;
         align-items: center;
-        font-size: 24px;
-        font-weight: 600;
+        font-size: 22px;
         color: var(--base-font-color);
         .github-login-wrapper {
             width: 80%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .login-icon-body {
+            margin-bottom: 10px;
         }
         .login-spin {
             margin-right: 8px;

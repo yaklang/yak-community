@@ -61,6 +61,9 @@ $REM: 16;
             font-size: 12px;
             color: #686c78;
             line-height: REM(17);
+            a {
+                color: var(--base-theme-color);
+            }
         }
         .content-time {
             margin-top: REM(8);

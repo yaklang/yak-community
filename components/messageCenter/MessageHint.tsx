@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { NextPage } from "next";
+import Link from "next/link";
 import { CaretRightOutlined } from "@ant-design/icons";
 import { useGetState, useMemoizedFn } from "ahooks";
 import { NetWorkApi } from "../../utils/fetch";
@@ -8,6 +9,7 @@ import { SearchPageMeta } from "../../types/extraApi";
 import { timeFormat } from "../../utils/timeTool";
 import { useRouter } from "next/router";
 import { ImgShow } from "../baseComponents/ImgShow";
+import { useStore } from "../../store";
 
 interface MessageHintProps {}
 
@@ -73,7 +75,7 @@ const MessageHint: NextPage<MessageHintProps> = (props) => {
     return (
         <div className="message-like-wrapper">
             <div className="message-like-hint">
-                共 {lists.pagemeta.total} 条点赞信息
+                共 {lists.pagemeta.total} 条系统信息
             </div>
             {lists.data.map((item, index) => {
                 return (
@@ -83,7 +85,7 @@ const MessageHint: NextPage<MessageHintProps> = (props) => {
                     />
                 );
             })}
-            {loading && <div className="list-loading">正在加载中。。。</div>}
+            {loading && <div className="list-loading">正在加载中...</div>}
         </div>
     );
 };
@@ -102,6 +104,21 @@ const LikeMessage: React.FC<LikeMessageProp> = (props) => {
             : JSON.parse(info.dynamic_content_img);
 
     const router = useRouter();
+    const { userInfo } = useStore();
+
+    const visitUserInfo = useMemoizedFn((id: number) => {
+        if (userInfo.user_id === id) {
+            router.push({
+                pathname: "/userinfo",
+                query: { tabs: "dynamic" },
+            });
+        } else {
+            router.push({
+                pathname: "/userpage",
+                query: { user: id },
+            });
+        }
+    });
 
     return (
         <div className="hint-message-wrapper">
@@ -109,23 +126,23 @@ const LikeMessage: React.FC<LikeMessageProp> = (props) => {
                 <div className="body-img">
                     <ImgShow
                         src={info.action_head_img}
-                        onclick={() =>
-                            router.push(`/userpage?user=${info.action_user_id}`)
-                        }
+                        onclick={() => visitUserInfo(info.action_user_id)}
                     />
                 </div>
 
                 <div className="body-content">
                     <div
                         className="content-name text-ellipsis-style"
-                        onClick={() =>
-                            router.push(`/userpage?user=${info.action_user_id}`)
-                        }
+                        onClick={() => visitUserInfo(info.action_user_id)}
                     >
                         {info.action_user_name}
                     </div>
                     <div className="content-text">
-                        该条动态已被管理员删除。原因：所发布内容不合规或含有广告或垃圾信息。为维护网站良好氛围，请遵守《Yak平台使用原则》，谢谢你的理解与支持。
+                        该条动态已被管理员删除。原因：所发布内容不合规或含有广告或垃圾信息。为维护网站良好氛围，请遵守
+                        <Link href="/agreement?type=platform" target={"_blank"}>
+                            <a target={"_blank"}>《Yak平台使用原则》</a>
+                        </Link>
+                        ，谢谢你的理解与支持。
                     </div>
                     <div className="content-time">
                         {timeFormat(info.created_at, "YYYY/MM/DD HH:mm")}

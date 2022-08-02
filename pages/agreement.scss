@@ -13,19 +13,29 @@
         padding: 50px 100px 20px 100px;
     }
 }
-.agreement-container {
+
+.agreement-type-container {
+    width: 100%;
+    display: flex;
     .agreement-type-body {
+        width: 160px;
         display: flex;
-        justify-content: center;
-        margin-bottom: 24px;
+        flex-direction: column;
+        border-right: 1px solid #dadde1;
+        margin-right: 20px;
 
         .type-page-title {
-            font-size: 32px;
-            font-weight: 600;
+            font-size: 14px;
             cursor: pointer;
+        }
+        .type-page-title:hover {
+            color: var(--base-theme-color);
         }
         .type-page-title-selected {
             color: var(--base-theme-color);
+        }
+        .type-page-title + .type-page-title {
+            margin-top: 20px;
         }
 
         .agreement-type-divider {
@@ -33,7 +43,12 @@
             margin: 0 20px;
         }
     }
+    .agreement-content-body {
+        flex: 1;
+    }
+}
 
+.agreement-container {
     .page-title {
         text-align: center;
         font-size: 32px;

@@ -91,11 +91,11 @@ const Home: NextPage<HomeProps> = (props) => {
     }, []);
 
     useEffect(() => {
-        if (homePageDynamicId) {
+        if (!homePageDynamicId.trigger && !!homePageDynamicId.value) {
             NetWorkApi<FetchDynamicInfo, API.DynamicListDetailResponse>({
                 method: "get",
                 url: "/api/dynamic/detail",
-                params: { id: homePageDynamicId },
+                params: { id: homePageDynamicId.value },
                 userToken: true,
             })
                 .then((res) => {
@@ -103,7 +103,7 @@ const Home: NextPage<HomeProps> = (props) => {
                         data: [res.data].concat(list.data),
                         pagemeta: list.pagemeta,
                     });
-                    setHomePageDynamicId(0);
+                    setHomePageDynamicId({ value: 0, trigger: false });
                 })
                 .catch((err) => {});
         }
@@ -311,7 +311,7 @@ const Home: NextPage<HomeProps> = (props) => {
                         })}
 
                         {loading && (
-                            <div className="list-loading">正在加载中。。。</div>
+                            <div className="list-loading">正在加载中...</div>
                         )}
 
                         {!loading && list.data.length === 0 && (

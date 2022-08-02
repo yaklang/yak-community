@@ -160,7 +160,7 @@ const SubComment: NextPage<SubCommentProps> = (props) => {
 
                     {loading && (
                         <div className="sub-comment-loading">
-                            正在加载中。。。
+                            正在加载中...
                         </div>
                     )}
                 </div>

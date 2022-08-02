@@ -113,6 +113,7 @@ const UserPage: NextPage<UserPageProps> = (props) => {
                         >
                             <UserDynamic
                                 userId={user.user_id}
+                                isFollow={user.is_follow}
                                 onlyShow={true}
                                 onUpdateUserInfo={() => {}}
                             />

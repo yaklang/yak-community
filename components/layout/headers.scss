@@ -133,6 +133,7 @@ $REM: 16;
                 display: flex;
                 align-items: center;
                 cursor: pointer;
+                font-size: REM(14);
                 .icon-style {
                     margin-right: 4px;
                     font-size: REM(20);
@@ -160,6 +161,7 @@ $REM: 16;
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
+                font-size: REM(14);
                 cursor: pointer;
                 .icon-style {
                     margin-right: 4px;
@@ -178,6 +180,7 @@ $REM: 16;
                     align-items: center;
                     color: #ffffff;
                     padding: 0 4px;
+                    font-size: REM(12);
                 }
             }
             li:hover {
@@ -200,6 +203,7 @@ $REM: 16;
             display: flex;
             align-items: center;
             cursor: pointer;
+            font-size: REM(14);
             .icon-style {
                 margin-right: 4px;
                 font-size: REM(20);

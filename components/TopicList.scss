@@ -15,7 +15,7 @@ $REM: 16;
             justify-content: space-between;
             height: 22px;
             &-title {
-                font-size: 16px;
+                font-size: REM(16);
                 font-weight: 600;
                 color: var(--base-font-color);
                 line-height: 22px;

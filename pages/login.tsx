@@ -6,8 +6,6 @@ import { Checkbox, Divider, Spin, Tooltip } from "antd";
 import {
     GithubOutlined,
     WechatOutlined,
-    RightOutlined,
-    ArrowLeftOutlined,
     FormOutlined,
     ExclamationCircleOutlined,
 } from "@ant-design/icons";
@@ -22,6 +20,7 @@ import { setPlatform, setTokenUser, userSignOut } from "../utils/auth";
 import { queryURLParams, replaceParamVal } from "../utils/urlTool";
 import { SingleUpload } from "../components/baseComponents/SingleUpload";
 import { ImgShow } from "../components/baseComponents/ImgShow";
+import { LeftOutIcon, RightOutIcon } from "../public/icons";
 
 interface LoginProps {}
 
@@ -331,7 +330,7 @@ const LoginFirst: React.FC<LoginFirstProps> = (props) => {
                     使用 GitHub 账号登录
                 </div>
                 <div>
-                    <RightOutlined className="right-style" />
+                    <RightOutIcon className="right-style" />
                 </div>
             </div>
 
@@ -341,7 +340,7 @@ const LoginFirst: React.FC<LoginFirstProps> = (props) => {
                     使用微信账号登录
                 </div>
                 <div>
-                    <RightOutlined className="right-style" />
+                    <RightOutIcon className="right-style" />
                 </div>
             </div>
 
@@ -359,6 +358,11 @@ const LoginFirst: React.FC<LoginFirstProps> = (props) => {
                 <Link href="/agreement?type=protection">
                     <a target={"_blank"}>隐私政策</a>
                 </Link>
+                <div className="login-extra-agreement">
+                    <Link href="/agreement?type=platform" target={"_blank"}>
+                        <a target={"_blank"}>平台使用原则</a>
+                    </Link>
+                </div>
             </div>
         </>
     );
@@ -411,8 +415,10 @@ const LoginSecond: React.FC<LoginSecondProps> = (props) => {
     return (
         <div className="github-login">
             <div className="github-login-wrapper">
-                <Spin spinning={true} className="login-spin" />
-                正在跳转登录界面中。。。
+                <div className="login-icon-body">
+                    <Spin spinning={true} className="login-spin" />
+                </div>
+                正在跳转登录界面中...
             </div>
         </div>
     );
@@ -492,7 +498,7 @@ const LoginThird: React.FC<LoginThirdProps> = (props) => {
 
     return (
         <>
-            <div className="login-title">
+            <div className="login-title login-title-third">
                 <a
                     href="#"
                     onClick={(e) => {
@@ -500,7 +506,7 @@ const LoginThird: React.FC<LoginThirdProps> = (props) => {
                         onThird(false);
                     }}
                 >
-                    <ArrowLeftOutlined className="icon-style" />
+                    <LeftOutIcon className="icon-style" />
                 </a>
                 绑定手机号
             </div>
@@ -600,7 +606,7 @@ const LoginFourth: React.FC<LoginFourthProps> = (props) => {
 
     return (
         <>
-            <div className="login-title">
+            <div className="login-title login-title-fourth">
                 <a
                     href="#"
                     onClick={(e) => {
@@ -608,7 +614,7 @@ const LoginFourth: React.FC<LoginFourthProps> = (props) => {
                         onFourth(false);
                     }}
                 >
-                    <ArrowLeftOutlined className="icon-style" />
+                    <LeftOutIcon className="icon-style" />
                 </a>
                 基本信息
             </div>

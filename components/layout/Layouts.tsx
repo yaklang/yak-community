@@ -20,18 +20,30 @@ const Layouts: NextPage<LayoutsProps> = (props) => {
         const DesignW = 1920;
         const FontRate = 16;
 
+        const HtmlFontSize = (document.body.offsetWidth / DesignW) * FontRate;
+        const ActualSize =
+            HtmlFontSize > 16 ? 16 : HtmlFontSize < 12 ? 12 : HtmlFontSize;
+
         document.getElementsByTagName("html")[0].style.fontSize =
-            (document.body.offsetWidth / DesignW) * FontRate + "px";
+            ActualSize + "px";
         document.getElementsByTagName("body")[0].style.fontSize =
-            (document.body.offsetWidth / DesignW) * FontRate + "px";
+            ActualSize + "px";
 
         window.addEventListener(
             "onorientationchange" in window ? "orientationchange" : "resize",
             () => {
+                const HtmlFontSize =
+                    (document.body.offsetWidth / DesignW) * FontRate;
+                const ActualSize =
+                    HtmlFontSize > 16
+                        ? 16
+                        : HtmlFontSize < 12
+                        ? 12
+                        : HtmlFontSize;
                 document.getElementsByTagName("html")[0].style.fontSize =
-                    (document.body.offsetWidth / DesignW) * FontRate + "px";
+                    ActualSize + "px";
                 document.getElementsByTagName("body")[0].style.fontSize =
-                    (document.body.offsetWidth / DesignW) * FontRate + "px";
+                    ActualSize + "px";
             }
         );
     }, []);

@@ -151,6 +151,20 @@ const Fans: NextPage<FansProps> = (props) => {
             .finally(() => setTimeout(() => setFollowLoading(false), 100));
     });
 
+    const visitUserInfo = useMemoizedFn((id: number) => {
+        if (userInfo.user_id === id) {
+            router.push({
+                pathname: "/userinfo",
+                query: { tabs: "dynamic" },
+            });
+        } else {
+            router.push({
+                pathname: "/userpage",
+                query: { user: id },
+            });
+        }
+    });
+
     return (
         <div className="fans-wrapper">
             {!onlyShow && (
@@ -167,9 +181,7 @@ const Fans: NextPage<FansProps> = (props) => {
                                     <ImgShow
                                         src={item.action_head_img}
                                         onclick={() =>
-                                            router.push(
-                                                `/userpage?user=${item.action_user_id}`
-                                            )
+                                            visitUserInfo(item.action_user_id)
                                         }
                                     />
                                 </div>
@@ -177,9 +189,7 @@ const Fans: NextPage<FansProps> = (props) => {
                                     <div
                                         className="info-name"
                                         onClick={() =>
-                                            router.push(
-                                                `/userpage?user=${item.action_user_id}`
-                                            )
+                                            visitUserInfo(item.action_user_id)
                                         }
                                     >
                                         {item.action_user_name}
@@ -246,7 +256,7 @@ const Fans: NextPage<FansProps> = (props) => {
                     </div>
                 );
             })}
-            {loading && <div className="list-loading">正在加载中。。。</div>}
+            {loading && <div className="list-loading">正在加载中...</div>}
         </div>
     );
 };

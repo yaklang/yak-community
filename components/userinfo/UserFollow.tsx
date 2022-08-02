@@ -164,6 +164,20 @@ const UserFollow: NextPage<UserFollowProps> = (props) => {
         }
     }, [userInfo]);
 
+    const visitUserInfo = useMemoizedFn((id: number) => {
+        if (userInfo.user_id === id) {
+            router.push({
+                pathname: "/userinfo",
+                query: { tabs: "dynamic" },
+            });
+        } else {
+            router.push({
+                pathname: "/userpage",
+                query: { user: id },
+            });
+        }
+    });
+
     return (
         <div className="user-follow-wrapper">
             {!onlyShow && (
@@ -194,9 +208,7 @@ const UserFollow: NextPage<UserFollowProps> = (props) => {
                                     <ImgShow
                                         src={item.follow_head_img}
                                         onclick={() =>
-                                            router.push(
-                                                `/userpage?user=${item.follow_user_id}`
-                                            )
+                                            visitUserInfo(item.follow_user_id)
                                         }
                                     />
                                 </div>
@@ -204,9 +216,7 @@ const UserFollow: NextPage<UserFollowProps> = (props) => {
                                     <div
                                         className="info-name text-ellipsis-style"
                                         onClick={() =>
-                                            router.push(
-                                                `/userpage?user=${item.follow_user_id}`
-                                            )
+                                            visitUserInfo(item.follow_user_id)
                                         }
                                     >
                                         {item.follow_user_name}
@@ -295,7 +305,7 @@ const UserFollow: NextPage<UserFollowProps> = (props) => {
                 );
             })}
 
-            {loading && <div className="list-loading">正在加载中。。。</div>}
+            {loading && <div className="list-loading">正在加载中...</div>}
         </div>
     );
 };
