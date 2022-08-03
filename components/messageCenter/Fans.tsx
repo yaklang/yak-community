@@ -224,8 +224,14 @@ const Fans: NextPage<FansProps> = (props) => {
                                         <ButtonTheme
                                             className="fans-operate-btn"
                                             disabled={followLoading}
-                                            isInfo={!showCancel}
-                                            isDanger={!!showCancel}
+                                            isInfo={
+                                                showCancel !==
+                                                item.action_user_id
+                                            }
+                                            isDanger={
+                                                showCancel ===
+                                                item.action_user_id
+                                            }
                                             onMouseEnter={() =>
                                                 setShowCancel(
                                                     item.action_user_id

@@ -8,7 +8,7 @@ $REM: 16;
     top: 0;
     left: 0;
     width: 100%;
-    height: REM(63);
+    height: 63px;
     border-bottom: 1px solid rgba(#e6eaef, 0.5);
     z-index: 99;
 }
@@ -21,7 +21,7 @@ $REM: 16;
 
 .header-main {
     @include width-height-100;
-    padding: REM(16) REM(32) REM(15) REM(32);
+    padding: 16px 32px 15px 32px;
     display: flex;
     justify-content: space-between;
     .header-left {

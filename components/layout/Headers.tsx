@@ -111,33 +111,40 @@ const Headers: NextPage<HeadersProps> = React.memo((props) => {
             .catch((err) => {});
     };
 
+    const ChangeEvent = useMemoizedFn((e: Event) => {
+        if (!e.target) return;
+        const target = e.target as Document;
+        if (!target.scrollingElement) return;
+        const html = target.scrollingElement as HTMLHtmlElement;
+        const scrollTop = html.scrollTop;
+
+        if (!headerRef || !headerRef.current) return;
+        const header = headerRef.current as unknown as HTMLDivElement;
+
+        const HtmlFontSize = +document.body.style.fontSize.split("px")[0] || 14;
+
+        if (scrollTop >= (376 * HtmlFontSize) / 16) setShowKeywords(true);
+        if (scrollTop < (376 * HtmlFontSize) / 16) setShowKeywords(false);
+
+        if (
+            scrollTop >= header.offsetHeight &&
+            header.className.indexOf("header-outside-transparent") > -1
+        ) {
+            header.className = "header-outside header-outside-white";
+        }
+        if (
+            scrollTop < header.offsetHeight &&
+            header.className.indexOf("header-outside-white") > -1
+        ) {
+            header.className = "header-outside header-outside-transparent";
+        }
+    });
+
     useEffect(() => {
-        document.addEventListener("scroll", (e) => {
-            if (!e.target) return;
-            const target = e.target as Document;
-            if (!target.scrollingElement) return;
-            const html = target.scrollingElement as HTMLHtmlElement;
-            const scrollTop = html.scrollTop;
-
-            if (!headerRef || !headerRef.current) return;
-            const header = headerRef.current as unknown as HTMLDivElement;
-
-            if (scrollTop >= 376) setShowKeywords(true);
-            if (scrollTop < 376) setShowKeywords(false);
-
-            if (
-                scrollTop >= header.offsetHeight &&
-                header.className.indexOf("header-outside-transparent") > -1
-            ) {
-                header.className = "header-outside header-outside-white";
-            }
-            if (
-                scrollTop < header.offsetHeight &&
-                header.className.indexOf("header-outside-white") > -1
-            ) {
-                header.className = "header-outside header-outside-transparent";
-            }
-        });
+        document.addEventListener("scroll", ChangeEvent);
+        return () => {
+            document.removeEventListener("scroll", ChangeEvent);
+        };
     }, []);
 
     const fetchUserInfo = useMemoizedFn(() => {
@@ -158,13 +165,21 @@ const Headers: NextPage<HeadersProps> = React.memo((props) => {
             .catch((err) => {});
     });
 
-    useEffect(() => {
-        const tokenFlag = !!getToken();
-        if (tokenFlag) fetchUserInfo();
-    }, []);
+    const Unsubscribe = useMemoizedFn((e: MessageEvent) => {
+        if (
+            !e.data.isLogin &&
+            e.data.code === 500 &&
+            e.data.message === "token无效"
+        ) {
+            signOut();
+            setTimeout(() => router.push("/"), 50);
+        }
+    });
 
     useEffect(() => {
         const tokenFlag = !!getToken();
+        if (tokenFlag) fetchUserInfo();
+
         if (tokenFlag) {
             NetWorkApi<undefined, API.UserResponse>({
                 method: "get",
@@ -174,6 +189,11 @@ const Headers: NextPage<HeadersProps> = React.memo((props) => {
                 .then((res) => {})
                 .catch((err) => {});
         }
+
+        window.addEventListener("message", Unsubscribe);
+        return () => {
+            window.removeEventListener("message", Unsubscribe);
+        };
     }, []);
 
     return (

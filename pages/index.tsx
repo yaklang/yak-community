@@ -206,7 +206,7 @@ const Home: NextPage<HomeProps> = (props) => {
         const isToken = !!getToken();
         if (homePageKeywords.trigger) {
             setListPage(1);
-            setKeyword("");
+            setKeyword(homePageKeywords.value);
             if (isToken) fetchDynamics(1, homePageKeywords.value);
             else fetchNoDynamics(1, homePageKeywords.value);
         }

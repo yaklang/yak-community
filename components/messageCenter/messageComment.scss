@@ -23,7 +23,7 @@ $REM: 16;
         text-align: center;
         margin-top: REM(16);
         line-height: 20px;
-        font-size: 16px;
+        font-size: REM(16);
         color: var(--base-icon-color);
     }
 }
@@ -53,7 +53,7 @@ $REM: 16;
         .reply-name {
             width: 100%;
             height: REM(20);
-            font-size: 14px;
+            font-size: REM(14);
             font-weight: 600;
             color: var(--base-font-color);
             line-height: REM(20);

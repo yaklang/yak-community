@@ -1,6 +1,6 @@
 import axios, { AxiosError, AxiosRequestConfig } from "axios";
 import { failed } from "./notification";
-import { getToken } from "./auth";
+import { getToken, userSignOut } from "./auth";
 import { API } from "../types/api";
 
 const instance = axios.create({
@@ -50,13 +50,22 @@ export const handleAxiosError = (err: any) => {
         failed("请求超时，请重试");
         return;
     }
+
     switch (response.status) {
         case 209:
             failed(response?.data.reason || "");
             return;
         case 500:
-            if ((response as any)?.data?.message === "token无效")
+            if ((response as any)?.data?.message === "token无效") {
+                userSignOut();
+                window.postMessage(
+                    { isLogin: false, code: 500, message: "token无效" },
+                    window.location.href
+                );
                 failed("Token已过期，请重新登录");
+            } else {
+                failed((response as any)?.data?.message || "请求超时，请重试");
+            }
             return;
 
         default:

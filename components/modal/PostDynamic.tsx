@@ -8,7 +8,9 @@ import {
     Popconfirm,
     Popover,
     Progress,
+    Spin,
     Switch,
+    Tooltip,
     Upload,
 } from "antd";
 import { CloseOutlined, PlusOutlined, UploadOutlined } from "@ant-design/icons";
@@ -494,6 +496,16 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
                                 icon={<UploadImgIcon className="icon-style" />}
                                 onClick={() => showUploadWarn(1)}
                             />
+                        ) : dynamic.content_img.length >= 18 ? (
+                            <Tooltip placement="bottom" title="图片上限为18张">
+                                <Button
+                                    type="link"
+                                    disabled={true}
+                                    icon={
+                                        <UploadImgIcon className="icon-style" />
+                                    }
+                                />
+                            </Tooltip>
                         ) : (
                             <Upload
                                 accept=".png,.jpg,.jpeg.,gif"
@@ -630,7 +642,7 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
                     </div>
                 </div>
 
-                {dynamic.content_img.length !== 0 && (
+                {(dynamic.content_img.length !== 0 || imgLoading) && (
                     <div className="post-dynamic-img">
                         {dynamic.content_img.map((item, index) => {
                             return (
@@ -670,9 +682,14 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
                                     return Promise.reject();
                                 }}
                             >
-                                <div className="img-add">
-                                    <PlusOutlined className="icon-style" />
-                                </div>
+                                <Spin
+                                    className="dynamic-img-spin"
+                                    spinning={imgLoading}
+                                >
+                                    <div className="img-add">
+                                        <PlusOutlined className="icon-style" />
+                                    </div>
+                                </Spin>
                             </Upload>
                         )}
                     </div>

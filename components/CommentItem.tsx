@@ -384,7 +384,7 @@ const CommentItem: NextPage<CommentItemProps> = (props) => {
                                 {info.user_name}
                             </div>
                             <div className="avatar-info-time">
-                                {timeFormat(info.created_at, "MM-DD HH:mm")}
+                                {timeFormat(info.updated_at, "MM-DD HH:mm")}
                             </div>
                         </div>
                         <div className="avatar-follow">
