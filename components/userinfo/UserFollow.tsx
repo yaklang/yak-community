@@ -156,9 +156,12 @@ const UserFollow: NextPage<UserFollowProps> = (props) => {
     });
 
     useEffect(() => {
-        if (userInfo.isLogin) {
-            fetchList();
-            fetchCrossNum();
+        const tokenFlag = !!getToken();
+        if (tokenFlag) {
+            if (userInfo.isLogin) {
+                fetchList();
+                fetchCrossNum();
+            }
         } else {
             fetchUnloggedList();
         }

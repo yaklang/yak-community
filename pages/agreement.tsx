@@ -21,6 +21,9 @@ const Agreement: NextPage<AgreementProps> = (props) => {
                 case "protection":
                     setType("protection");
                     break;
+                case "platform":
+                    setType("platform");
+                    break;
                 default:
                     setType("protection");
                     break;

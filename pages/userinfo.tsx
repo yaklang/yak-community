@@ -83,6 +83,12 @@ const UserInfo: NextPage<ModifyUserProps> = (props) => {
                         img={user.head_img}
                         fans={userCount.fans}
                         follows={userCount.follow_num}
+                        goFans={() => {
+                            router.push({
+                                pathname: "/messagecenter",
+                                query: { tabs: "fans" },
+                            });
+                        }}
                     />
 
                     <Tabs

@@ -111,12 +111,14 @@ const UserPage: NextPage<UserPageProps> = (props) => {
                             }
                             key="dynamic"
                         >
-                            <UserDynamic
-                                userId={user.user_id}
-                                isFollow={user.is_follow}
-                                onlyShow={true}
-                                onUpdateUserInfo={() => {}}
-                            />
+                            {user.user_id && (
+                                <UserDynamic
+                                    userId={user.user_id}
+                                    isFollow={user.is_follow}
+                                    onlyShow={true}
+                                    onUpdateUserInfo={() => {}}
+                                />
+                            )}
                         </TabPane>
                         <TabPane
                             tab={
@@ -143,11 +145,13 @@ const UserPage: NextPage<UserPageProps> = (props) => {
                             }
                             key="follow"
                         >
-                            <UserFollow
-                                userId={user.user_id}
-                                onlyShow={true}
-                                onUpdateUserInfo={() => {}}
-                            />
+                            {user.user_id && (
+                                <UserFollow
+                                    userId={user.user_id}
+                                    onlyShow={true}
+                                    onUpdateUserInfo={() => {}}
+                                />
+                            )}
                         </TabPane>
                         <TabPane
                             tab={
@@ -173,7 +177,9 @@ const UserPage: NextPage<UserPageProps> = (props) => {
                             }
                             key="fans"
                         >
-                            <Fans userId={user.user_id} onlyShow={true} />
+                            {user.user_id && (
+                                <Fans userId={user.user_id} onlyShow={true} />
+                            )}
                         </TabPane>
                     </Tabs>
                 </div>

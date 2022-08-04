@@ -20,6 +20,7 @@ interface AvatarProps {
     isFollow?: boolean;
     showFollow?: boolean;
     updateInfo?: () => any;
+    goFans?: () => any;
 }
 
 const Avatar: NextPage<AvatarProps> = (props) => {
@@ -32,6 +33,7 @@ const Avatar: NextPage<AvatarProps> = (props) => {
         isFollow,
         showFollow = false,
         updateInfo,
+        goFans,
     } = props;
     const { userInfo } = useStore();
     const router = useRouter();
@@ -93,7 +95,16 @@ const Avatar: NextPage<AvatarProps> = (props) => {
                             {name}
                         </div>
                         <div className="author-popularity">
-                            <div className="author-popularity-span">
+                            <div
+                                className={
+                                    !!goFans
+                                        ? "author-popularity-function-span"
+                                        : "author-popularity-span"
+                                }
+                                onClick={() => {
+                                    if (goFans) goFans();
+                                }}
+                            >
                                 粉丝
                                 <span className="quantity-style">{fans}</span>
                             </div>

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { NextPage } from "next";
-import { Modal } from "antd";
+import { Button, Modal } from "antd";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import { ImgShow } from "../baseComponents/ImgShow";
 
@@ -37,22 +37,32 @@ const MediaShow: NextPage<MediaShowProps> = (props) => {
             <div className="media-show-body">
                 {isVideo ? (
                     <div className="video-wrapper">
-                        <video src={video || ""} controls className="video-style"></video>
+                        <video
+                            src={video || ""}
+                            controls
+                            className="video-style"
+                        ></video>
                     </div>
                 ) : (
-                    <div className="img-wrapper">
-                        <ImgShow src={imgs[imgIndex]} />
+                    <div className="media-img-wrapper">
+                        <div className="media-img-show-body">
+                            <ImgShow src={imgs[imgIndex]} />
+                        </div>
 
-                        <div
+                        <Button
+                            type="link"
                             className="left-change"
+                            disabled={imgIndex === 0}
                             onClick={() =>
                                 setImgIndex(imgIndex === 0 ? 0 : imgIndex - 1)
                             }
                         >
                             <LeftOutlined className="icon-style" />
-                        </div>
-                        <div
+                        </Button>
+                        <Button
+                            type="link"
                             className="right-change"
+                            disabled={imgIndex === imgs.length - 1}
                             onClick={() =>
                                 setImgIndex(
                                     imgIndex === imgs.length - 1
@@ -62,6 +72,24 @@ const MediaShow: NextPage<MediaShowProps> = (props) => {
                             }
                         >
                             <RightOutlined className="icon-style" />
+                        </Button>
+
+                        <div className="media-img-preview-body">
+                            {imgs.map((item, index) => {
+                                return (
+                                    <div
+                                        key={item}
+                                        className={`media-img-preview-opt ${
+                                            index === imgIndex
+                                                ? "media-img-preview-opt-selected"
+                                                : ""
+                                        }`}
+                                        onClick={() => setImgIndex(index)}
+                                    >
+                                        <ImgShow src={item} />
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
                 )}

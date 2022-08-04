@@ -35,6 +35,18 @@ $REM: 16;
                 font-size: REM(12);
                 line-height: REM(20);
                 display: flex;
+                .author-popularity-function-span {
+                    cursor: pointer;
+                }
+                .author-popularity-function-span:hover {
+                    color: var(--base-theme-color);
+                    .quantity-style {
+                        color: var(--base-theme-color);
+                    }
+                }
+                .author-popularity-function-span + .author-popularity-span {
+                    margin-left: REM(24);
+                }
                 .author-popularity-span + .author-popularity-span {
                     margin-left: REM(24);
                 }

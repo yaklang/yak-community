@@ -56,13 +56,13 @@ export const handleAxiosError = (err: any) => {
             failed(response?.data.reason || "");
             return;
         case 500:
-            if ((response as any)?.data?.message === "token无效") {
+            if ((response as any)?.data?.message === "token过期") {
                 userSignOut();
                 window.postMessage(
-                    { isLogin: false, code: 500, message: "token无效" },
+                    { isLogin: false, code: 500, message: "token过期" },
                     window.location.href
                 );
-                failed("Token已过期，请重新登录");
+                failed("登录已过期，请重新登录");
             } else {
                 failed((response as any)?.data?.message || "请求超时，请重试");
             }

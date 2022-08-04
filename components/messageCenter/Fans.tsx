@@ -44,7 +44,7 @@ const Fans: NextPage<FansProps> = (props) => {
                 page: page || listPage,
                 limit: 20,
                 order: "desc",
-                user_id: userInfo.user_id || userId || 0,
+                user_id: userId || userInfo.user_id || 0,
             },
             userToken: true,
         })
@@ -71,7 +71,7 @@ const Fans: NextPage<FansProps> = (props) => {
                 page: page || listPage,
                 limit: 20,
                 order: "desc",
-                user_id: userInfo.user_id || userId || 0,
+                user_id: userId || userInfo.user_id || 0,
             },
         })
             .then((res) => {
@@ -88,9 +88,17 @@ const Fans: NextPage<FansProps> = (props) => {
     });
 
     useEffect(() => {
-        if (userInfo.isLogin) fetchLists(1);
-        else fetchNoLists(1);
-    }, []);
+        const tokenFlag = !!getToken();
+        if (userId) {
+            if (tokenFlag) {
+                if (userInfo.isLogin) fetchLists(1);
+            } else {
+                fetchNoLists(1);
+            }
+        } else {
+            if (userInfo.isLogin) fetchLists(1);
+        }
+    }, [userInfo]);
 
     const nextPage = useMemoizedFn((e: Event) => {
         if (getLoading()) return;

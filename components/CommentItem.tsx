@@ -474,7 +474,7 @@ const CommentItem: NextPage<CommentItemProps> = (props) => {
                                 <CommentWord info={info} />
                             )}
                             {info.status !== 2 && imgs && (
-                                <CommentImg info={info} />
+                                <CommentImg info={info} isDetail={isDetail} />
                             )}
                             {info.status !== 2 && videos && (
                                 <CommentVideo info={info} />
@@ -784,14 +784,19 @@ const CommentWord: React.FC<CommentWordProp> = (props) => {
 // 动态图片组件
 interface CommentImgProp {
     info: API.DynamicLists;
+    isDetail?: boolean;
 }
 const CommentImg: React.FC<CommentImgProp> = (props) => {
-    const { info } = props;
+    const { info, isDetail = false } = props;
     const imgs: string[] =
         !info.content_img || info.content_img === "null"
             ? undefined
             : JSON.parse(info.content_img);
-    const arr = imgs.length > 9 ? imgs.slice(0, 9) : [...imgs];
+    const arr = isDetail
+        ? imgs
+        : imgs.length > 9
+        ? imgs.slice(0, 9)
+        : [...imgs];
 
     const [isShow, setIsShow] = useState<boolean>(false);
     const [showIndex, setShowIndex] = useState<number>(0);
@@ -804,7 +809,8 @@ const CommentImg: React.FC<CommentImgProp> = (props) => {
             <div className="comment-img-body">
                 <div
                     className={
-                        arr.length !== 1 && arr.length % 3 === 1
+                        arr.length !== 1 &&
+                        (arr.length % 3 === 1 || arr.length % 4 === 0)
                             ? "img-grid-four-wrapper"
                             : "img-grid-three-wrapper"
                     }

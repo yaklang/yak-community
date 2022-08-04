@@ -9,7 +9,6 @@ import {
     Popover,
     Progress,
     Spin,
-    Switch,
     Tooltip,
     Upload,
 } from "antd";
@@ -246,7 +245,7 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
 
     const [secondShow, setSecondShow] = useState<boolean>(false);
 
-    const [imgLoading, setImgLoading] = useState<boolean>();
+    const [imgLoading, setImgLoading] = useState<boolean>(false);
     const imgTime = useRef<any>(null);
     const fileList = useRef<RcFile[]>([]);
     const imgList = useRef<{ src: string; name: string }[]>([]);
@@ -295,6 +294,7 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
             userToken: true,
         })
             .then((res) => {
+                if (!visible) return;
                 imgList.current.push({
                     src: URL.createObjectURL(file),
                     name: `${fileName}.${file.name.split(".").pop()}`,
@@ -343,7 +343,7 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
             videoCount.current = 0;
         }
         videoTime.current = setInterval(() => {
-            if (videoCount.current === 11) {
+            if (videoCount.current === 11 || !visible) {
                 clearInterval(videoTime.current);
                 videoTime.current = null;
                 videoCount.current = 0;
@@ -668,6 +668,7 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
                                     if (!imgJudge(file)) {
                                         return Promise.reject();
                                     }
+                                    if (!visible) return Promise.reject();
 
                                     fileList.current.push(file);
 

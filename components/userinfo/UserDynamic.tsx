@@ -133,9 +133,13 @@ const UserDynamic: NextPage<UserDynamicProps> = (props) => {
     }, []);
 
     useEffect(() => {
-        if (userInfo.isLogin) fetchList();
-        else fetchUnloggedList();
-    }, []);
+        const tokenFlag = !!getToken();
+        if (tokenFlag) {
+            if (userInfo.isLogin) fetchList();
+        } else {
+            fetchUnloggedList();
+        }
+    }, [userInfo]);
 
     const updateDynamicInfo = useMemoizedFn(
         (type: "user" | "stars" | "collect", info: API.DynamicLists) => {

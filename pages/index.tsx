@@ -272,7 +272,7 @@ const Home: NextPage<HomeProps> = (props) => {
     return (
         <HomeLayout>
             <div className="home-page-wrapper">
-                <div className="home-page-title">Yak 社区</div>
+                <div className="home-page-title">Ya! 一刻</div>
 
                 <div className="home-page-search">
                     <Input.Group className="search-body" compact>

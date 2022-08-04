@@ -25,6 +25,7 @@ import { NetWorkApi } from "../../utils/fetch";
 import { API } from "../../types/api";
 import PostDynamic from "../modal/PostDynamic";
 import { ImgShow } from "../baseComponents/ImgShow";
+import { success } from "../../utils/notification";
 
 interface HeadersProps {}
 
@@ -67,7 +68,6 @@ const Headers: NextPage<HeadersProps> = React.memo((props) => {
             }, 60000);
         } else {
             clearInterval(messageTime);
-            setTimeout(() => router.push("/"), 50);
         }
 
         return () => {
@@ -106,6 +106,7 @@ const Headers: NextPage<HeadersProps> = React.memo((props) => {
             .then((res) => {
                 signOut();
                 userSignOut();
+                success("退出登录成功");
                 setTimeout(() => router.push("/"), 50);
             })
             .catch((err) => {});
@@ -169,7 +170,7 @@ const Headers: NextPage<HeadersProps> = React.memo((props) => {
         if (
             !e.data.isLogin &&
             e.data.code === 500 &&
-            e.data.message === "token无效"
+            e.data.message === "token过期"
         ) {
             signOut();
             setTimeout(() => router.push("/"), 50);
@@ -216,7 +217,7 @@ const Headers: NextPage<HeadersProps> = React.memo((props) => {
                         >
                             <CommunityThemeIcon className="community-icon-style" />
                             <div className="community-title-style">
-                                Yak 社区
+                                Ya! 一刻
                             </div>
                         </div>
                         {showKeywords && (

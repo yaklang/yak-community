@@ -38,7 +38,7 @@ interface StoreProps {
 }
 export const useStore = create<StoreProps>((set, get) => ({
     userInfo: {
-        isLogin: true,
+        isLogin: false,
     },
     signIn: (info) => set({ userInfo: info }),
     signOut: () => set({ userInfo: DefaultUserInfo }),
