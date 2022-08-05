@@ -62,6 +62,33 @@ const AvatarCard: NextPage<AvatarCardProps> = (props) => {
         }
     });
 
+    const visitFollows = useMemoizedFn(() => {
+        if (userInfo.user_id === info.user_id) {
+            router.push({
+                pathname: "/userinfo",
+                query: { tabs: "follow" },
+            });
+        } else {
+            router.push({
+                pathname: "/userpage",
+                query: { user: info.user_id, tabs: "follow" },
+            });
+        }
+    });
+    const visitFans = useMemoizedFn(() => {
+        if (userInfo.user_id === info.user_id) {
+            router.push({
+                pathname: "/messagecenter",
+                query: { tabs: "fans" },
+            });
+        } else {
+            router.push({
+                pathname: "/userpage",
+                query: { user: info.user_id, tabs: "fans" },
+            });
+        }
+    });
+
     return (
         <div className="avatar-card-wrapper">
             <div className="avatar-card-body">
@@ -73,10 +100,16 @@ const AvatarCard: NextPage<AvatarCardProps> = (props) => {
                         {info.user_name}
                     </div>
                     <div className="info-popularity">
-                        <div className="info-popularity-block">
+                        <div
+                            className="info-popularity-block"
+                            onClick={visitFans}
+                        >
                             粉丝<span className="block-count">{info.fans}</span>
                         </div>
-                        <div className="info-popularity-block">
+                        <div
+                            className="info-popularity-block"
+                            onClick={visitFollows}
+                        >
                             关注
                             <span className="block-count">
                                 {info.follow_num}

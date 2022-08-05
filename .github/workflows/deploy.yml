@@ -1,59 +1,36 @@
 name: Docker Image CI
 
 on:
-  push:
-    branches:
-        - "main"
-        - "test"
-      tags:
-        - "v*"
-        - "t*"
+    push:
+        branches:
+            - "deploy"
+            # - "test-deploy"
+            # tags:
+            #   - "v*"
+            #   - "t*"
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+    build:
+        # if: ${{ startsWith(github.ref, 'refs/tags/t') || startsWith(github.ref, 'refs/heads/test-deploy/') || startsWith(github.ref, 'refs/tags/v') || startsWith(github.ref, 'refs/heads/deploy/') }}
+        runs-on: ubuntu-latest
 
-    steps:
-      # 拉取main分支代码
-      - name: Checkout
-        uses: actions/checkout@v2
+        steps:
+            # 拉取main分支代码
+            - name: Checkout
+              uses: actions/checkout@v2
+              uses: actions/setup-node@v2
+              with:
+                node-version: 16.13
 
-      # 制作docker镜像并推送到阿里云容器镜像服务
-      - name: build and push docker image
-        run: |
-          echo ${{ secrets.ALIYUN_DOCKER_PASSWORD }} | docker login registry.cn-hangzhou.aliyuncs.com --username ${{ secrets.ALIYUN_DOCKER_USERNAME }} --password-stdin
+            # 制作docker镜像并推送到阿里云容器镜像服务
+            - name: build and push docker image
+              run: yarn install
+              run: yarn build
 
-          docker image build -t myblog:latest .
-          docker tag myblog registry.cn-hangzhou.aliyuncs.com/test-blog/myblog:latest
-          docker push registry.cn-hangzhou.aliyuncs.com/test-blog/myblog:latest
-          docker logout
-      # 登录远程服务器，拉取镜像，制作并重启容器
-      # https://github.com/marketplace/actions/remote-ssh-commands
-      - name: ssh remote deploy
-        uses: fifsky/ssh-action@master
-        with:
-          command: |
-            cd /
-            echo -e "1.docker login start==>"
-            echo ${{ secrets.ALIYUN_DOCKER_PASSWORD }} | docker login registry.cn-hangzhou.aliyuncs.com --username ${{ secrets.ALIYUN_DOCKER_USERNAME }} --password-stdin
-
-            echo -e "2.docker stop myblog container==>"
-            docker container stop myblog
-
-            echo -e "3.docker conatainer rm==>"
-            docker container rm myblog
-
-            echo -e "4.docker image rm==>"
-            docker image rm registry.cn-hangzhou.aliyuncs.com/test-blog/myblog:latest
-
-            echo -e "5.docker pull==>"
-            docker pull registry.cn-hangzhou.aliyuncs.com/test-blog/myblog:latest
-
-            echo -e "6.docker container create and start==>"
-            docker container run -d -p 80:3000 --name myblog registry.cn-hangzhou.aliyuncs.com/test-blog/myblog:latest
-
-            echo -e "7.docker logout==>"
-            docker logout
-          host: ${{ secrets.HOST }}
-          user: ${{ secrets.USER }}
-          pass: ${{ secrets.PASSWORD }}
+            - name: Upload dist ssh
+              uses: easingthemes/ssh-deploy@v2.1.6
+              with:
+                REMOTE_USER: 'root'
+                REMOTE_HOST: '${{ secrets.ONLINE_HOST }}' #测试服务器地址
+                SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_PRIV_KEY }}
+                TARGET: '/root/yakit-online/' #服务器中，代码部署的位置

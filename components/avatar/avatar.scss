@@ -44,6 +44,10 @@ $REM: 16;
                         color: var(--base-theme-color);
                     }
                 }
+                .author-popularity-function-span
+                    + .author-popularity-function-span {
+                    margin-left: REM(24);
+                }
                 .author-popularity-function-span + .author-popularity-span {
                     margin-left: REM(24);
                 }
@@ -100,9 +104,16 @@ $REM: 16;
                 font-weight: 400;
                 color: var(--base-font-color);
                 line-height: REM(20);
+                cursor: pointer;
                 .block-count {
                     margin-left: REM(8);
                     color: #999ea8;
+                }
+            }
+            .info-popularity-block:hover {
+                color: var(--base-theme-color);
+                .block-count {
+                    color: var(--base-theme-color);
                 }
             }
             .info-popularity-block + .info-popularity-block {

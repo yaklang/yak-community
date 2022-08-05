@@ -89,6 +89,12 @@ const UserInfo: NextPage<ModifyUserProps> = (props) => {
                                 query: { tabs: "fans" },
                             });
                         }}
+                        goFollows={() => {
+                            router.push({
+                                pathname: "/userinfo",
+                                query: { tabs: "follow" },
+                            });
+                        }}
                     />
 
                     <Tabs

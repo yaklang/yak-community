@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { NextPage } from "next";
 import { Tabs } from "antd";
 import Avatar from "../components/avatar/Avatar";
@@ -22,8 +22,10 @@ const UserPage: NextPage<UserPageProps> = (props) => {
     const router = useRouter();
     const { userInfo } = useStore();
 
+    const userIdRef = useRef<number>(0);
+
     const [user, setUser] = useState<API.UserHead>();
-    const fetchUserInfo = useMemoizedFn((id: number) => {
+    const fetchUserInfo = useMemoizedFn((id: number, tabs?: string) => {
         NetWorkApi<FetchUserFans, API.UserHead>({
             method: "get",
             url: "/api/dynamic/user/head",
@@ -32,25 +34,34 @@ const UserPage: NextPage<UserPageProps> = (props) => {
         })
             .then((res) => {
                 setUser(res);
+                if (tabs) setActiveKey(tabs);
             })
             .catch((err) => {});
     });
-    const fetchUnloggedUserInfo = useMemoizedFn((user: number) => {
-        NetWorkApi<FetchUserFans, API.UserHead>({
-            method: "get",
-            url: "/api/dynamic/user/head/unlogged",
-            params: { user_id: user },
-        })
-            .then((res) => {
-                setUser(res);
+    const fetchUnloggedUserInfo = useMemoizedFn(
+        (user: number, tabs?: string) => {
+            NetWorkApi<FetchUserFans, API.UserHead>({
+                method: "get",
+                url: "/api/dynamic/user/head/unlogged",
+                params: { user_id: user },
             })
-            .catch((err) => {});
-    });
+                .then((res) => {
+                    setUser(res);
+                    if (tabs) setActiveKey(tabs);
+                })
+                .catch((err) => {});
+        }
+    );
     useEffect(() => {
-        const user = router.query.user;
+        const { user, tabs } = router.query;
         if (!user) return;
-        if (userInfo.isLogin) fetchUserInfo(+(user as string));
-        else fetchUnloggedUserInfo(+(user as string));
+        userIdRef.current = +user || 0;
+        let tabName = "";
+        if (tabs === "dynamic" || tabs === "follow" || tabs === "fans")
+            tabName = tabs;
+
+        if (userInfo.isLogin) fetchUserInfo(+(user as string), tabName);
+        else fetchUnloggedUserInfo(+(user as string), tabName);
     }, [router]);
 
     const [activeKey, setActiveKey] = useState<string>("dynamic");
@@ -78,13 +89,27 @@ const UserPage: NextPage<UserPageProps> = (props) => {
                         isFollow={user.is_follow}
                         showFollow={true}
                         updateInfo={() => fetchUserInfo(user.user_id)}
+                        goFans={() => setActiveKey("fans")}
+                        goFollows={() => setActiveKey("follow")}
                     />
 
                     <Tabs
                         className="user-page-tabs"
                         destroyInactiveTabPane={true}
                         activeKey={activeKey}
-                        onChange={(key: string) => setActiveKey(key)}
+                        onChange={(key: string) => {
+                            if (userIdRef.current) {
+                                router.push({
+                                    pathname: "/userpage",
+                                    query: {
+                                        user: userIdRef.current,
+                                        tabs: key,
+                                    },
+                                });
+                            } else {
+                                setActiveKey(key);
+                            }
+                        }}
                     >
                         <TabPane
                             tab={

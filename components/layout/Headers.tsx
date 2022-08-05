@@ -104,9 +104,11 @@ const Headers: NextPage<HeadersProps> = React.memo((props) => {
             userToken: true,
         })
             .then((res) => {
-                signOut();
                 userSignOut();
-                success("退出登录成功");
+                setTimeout(() => {
+                    signOut();
+                    success("退出登录成功");
+                }, 50);
                 setTimeout(() => router.push("/"), 50);
             })
             .catch((err) => {});

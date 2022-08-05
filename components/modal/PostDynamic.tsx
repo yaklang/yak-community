@@ -67,6 +67,8 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
 
     const { userInfo, setHomePageDynamicId } = useStore();
 
+    const isShow = useRef<boolean>(false);
+
     const [loading, setLoading] = useState<boolean>(false);
     const [dynamic, setDynamic, getDynamic] = useGetState<NewDynamicInfoProps>({
         ...DefaultNewDynamicInfo,
@@ -84,7 +86,10 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
             .catch((err) => {});
     });
     useEffect(() => {
-        if (visible) fetchCsrfToken();
+        if (visible) {
+            isShow.current = true;
+            fetchCsrfToken();
+        }
     }, [visible]);
 
     useEffect(() => {
@@ -149,6 +154,7 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
         ) {
             setSecondShow(true);
         } else {
+            isShow.current = false;
             setTimeout(() => onCancel(false), 50);
             resetDynamic();
         }
@@ -235,6 +241,7 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
                     if (el.src.indexOf("yakit-online.oss") === -1)
                         URL.revokeObjectURL(el.src);
                 }
+                isShow.current = false;
                 setTimeout(() => onCancel(true), 50);
                 setHomePageDynamicId({ value: res, trigger: !!existId });
                 resetDynamic();
@@ -251,6 +258,7 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
     const imgList = useRef<{ src: string; name: string }[]>([]);
 
     const uploadImg = useMemoizedFn(() => {
+        if (!isShow.current) return;
         if (!dynamic.csrf_token) {
             failed("获取关键信息失败，请关闭弹窗重新打开");
             setImgLoading(false);
@@ -294,7 +302,7 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
             userToken: true,
         })
             .then((res) => {
-                if (!visible) return;
+                if (!isShow.current) return;
                 imgList.current.push({
                     src: URL.createObjectURL(file),
                     name: `${fileName}.${file.name.split(".").pop()}`,
@@ -343,7 +351,7 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
             videoCount.current = 0;
         }
         videoTime.current = setInterval(() => {
-            if (videoCount.current === 11 || !visible) {
+            if (videoCount.current === 11 || !isShow.current) {
                 clearInterval(videoTime.current);
                 videoTime.current = null;
                 videoCount.current = 0;
@@ -668,7 +676,8 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
                                     if (!imgJudge(file)) {
                                         return Promise.reject();
                                     }
-                                    if (!visible) return Promise.reject();
+                                    if (!isShow.current)
+                                        return Promise.reject();
 
                                     fileList.current.push(file);
 
@@ -876,6 +885,7 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
                     onCancel={(flag) => {
                         setSecondShow(false);
                         if (flag) {
+                            isShow.current = false;
                             setTimeout(() => onCancel(false), 50);
                             resetDynamic();
                         }
