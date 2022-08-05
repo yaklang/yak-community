@@ -142,7 +142,7 @@ const LikeMessage: React.FC<LikeMessageProp> = (props) => {
                         <Link href="/agreement?type=platform" target={"_blank"}>
                             <a target={"_blank"}>《Yak平台使用原则》</a>
                         </Link>
-                        ，谢谢你的理解与支持。
+                        ，谢谢您的理解与支持。
                     </div>
                     <div className="content-time">
                         {timeFormat(info.created_at, "YYYY/MM/DD HH:mm")}

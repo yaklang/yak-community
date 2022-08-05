@@ -153,15 +153,26 @@ const SubComment: NextPage<SubCommentProps> = (props) => {
                                     onReply={(commentInfo) =>
                                         publishReply(commentInfo)
                                     }
+                                    updateCommentStar={(id, flag) => {
+                                        setLists({
+                                            data: lists.data.map((item) => {
+                                                if (item.id === id) {
+                                                    item.like_num = flag
+                                                        ? item.like_num - 1
+                                                        : item.like_num + 1;
+                                                }
+                                                return item;
+                                            }),
+                                            pagemeta: lists.pagemeta,
+                                        });
+                                    }}
                                 />
                             );
                         })}
                     </div>
 
                     {loading && (
-                        <div className="sub-comment-loading">
-                            正在加载中...
-                        </div>
+                        <div className="sub-comment-loading">正在加载中...</div>
                     )}
                 </div>
 

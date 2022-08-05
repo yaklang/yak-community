@@ -231,7 +231,7 @@ const CommentMessage: React.FC<CommentMessageProp> = (props) => {
                     <div className="operate-btn">
                         <Button
                             type="link"
-                            className="btn-style"
+                            className="btn-style btn-reply-style"
                             onClick={() => setReplyShow(true)}
                         >
                             <ReplyIcon className="icon-style" />
@@ -240,7 +240,6 @@ const CommentMessage: React.FC<CommentMessageProp> = (props) => {
                     </div>
                     <div className="operate-btn">
                         <Button
-                            disabled={starsLoading}
                             type="link"
                             className={`btn-style ${
                                 starShow ? "btn-theme-style" : ""

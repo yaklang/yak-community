@@ -3,17 +3,24 @@ import { Spin } from "antd";
 
 export interface ImgShowProps {
     isCover?: boolean;
+    isMedia?: boolean;
     src: string;
     onclick?: () => any;
 }
 
 export const ImgShow: React.FC<ImgShowProps> = (props) => {
-    const { isCover = false, src, onclick } = props;
+    const { isCover = false, isMedia = false, src, onclick } = props;
 
     const bodyRef = useRef<HTMLDivElement>(null);
     const imgRef = useRef<HTMLImageElement>(null);
     const [isWidth, setIsWidth] = useState<boolean>(true);
     const [loading, setLoading] = useState<boolean>(true);
+
+    const ClassName = isCover
+        ? "img-show-video-wrapper"
+        : isMedia
+        ? "img-show-media-wrapper"
+        : "img-show-img-wrapper";
 
     const setImgOffset = () => {
         if (!imgRef || !imgRef.current) return;
@@ -50,15 +57,13 @@ export const ImgShow: React.FC<ImgShowProps> = (props) => {
 
     return (
         <div
-            className={`img-show-wrapper ${
-                isCover ? "img-show-video-wrapper" : "img-show-img-wrapper"
-            }`}
+            className={`img-show-wrapper ${ClassName}`}
             onClick={() => {
                 if (onclick) onclick();
             }}
         >
             <div ref={bodyRef} className="img-show-body">
-                {isCover ? (
+                {isCover && !isMedia && (
                     <img
                         ref={imgRef}
                         src={src}
@@ -66,7 +71,17 @@ export const ImgShow: React.FC<ImgShowProps> = (props) => {
                             isWidth ? "cover-width-style" : "cover-height-style"
                         }
                     />
-                ) : (
+                )}
+                {!isCover && isMedia && (
+                    <img
+                        ref={imgRef}
+                        src={src}
+                        className={
+                            isWidth ? "cover-width-style" : "cover-height-style"
+                        }
+                    />
+                )}
+                {!isCover && !isMedia && (
                     <img
                         ref={imgRef}
                         src={src}

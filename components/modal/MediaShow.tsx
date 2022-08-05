@@ -31,7 +31,7 @@ const MediaShow: NextPage<MediaShowProps> = (props) => {
             centered={true}
             footer={null}
             className="media-show-modal"
-            width={"80%"}
+            width={"100%"}
             onCancel={onCancel}
         >
             <div className="media-show-body">
@@ -46,7 +46,7 @@ const MediaShow: NextPage<MediaShowProps> = (props) => {
                 ) : (
                     <div className="media-img-wrapper">
                         <div className="media-img-show-body">
-                            <ImgShow src={imgs[imgIndex]} />
+                            <ImgShow isMedia={true} src={imgs[imgIndex]} />
                         </div>
 
                         <Button
@@ -57,7 +57,13 @@ const MediaShow: NextPage<MediaShowProps> = (props) => {
                                 setImgIndex(imgIndex === 0 ? 0 : imgIndex - 1)
                             }
                         >
-                            <LeftOutlined className="icon-style" />
+                            <LeftOutlined
+                                className={
+                                    imgIndex === 0
+                                        ? "icon-disabled-style"
+                                        : "icon-style"
+                                }
+                            />
                         </Button>
                         <Button
                             type="link"
@@ -71,7 +77,13 @@ const MediaShow: NextPage<MediaShowProps> = (props) => {
                                 )
                             }
                         >
-                            <RightOutlined className="icon-style" />
+                            <RightOutlined
+                                className={
+                                    imgIndex === imgs.length - 1
+                                        ? "icon-disabled-style"
+                                        : "icon-style"
+                                }
+                            />
                         </Button>
 
                         <div className="media-img-preview-body">

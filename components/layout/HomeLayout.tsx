@@ -1,7 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { NextPage } from "next";
-import {} from "antd";
-import {} from "@ant-design/icons";
 
 interface HomeLayoutProps {
     children?: React.ReactNode;
