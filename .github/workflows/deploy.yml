@@ -67,5 +67,5 @@ jobs:
           username: 'root'
           key: ${{ secrets.DEPLOY_PRIV_KEY }}
           script: |
-            cd /root/yakit-community/
+            cd /root/yaklang-community/
             tar zxvf out.tgz
