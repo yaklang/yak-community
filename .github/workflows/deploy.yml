@@ -63,9 +63,9 @@ jobs:
         # if: ${{ startsWith(github.ref, 'refs/tags/v') || startsWith(github.ref, 'refs/heads/main/') }}
         uses: appleboy/ssh-action@master # 使用ssh链接服务器
         with:
-        host: ${{ secrets.ONLINE_HOST }}
-        username: 'root'
-        key: ${{ secrets.DEPLOY_PRIV_KEY }}
-        script: |
-          cd /root/yakit-community/
-          tar zxvf out.tgz
+          host: ${{ secrets.ONLINE_HOST }}
+          username: 'root'
+          key: ${{ secrets.DEPLOY_PRIV_KEY }}
+          script: |
+            cd /root/yakit-community/
+            tar zxvf out.tgz
