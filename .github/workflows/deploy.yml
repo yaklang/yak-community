@@ -26,7 +26,7 @@ jobs:
       - name: build
         run: yarn install
       - run: yarn build
-      - run: tar -zcvf dist.tgz .out
+      - run: tar -zcvf dist.tgz out
 
       - name: Create Release
         id: create_release
