@@ -56,7 +56,7 @@ jobs:
         with:
           REMOTE_USER: 'root'
           REMOTE_HOST: '${{ secrets.ONLINE_HOST }}' #测试服务器地址
-          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_PRIV_KEY }}
+          SSH_PRIVATE_KEY: ${{ secrets.ONLINE_PRIV_KEY }}
           TARGET: '/root/yaklang-community/' #服务器中，代码部署的位置
 
       - name: Deploy
@@ -65,7 +65,7 @@ jobs:
         with:
           host: ${{ secrets.ONLINE_HOST }}
           username: 'root'
-          key: ${{ secrets.DEPLOY_PRIV_KEY }}
+          key: ${{ secrets.ONLINE_PRIV_KEY }}
           script: |
             cd /root/yaklang-community/
             tar zxvf out.tgz
