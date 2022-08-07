@@ -5,9 +5,9 @@ on:
     branches:
       - "deploy"
       # - "test-deploy"
-      # tags:
-      #   - "v*"
-      #   - "t*"
+      tags:
+        - "v*"
+        # - "t*"
 
 jobs:
   build:
