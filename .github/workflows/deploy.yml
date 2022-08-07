@@ -2,8 +2,8 @@ name: Docker Image CI
 
 on:
   push:
-    branches:
-      - "deploy"
+    # branches:
+    #   - "deploy"
       # - "test-deploy"
     tags:
       - "v*"
@@ -46,8 +46,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./out.tgz
-          asset_name: out.tgz
+          asset_path: ./dist.tgz
+          asset_name: dist.tgz
           asset_content_type: application/x-tgz
         
 
