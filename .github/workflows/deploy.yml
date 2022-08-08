@@ -63,6 +63,7 @@ jobs:
         
 
       - name: Upload out ssh
+        if: ${{ startsWith(github.ref, 'refs/tags/t') || startsWith(github.ref, 'refs/heads/test/') || startsWith(github.ref, 'refs/tags/v') || startsWith(github.ref, 'refs/heads/main/') }}
         uses: easingthemes/ssh-deploy@v2.1.6
         with:
           REMOTE_USER: 'root'
