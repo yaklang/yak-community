@@ -4,10 +4,10 @@ on:
   push:
     # branches:
     #   - "deploy"
-      # - "test-deploy"
+    #   - "test-deploy"
     tags:
       - "v*"
-        # - "t*"
+      # - "t*"
 
 jobs:
   build:
@@ -26,47 +26,49 @@ jobs:
       - name: build
         run: yarn install
       - run: yarn build
-      - run: tar -zcvf dist.tgz out
+      - name: pack out file
+        if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+        run: tar -zcvf out.tgz out
 
-      - name: deploy file to server
-        uses: wlixcc/SFTP-Deploy-Action@v1.0 
-        with:  
-          username: 'root'   #ssh user name
-          server: '${{ secrets.ONLINE_HOST }}' #引用之前创建好的secret
-          ssh_private_key: ${{ secrets.ONLINE_PRIV_KEY }} #引用之前创建好的secret
-          local_path: './dist.tgz'  # 对应我们项目build的文件夹路径
-          remote_path: '/root/yaklang-community/'
+      # - name: deploy file to server
+      #   uses: wlixcc/SFTP-Deploy-Action@v1.0 
+      #   with:  
+      #     username: 'root'   #ssh user name
+      #     server: '${{ secrets.ONLINE_HOST }}' #引用之前创建好的secret
+      #     ssh_private_key: ${{ secrets.ONLINE_PRIV_KEY }} #引用之前创建好的secret
+      #     local_path: './dist.tgz'  # 对应我们项目build的文件夹路径
+      #     remote_path: '/root/yakit-online/static/'
 
-      # - name: Create Release
-      #   id: create_release
-      #   uses: actions/create-release@master
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
-      #   with:
-      #     tag_name: ${{ github.ref }}
-      #     release_name: Release ${{ github.ref }}
-      #     draft: false
-      #     prerelease: false
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
 
-      # - name: Upload Release Asset
-      #   id: upload-release-asset
-      #   uses: actions/upload-release-asset@master
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
-      #   with:
-      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
-      #     asset_path: ./dist.tgz
-      #     asset_name: dist.tgz
-      #     asset_content_type: application/x-tgz
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./out.tgz
+          asset_name: out.tgz
+          asset_content_type: application/x-tgz
         
 
-      # - name: Upload dist ssh
-      #   uses: easingthemes/ssh-deploy@v2.1.6
-      #   with:
-      #     REMOTE_USER: 'root'
-      #     REMOTE_HOST: '${{ secrets.ONLINE_HOST }}' #测试服务器地址
-      #     SSH_PRIVATE_KEY: ${{ secrets.ONLINE_PRIV_KEY }}
-      #     TARGET: '/root/yaklang-community/' #服务器中，代码部署的位置
+      - name: Upload out ssh
+        uses: easingthemes/ssh-deploy@v2.1.6
+        with:
+          REMOTE_USER: 'root'
+          REMOTE_HOST: '${{ secrets.ONLINE_HOST }}' #测试服务器地址
+          SSH_PRIVATE_KEY: ${{ secrets.ONLINE_PRIV_KEY }}
+          TARGET: '/root/yakit-online/static/' #服务器中，代码部署的位置
 
       - name: Deploy
         # if: ${{ startsWith(github.ref, 'refs/tags/v') || startsWith(github.ref, 'refs/heads/main/') }}
@@ -76,5 +78,6 @@ jobs:
           username: 'root'
           key: ${{ secrets.ONLINE_PRIV_KEY }}
           script: |
-            cd /root/yaklang-community/
-            tar zxvf dist.tgz
+            cd /root/yakit-online/static/
+            tar zxvf out.tgz
+            rm -rf out.taz

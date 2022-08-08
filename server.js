@@ -4,7 +4,7 @@ const { createProxyMiddleware } = require("http-proxy-middleware");
 
 const devProxy = {
     "/api": {
-        target: "http://192.168.101.119:80/api/",
+        target: "http://192.168.101.196:8080/api/",
         pathRewrite: {
             "^/api": "/",
         },
