@@ -206,22 +206,26 @@ const Headers: NextPage<HeadersProps> = React.memo((props) => {
         >
             <div className="header-main">
                 <div className="header-left">
-                    <a
+                    {/* <a
                         href="https://www.yaklang.io/"
                         className="header-left-home-page"
                     >
                         <img src="/images/yakLogo.png" className="img-style" />
-                    </a>
+                    </a> */}
+                    <div
+                        className="community-body"
+                        onClick={() => {
+                            if (router.pathname === "/") {
+                                window.location.reload();
+                            } else {
+                                router.push("/");
+                            }
+                        }}
+                    >
+                        <CommunityThemeIcon className="community-icon-style" />
+                        <div className="community-title-style">Ya! 一刻</div>
+                    </div>
                     <div className="header-left-community-search">
-                        <div
-                            className="community-body"
-                            onClick={() => router.push("/")}
-                        >
-                            <CommunityThemeIcon className="community-icon-style" />
-                            <div className="community-title-style">
-                                Ya! 一刻
-                            </div>
-                        </div>
                         {showKeywords && (
                             <>
                                 <Divider

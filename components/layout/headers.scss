@@ -26,31 +26,32 @@ $REM: 16;
     justify-content: space-between;
     .header-left {
         display: flex;
-        &-home-page {
-            display: block;
-            width: REM(133);
-            height: REM(32);
-            .img-style {
-                @include width-height-100;
+        // &-home-page {
+        //     display: block;
+        //     width: REM(133);
+        //     height: REM(32);
+        //     .img-style {
+        //         @include width-height-100;
+        //     }
+        // }
+        .community-body {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            .community-icon-style {
+                font-size: REM(40);
+            }
+            .community-title-style {
+                margin-left: REM(8);
+                font-size: REM(18);
+                font-weight: 600;
+                color: var(--base-font-color);
             }
         }
         &-community-search {
             margin-left: REM(118);
             display: flex;
-            .community-body {
-                display: flex;
-                align-items: center;
-                cursor: pointer;
-                .community-icon-style {
-                    font-size: REM(24);
-                }
-                .community-title-style {
-                    margin-left: REM(8);
-                    font-size: REM(14);
-                    font-weight: 600;
-                    color: var(--base-font-color);
-                }
-            }
+
             .community-divider {
                 margin: 0 16px;
                 height: 100%;
