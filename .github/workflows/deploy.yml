@@ -39,29 +39,29 @@ jobs:
       #     local_path: './dist.tgz'  # 对应我们项目build的文件夹路径
       #     remote_path: '/root/yakit-online/static/'
 
-      - name: Create Release
-        if: ${{ startsWith(github.ref, 'refs/tags/v') }}
-        id: create_release
-        uses: actions/create-release@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          draft: false
-          prerelease: false
+      # - name: Create Release
+      #   if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+      #   id: create_release
+      #   uses: actions/create-release@master
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
+      #   with:
+      #     tag_name: ${{ github.ref }}
+      #     release_name: Release ${{ github.ref }}
+      #     draft: false
+      #     prerelease: false
 
-      - name: Upload Release Asset
-        if: ${{ startsWith(github.ref, 'refs/tags/v') }}
-        id: upload-release-asset
-        uses: actions/upload-release-asset@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./out.tgz
-          asset_name: out.tgz
-          asset_content_type: application/x-tgz
+      # - name: Upload Release Asset
+      #   if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+      #   id: upload-release-asset
+      #   uses: actions/upload-release-asset@master
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
+      #   with:
+      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
+      #     asset_path: ./out.tgz
+      #     asset_name: out.tgz
+      #     asset_content_type: application/x-tgz
         
 
       - name: Upload out ssh
@@ -71,6 +71,7 @@ jobs:
           REMOTE_USER: 'root'
           REMOTE_HOST: '${{ secrets.ONLINE_HOST }}' #测试服务器地址
           SSH_PRIVATE_KEY: ${{ secrets.ONLINE_PRIV_KEY }}
+          SOURCE: "out.tgz"
           TARGET: '/root/yakit-online/static/' #服务器中，代码部署的位置
 
       - name: Deploy

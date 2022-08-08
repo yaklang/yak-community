@@ -29,12 +29,12 @@ const App: NextPage<AppProps> = (props) => {
             </Head>
             {pageProps.isLogin || pageProps.isMiddle ? (
                 <>
-                    <Script src="http://res.wx.qq.com/connect/zh_CN/htmledition/js/wxLogin.js"></Script>
+                    <Script src="https://res.wx.qq.com/connect/zh_CN/htmledition/js/wxLogin.js"></Script>
                     <Component {...pageProps} />
                 </>
             ) : (
                 <Layouts>
-                    <Script src="http://res.wx.qq.com/connect/zh_CN/htmledition/js/wxLogin.js"></Script>
+                    <Script src="https://res.wx.qq.com/connect/zh_CN/htmledition/js/wxLogin.js"></Script>
                     <Component {...pageProps} />
                 </Layouts>
             )}

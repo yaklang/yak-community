@@ -6,7 +6,7 @@ import { API } from "../types/api";
 const instance = axios.create({
     baseURL:
         process.env.NODE_ENV === "production"
-            ? "http://www.yaklang.com"
+            ? "https://www.yaklang.com"
             : undefined,
     withCredentials: true,
 });
