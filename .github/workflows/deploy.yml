@@ -51,4 +51,4 @@ jobs:
           script: |
             cd /root/yakit-online/static/
             tar zxvf out.tgz
-            rm -rf out.taz
+            rm -rf out.tgz
