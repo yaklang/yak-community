@@ -4,10 +4,10 @@ import { getToken, userSignOut } from "./auth";
 import { API } from "../types/api";
 
 const instance = axios.create({
-    baseURL:
-        process.env.NODE_ENV === "production"
-            ? "https://www.yaklang.com"
-            : undefined,
+    // baseURL:
+    //     process.env.NODE_ENV === "production"
+    //         ? "https://www.yaklang.com"
+    //         : undefined,
     withCredentials: true,
 });
 instance.interceptors.response.use(

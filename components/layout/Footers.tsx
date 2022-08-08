@@ -16,7 +16,7 @@ const Footers: NextPage<FootersProps> = (props) => {
                     >
                         <img src="/images/yakLogo.png" className="img-style" />
                     </a>
-                    <div className="footer-left-copyright">{`Copyright © ${new Date().getFullYear()} for Yak Project. Own by v1ll4n. Powered by Docusaurus`}</div>
+                    <div className="footer-left-copyright">{`Copyright © ${new Date().getFullYear()} for Yak Project. 京ICP备17047700号-3`}</div>
                     <a
                         href="https://www.yaklang.io/docs/intro/"
                         className="footer-left-doc footer-left-link-style"

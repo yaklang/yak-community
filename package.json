@@ -3,10 +3,10 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "dev": "NODE_ENV=development next dev",
-        "dev-express": "NODE_ENV=development node server.js",
-        "build": "NODE_ENV=production next build && next export",
-        "start": "NODE_ENV=production next start",
+        "dev": "next dev",
+        "dev-express": "node server.js",
+        "build": "next build && next export",
+        "start": "next start",
         "lint": "next lint"
     },
     "dependencies": {
