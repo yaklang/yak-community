@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { Button, Col, Divider, Input, Popconfirm, Row } from "antd";
+import { Button, Col, Divider, Input, Popconfirm, Row, Spin } from "antd";
 import {
     CaretRightOutlined,
     PlusOutlined,
@@ -11,7 +11,6 @@ import {
 import {
     CollectionIcon,
     LikeIcon,
-    PlayIcon,
     ReplyIcon,
     UploadImgIcon,
 } from "../public/icons";
@@ -362,6 +361,8 @@ const CommentItem: NextPage<CommentItemProps> = (props) => {
         }
     });
 
+    const [imgLoading, setImgLoading] = useState<boolean>(false);
+
     return (
         <div className="comment-item-wrapper">
             <div className="comment-item-body">
@@ -633,10 +634,32 @@ const CommentItem: NextPage<CommentItemProps> = (props) => {
                                                                 ),
                                                         });
                                                     }}
+                                                    onProgress={() =>
+                                                        setImgLoading(true)
+                                                    }
+                                                    onSuccess={() => {
+                                                        setTimeout(() => {
+                                                            setImgLoading(
+                                                                false
+                                                            );
+                                                        }, 100);
+                                                    }}
+                                                    onFailed={() => {
+                                                        setTimeout(() => {
+                                                            setImgLoading(
+                                                                false
+                                                            );
+                                                        }, 100);
+                                                    }}
                                                 >
-                                                    <div className="reply-img-add">
-                                                        <PlusOutlined className="icon-style" />
-                                                    </div>
+                                                    <Spin
+                                                        className="dynamic-img-spin"
+                                                        spinning={imgLoading}
+                                                    >
+                                                        <div className="reply-img-add">
+                                                            <PlusOutlined className="icon-style" />
+                                                        </div>
+                                                    </Spin>
                                                 </SingleUpload>
                                             )}
                                         </div>
@@ -653,6 +676,17 @@ const CommentItem: NextPage<CommentItemProps> = (props) => {
                                                     res,
                                                 ]),
                                         });
+                                    }}
+                                    onProgress={() => setImgLoading(true)}
+                                    onSuccess={() => {
+                                        setTimeout(() => {
+                                            setImgLoading(false);
+                                        }, 100);
+                                    }}
+                                    onFailed={() => {
+                                        setTimeout(() => {
+                                            setImgLoading(false);
+                                        }, 100);
                                     }}
                                 >
                                     <Button
@@ -874,7 +908,7 @@ const CommentVideo: React.FC<CommentVideoProp> = (props) => {
                     className="comment-video-mask"
                     onClick={() => setIsShow(true)}
                 >
-                    <PlayIcon className="icon-style" />
+                    <CaretRightOutlined className="icon-style" />
                 </div>
             </div>
             {isShow && (

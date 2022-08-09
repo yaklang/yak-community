@@ -73,8 +73,8 @@ export const handleAxiosError = (err: any) => {
 
         default:
             if (response.data === undefined) failed("网络异常，请重试");
-            if (typeof response.data === "string") failed(response?.data || "");
-            else failed((response as any)?.data?.message || "");
+            if (typeof response.data === "string") failed(response?.data || "网络异常，请重试");
+            else failed((response as any)?.data?.message || "网络异常，请重试");
 
             break;
     }

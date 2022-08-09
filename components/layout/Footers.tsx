@@ -27,7 +27,7 @@ const Footers: NextPage<FootersProps> = (props) => {
                         href="https://www.yaklang.io/team"
                         className="footer-left-team footer-left-link-style"
                     >
-                        研发团队
+                        关于我们
                     </a>
                 </div>
                 <div className="footer-right">

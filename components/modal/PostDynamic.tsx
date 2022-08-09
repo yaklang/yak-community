@@ -666,41 +666,43 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
                             );
                         })}
                         {dynamic.content_img.length !== 18 && (
-                            <Upload
-                                className="img-upload"
-                                accept=".png,.jpg,.jpeg,.gif"
-                                showUploadList={false}
-                                multiple={true}
-                                disabled={imgLoading}
-                                beforeUpload={(file: RcFile) => {
-                                    if (!imgJudge(file)) {
-                                        return Promise.reject();
-                                    }
-                                    if (!isShow.current)
-                                        return Promise.reject();
+                            <div className="img-opt">
+                                <Upload
+                                    className="img-upload"
+                                    accept=".png,.jpg,.jpeg,.gif"
+                                    showUploadList={false}
+                                    multiple={true}
+                                    disabled={imgLoading}
+                                    beforeUpload={(file: RcFile) => {
+                                        if (!imgJudge(file)) {
+                                            return Promise.reject();
+                                        }
+                                        if (!isShow.current)
+                                            return Promise.reject();
 
-                                    fileList.current.push(file);
+                                        fileList.current.push(file);
 
-                                    if (imgTime.current) {
-                                        clearTimeout(imgTime.current);
-                                        imgTime.current = null;
-                                    }
-                                    imgTime.current = setTimeout(
-                                        () => uploadImg(),
-                                        200
-                                    );
-                                    return Promise.reject();
-                                }}
-                            >
-                                <Spin
-                                    className="dynamic-img-spin"
-                                    spinning={imgLoading}
+                                        if (imgTime.current) {
+                                            clearTimeout(imgTime.current);
+                                            imgTime.current = null;
+                                        }
+                                        imgTime.current = setTimeout(
+                                            () => uploadImg(),
+                                            200
+                                        );
+                                        return Promise.reject();
+                                    }}
                                 >
-                                    <div className="img-add">
-                                        <PlusOutlined className="icon-style" />
-                                    </div>
-                                </Spin>
-                            </Upload>
+                                    <Spin
+                                        className="dynamic-img-spin"
+                                        spinning={imgLoading}
+                                    >
+                                        <div className="img-add">
+                                            <PlusOutlined className="icon-style" />
+                                        </div>
+                                    </Spin>
+                                </Upload>
+                            </div>
                         )}
                     </div>
                 )}

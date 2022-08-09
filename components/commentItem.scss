@@ -184,9 +184,15 @@ $REM: 16;
                     display: flex;
                     justify-content: center;
                     align-items: center;
+                    cursor: pointer;
                     .icon-style {
                         font-size: REM(16);
                         color: #686c78;
+                    }
+                }
+                .reply-img-add:hover {
+                    .icon-style {
+                        color: var(--base-theme-color);
                     }
                 }
 
