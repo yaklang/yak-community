@@ -233,49 +233,55 @@ const Login: NextPage<LoginProps> = (props) => {
 
     return (
         <div ref={wrapperRef} className="login-wrapper">
-            <div className="login-body">
-                {page === 1 && (
-                    <LoginFirst
-                        onFirst={(source) =>
-                            nextStep({ index: 1, source: source })
-                        }
-                    />
-                )}
-                {page === 2 && (
-                    <LoginSecond
-                        src={codeUrl}
-                        onSecond={(code, source) => {
-                            nextStep({ index: 2, source: source, code: code });
-                        }}
-                    />
-                )}
-                {page === 3 && (
-                    <LoginThird
-                        authId={authId}
-                        onThird={(flag, phone, code) => {
-                            nextStep({
-                                index: 3,
-                                thirdFlag: flag,
-                                phone: phone,
-                                phoneCode: code,
-                            });
-                        }}
-                    />
-                )}
-                {page === 4 && (
-                    <LoginFourth
-                        name={name}
-                        headImg={headImg}
-                        onFourth={(flag, name, img) => {
-                            nextStep({
-                                index: 4,
-                                fourthFlag: flag,
-                                fourthName: name,
-                                img,
-                            });
-                        }}
-                    />
-                )}
+            <div className="login-body-wrapper">
+                <div className="login-body">
+                    {page === 1 && (
+                        <LoginFirst
+                            onFirst={(source) =>
+                                nextStep({ index: 1, source: source })
+                            }
+                        />
+                    )}
+                    {page === 2 && (
+                        <LoginSecond
+                            src={codeUrl}
+                            onSecond={(code, source) => {
+                                nextStep({
+                                    index: 2,
+                                    source: source,
+                                    code: code,
+                                });
+                            }}
+                        />
+                    )}
+                    {page === 3 && (
+                        <LoginThird
+                            authId={authId}
+                            onThird={(flag, phone, code) => {
+                                nextStep({
+                                    index: 3,
+                                    thirdFlag: flag,
+                                    phone: phone,
+                                    phoneCode: code,
+                                });
+                            }}
+                        />
+                    )}
+                    {page === 4 && (
+                        <LoginFourth
+                            name={name}
+                            headImg={headImg}
+                            onFourth={(flag, name, img) => {
+                                nextStep({
+                                    index: 4,
+                                    fourthFlag: flag,
+                                    fourthName: name,
+                                    img,
+                                });
+                            }}
+                        />
+                    )}
+                </div>
             </div>
 
             <img src="/images/yakLogo.png" className="yak-logo-style" />

@@ -17,7 +17,7 @@ const App: NextPage<AppProps> = (props) => {
                     content="width=device-width, initial-scale=1"
                 />
                 <meta charSet="utf-8" />
-                <title>Yak 社区</title>
+                <title>Ya! 一刻</title>
                 <style jsx global>
                     {`
                         * {
