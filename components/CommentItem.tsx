@@ -604,10 +604,12 @@ const CommentItem: NextPage<CommentItemProps> = (props) => {
 
                         <div className="reply-img-and-btn">
                             <div className="reply-full">
-                                {comment.message_img &&
-                                    comment.message_img.length > 0 && (
-                                        <div className="reply-img">
-                                            {comment.message_img.map(
+                                {(imgLoading ||
+                                    (comment.message_img &&
+                                        comment.message_img.length > 0)) && (
+                                    <div className="reply-img">
+                                        {comment.message_img &&
+                                            comment.message_img.map(
                                                 (item, index) => {
                                                     return (
                                                         <ReplyFunctionImg
@@ -623,7 +625,8 @@ const CommentItem: NextPage<CommentItemProps> = (props) => {
                                                     );
                                                 }
                                             )}
-                                            {comment.message_img.length < 3 && (
+                                        {comment.message_img &&
+                                            comment.message_img.length < 3 && (
                                                 <SingleUpload
                                                     setValue={(res) => {
                                                         setComment({
@@ -662,8 +665,8 @@ const CommentItem: NextPage<CommentItemProps> = (props) => {
                                                     </Spin>
                                                 </SingleUpload>
                                             )}
-                                        </div>
-                                    )}
+                                    </div>
+                                )}
                             </div>
 
                             <div className="reply-btn">
