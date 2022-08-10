@@ -39,9 +39,9 @@ const videoJudge = (file: RcFile) => {
 
 export interface SingleUploadProps extends UploadProps {
     isVideo?: boolean;
-    setValue: (res: string, name?: string) => any;
+    setValue?: (res: string, name: string) => any;
     onProgress?: (file: RcFile) => any;
-    onSuccess?: (file: RcFile) => any;
+    onSuccess?: (file: RcFile, res: string) => any;
     onFailed?: () => any;
 }
 // eslint-disable-next-line react/display-name
@@ -93,8 +93,12 @@ export const SingleUpload: React.FC<SingleUploadProps> = React.memo((props) => {
                     userToken: true,
                 })
                     .then((res) => {
-                        setValue(res, `${name}.${file.name.split(".").pop()}`);
-                        if (onSuccess) onSuccess(file);
+                        if (setValue)
+                            setValue(
+                                res,
+                                `${name}.${file.name.split(".").pop()}`
+                            );
+                        if (onSuccess) onSuccess(file, res);
                     })
                     .catch((err) => {
                         if (onFailed) onFailed();

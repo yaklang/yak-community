@@ -57,6 +57,7 @@ const SettingInfo: NextPage<SettingInfoProps> = (props) => {
     const [name, setName] = useState<string>(info.name);
     const [img, setImg] = useState<string>(info.head_img);
     const [imgLoading, setImgLoading] = useState<boolean>(false);
+    const uploadImgName = useRef<string>("");
     const [showUpload, setShowUpload] = useState<boolean>(false);
 
     const [phone, setPhone] = useState<string>("");
@@ -71,6 +72,7 @@ const SettingInfo: NextPage<SettingInfoProps> = (props) => {
         setName(info.name);
         setImg(info.head_img);
         setImgLoading(false);
+        uploadImgName.current = "";
         setPhone("");
         setPhoneFlag(true);
         setPhoneCode("");
@@ -447,9 +449,17 @@ const SettingInfo: NextPage<SettingInfoProps> = (props) => {
                             >
                                 <ImgShow src={img} />
                                 <SingleUpload
-                                    setValue={(res) => setImg(res)}
-                                    onProgress={() => setImgLoading(true)}
-                                    onSuccess={() => setImgLoading(false)}
+                                    onProgress={(file) => {
+                                        uploadImgName.current = file.name;
+                                        setImgLoading(true);
+                                    }}
+                                    onSuccess={(file, res) => {
+                                        if (uploadImgName.current === file.name)
+                                            setImg(res);
+                                        setTimeout(() => {
+                                            setImgLoading(false);
+                                        }, 100);
+                                    }}
                                 >
                                     {showUpload && (
                                         <div className="login-fourth-img-upload">

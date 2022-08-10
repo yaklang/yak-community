@@ -642,7 +642,7 @@ const PostDynamic: NextPage<PostDynamicProps> = (props) => {
                     <div className="operate-publish">
                         <Button
                             className="operate-publish-btn"
-                            disabled={!dynamic.content || loading}
+                            disabled={loading}
                             onClick={releaseDynamic}
                         >
                             发布
