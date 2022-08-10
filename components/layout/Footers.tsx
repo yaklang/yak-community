@@ -46,7 +46,7 @@ const Footers: NextPage<FootersProps> = (props) => {
                             content={
                                 <div>
                                     <img
-                                        src="/images/wechat.png"
+                                        src="/images/wechat.jpg"
                                         className="wechat-code-img"
                                     />
                                     <div className="wechat-code-title">
