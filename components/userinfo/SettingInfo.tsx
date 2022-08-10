@@ -67,6 +67,16 @@ const SettingInfo: NextPage<SettingInfoProps> = (props) => {
     const codeTime = useRef<any>(null);
     const codeTimeCount = useRef<number>(180);
 
+    const resetModalInfo = useMemoizedFn(() => {
+        setName(info.name);
+        setImg(info.head_img);
+        setImgLoading(false);
+        setPhone("");
+        setPhoneFlag(true);
+        setPhoneCode("");
+        clearTime();
+    });
+
     const clearTime = () => {
         clearInterval(codeTime.current);
         codeTime.current = null;
@@ -424,6 +434,7 @@ const SettingInfo: NextPage<SettingInfoProps> = (props) => {
                 visible={modalVisible}
                 onCancel={() => {
                     setModalVisible(false);
+                    resetModalInfo();
                 }}
             >
                 {modalIndex === "name" && (
@@ -474,8 +485,7 @@ const SettingInfo: NextPage<SettingInfoProps> = (props) => {
                                 className="btn-style cancel-style"
                                 isTheme={false}
                                 onClick={() => {
-                                    setName(info.name);
-                                    setImg(info.head_img);
+                                    resetModalInfo();
                                     setModalVisible(false);
                                     setModalIndex("");
                                 }}
@@ -565,8 +575,7 @@ const SettingInfo: NextPage<SettingInfoProps> = (props) => {
                                 className="btn-style cancel-style"
                                 isTheme={false}
                                 onClick={() => {
-                                    setPhone("");
-                                    setPhoneCode("");
+                                    resetModalInfo();
                                     setModalVisible(false);
                                     setModalIndex("");
                                 }}

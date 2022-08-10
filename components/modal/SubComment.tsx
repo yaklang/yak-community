@@ -43,7 +43,7 @@ const SubComment: NextPage<SubCommentProps> = (props) => {
     const [list] = useVirtualList(lists.data, {
         containerTarget: listRef,
         wrapperTarget: wrapperRef,
-        itemHeight: 100,
+        itemHeight: 105,
         overscan: 5,
     });
 
