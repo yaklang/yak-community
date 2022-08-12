@@ -241,6 +241,14 @@ const CommentItem: NextPage<CommentItemProps> = (props) => {
     const userAction = useMemoizedFn((type: "collect" | "stars") => {
         if (type === "collect" && collectLoading) return;
         if (type === "stars" && starsLoading) return;
+        if (info.is_stars && info.stars === 0) {
+            failed("当前点赞数据有问题，请刷新后重试");
+            return;
+        }
+        if (info.is_collect && info.collect === 0) {
+            failed("当前点赞数据有问题，请刷新后重试");
+            return;
+        }
 
         const flag = type === "collect" ? info.is_collect : info.is_stars;
 
