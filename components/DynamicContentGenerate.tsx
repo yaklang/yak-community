@@ -3,13 +3,14 @@ import { useRouter } from "next/router";
 import { useStore } from "../store";
 
 export interface DynamicContentGenerateProps {
+    id: number;
     content: string;
 }
 
 export const DynamicContentGenerate: React.FC<DynamicContentGenerateProps> = (
     props
 ) => {
-    const { content } = props;
+    const { id = 0, content } = props;
     const ContentSplit = content.split(/#[^#]+?#/).filter((item) => !!item);
     const TopicContentSplit = content
         .split(/#([^#]+?)#/)
@@ -24,13 +25,13 @@ export const DynamicContentGenerate: React.FC<DynamicContentGenerateProps> = (
 
     return (
         <>
-            {TopicContentSplit.map((item) => {
+            {TopicContentSplit.map((item, index) => {
                 if (ContentSplit.indexOf(item) > -1) {
                     return item;
                 } else {
                     return (
                         <span
-                            key={item}
+                            key={`${id}-${item}-${index}`}
                             className="dynamic-content-body-topic"
                             onClick={() => setHotTopicContent(item)}
                         >{` #${item}# `}</span>

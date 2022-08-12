@@ -821,7 +821,12 @@ const CommentWord: React.FC<CommentWordProp> = (props) => {
     return (
         <div className="comment-word-wrapper">
             <CollapseText
-                value={<DynamicContentGenerate content={info.content} />}
+                value={
+                    <DynamicContentGenerate
+                        id={info.id}
+                        content={info.content}
+                    />
+                }
             />
         </div>
     );
@@ -849,7 +854,12 @@ const CommentImg: React.FC<CommentImgProp> = (props) => {
     return (
         <div className="comment-img-wrapper">
             <CollapseText
-                value={<DynamicContentGenerate content={info.content} />}
+                value={
+                    <DynamicContentGenerate
+                        id={info.id}
+                        content={info.content}
+                    />
+                }
             />
             <div className="comment-img-body">
                 <div
@@ -911,7 +921,12 @@ const CommentVideo: React.FC<CommentVideoProp> = (props) => {
     return (
         <div className="comment-video-wrapper">
             <CollapseText
-                value={<DynamicContentGenerate content={info.content} />}
+                value={
+                    <DynamicContentGenerate
+                        id={info.id}
+                        content={info.content}
+                    />
+                }
             />
             <div className="comment-video-body">
                 <ImgShow isCover={true} src={info.cover} />

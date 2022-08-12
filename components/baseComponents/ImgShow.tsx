@@ -27,7 +27,7 @@ export const ImgShow: React.FC<ImgShowProps> = (props) => {
         const img = imgRef.current;
         const { offsetWidth, offsetHeight } = img;
 
-        if (isCover) {
+        if (isCover || isMedia) {
             if (!bodyRef || !bodyRef.current) return;
             const body = bodyRef.current;
             const { offsetWidth: bodyWidth, offsetHeight: bodyHeight } = body;
