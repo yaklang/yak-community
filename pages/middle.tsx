@@ -26,7 +26,7 @@ const Middle: NextPage<MiddleProps> = (props) => {
         const code = params.code;
 
         const time = setInterval(() => {
-            if (timeRef.current >= 30) {
+            if (timeRef.current >= 60) {
                 clearInterval(time);
                 failed("登录超时，请重新登录");
                 router.push(
